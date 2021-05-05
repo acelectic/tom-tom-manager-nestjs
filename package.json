@@ -7,7 +7,7 @@
   "license": "UNLICENSED",
   "scripts": {
     "prebuild": "rimraf dist",
-    "build": "nest build",
+    "build": "nest build && yarn build-react",
     "format": "prettier --write \"src/**/*.ts\" \"libs/**/*.ts\"",
     "start": "yarn prebuild && nest start --watch",
     "start:debug": "nest start --debug --watch",
@@ -26,7 +26,7 @@
     "migration:generate": "npx typeorm migration:generate -d ./src/db/migrations -n ",
     "migration:revert": "npx typeorm migration:revert",
     "console": "node dist/console.js",
-    "heroku-postbuild": "yarn build && cd frontend && yarn install --dev && yarn build"
+    "build-react": "cd frontend && yarn install --dev && yarn build"
   },
   "dependencies": {
     "@nestjs/bull": "^0.3.1",
