@@ -15,5 +15,5 @@
     "paths": {}
   },
   "include": ["src", "typeoem-config.ts"],
-  "exclude": ["images"]
+  "exclude": ["images", "frontend"]
 }

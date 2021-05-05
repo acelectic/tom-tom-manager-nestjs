@@ -56,7 +56,7 @@ import { join } from 'path'
       },
     }),
     ServeStaticModule.forRoot({
-      rootPath: join(__dirname, '..', 'build'),
+      rootPath: join(__dirname, '..', 'frontend/build'),
     }),
     UserModule,
     ConsoleModule,
