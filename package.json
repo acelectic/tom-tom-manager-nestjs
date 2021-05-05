@@ -1,10 +1,14 @@
 {
-  "name": "app",
-  "version": "0.0.1",
-  "description": "",
-  "author": "",
+  "name": "tom-tom-manager",
+  "version": "1.0.0",
+  "description": "Best way to Manage TomTom at Home",
+  "author": "miniBear",
   "private": true,
   "license": "UNLICENSED",
+  "engines": {
+    "node": "14.x",
+    "yarn": "1.x"
+  },
   "scripts": {
     "prebuild": "rimraf dist",
     "build": "nest build && cd frontend && yarn install --dev && yarn build",
