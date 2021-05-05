@@ -78,7 +78,9 @@ export class AuthService {
   async registerWithEmail(data: ParamsRegisterEmailDto, role: Role, etm: EntityManager) {
     await this.verifyEmail(data)
     await this.validateSignInWithEmail(data)
+
     const { email, password, name = Chance().name({ middle: false, full: true }) } = data
+    console.log({ email, password, name })
     const encryptPassword = await bcrypt.hash(password, 10)
 
     const paramsSignInBase: ParamSignInBase = {
@@ -157,12 +159,12 @@ export class AuthService {
       user = await this.userService.createUserSignIn(params, etm)
     }
     user.lastSignInAt = new Date()
-
+    if (!user.password) user.password = password
     await etm.save(user)
-
+    const newUser = await User.findOne(user.id)
     return {
-      accessToken: this.getToken(user),
-      user,
+      accessToken: this.getToken(newUser),
+      user: newUser,
     }
   }
 
@@ -221,13 +223,14 @@ export class AuthService {
       .where({
         email,
       })
-      .addSelect('user.password')
+      .addSelect('password')
       .getOne()
     if (!user) {
       validateError('User not found')
     }
-    const isPasswordMatching = await bcrypt.compare(password, user.password)
-    if (!isPasswordMatching) {
+
+    const isPasswordMatching = await bcrypt.compare(password, user.password || '')
+    if (password && user.password && !isPasswordMatching) {
       validateError('Password not match')
     }
   }

@@ -19,6 +19,7 @@ import { Role } from '../../modules/auth/auth.constant'
 import { Transaction } from './Transaction'
 import { Payment } from './Payment'
 import { transformerDecimalToNumber } from 'src/utils/entity-transform'
+import { Exclude, Expose } from 'class-transformer'
 
 export enum UserSignInType {
   GOOGLE = 'google',

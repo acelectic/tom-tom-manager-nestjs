@@ -17,6 +17,7 @@ import basicAuth from 'express-basic-auth'
 // import { debugLog } from './utils/helper'
 import './initialize'
 import cors from 'cors'
+import { ResponseInterceptor } from './utils/interceptors/response.interceptor'
 // const sreviceAccount = require('../test-man-savvy-firebase-adminsdk-f2848-982951f18b.json')
 // const cors = require('cors')
 // import cors from 'cors'
@@ -44,7 +45,7 @@ const logger: NestApplicationOptions =
     ? { logger: loggerProduction }
     : {}
 async function bootstrap() {
-  const app = await NestFactory.create(AppModule)
+  const app = await NestFactory.create(AppModule, logger)
   // app.use(
   //   cors({
   //     origin: '*',

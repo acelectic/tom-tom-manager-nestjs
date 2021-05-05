@@ -1,4 +1,14 @@
-import { Body, Controller, Get, Post, Query, Patch, Header } from '@nestjs/common'
+import {
+  Body,
+  Controller,
+  Get,
+  Post,
+  Query,
+  Patch,
+  Header,
+  UseInterceptors,
+  SerializeOptions,
+} from '@nestjs/common'
 import { ApiBody, ApiTags } from '@nestjs/swagger'
 import { AuthService } from './auth.service'
 import {
@@ -14,6 +24,7 @@ import { VerifyEmailDto, VerifyMobilelDto, ParamsRegisterEmailDto } from './dto/
 import { EntityManager, Transaction, TransactionManager } from 'typeorm'
 import { Role } from './auth.constant'
 import { debugLog } from 'src/utils/helper'
+import { ResponseInterceptor } from 'src/utils/interceptors/response.interceptor'
 
 @ApiTags('auth')
 @Controller('v1/auth')
@@ -62,10 +73,14 @@ export class AuthController {
   @ApiBody({ type: ParamsRegisterEmailDto })
   @Post('register')
   @Transaction()
+  @SerializeOptions({
+    strategy: 'exposeAll',
+  })
   async registerEmail(
     @Body() body: ParamsRegisterEmailDto,
     @TransactionManager() etm: EntityManager,
   ) {
+    debugLog({ ...body })
     return await this.authService.registerWithEmail(body, Role.USER, etm)
   }
 

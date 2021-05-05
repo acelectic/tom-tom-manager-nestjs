@@ -7,7 +7,7 @@
   "license": "UNLICENSED",
   "scripts": {
     "prebuild": "rimraf dist",
-    "build": "nest build",
+    "build": "nest build && cd frontend && yarn install --dev && yarn build",
     "format": "prettier --write \"src/**/*.ts\" \"libs/**/*.ts\"",
     "start": "yarn prebuild && nest start --watch",
     "start:debug": "nest start --debug --watch",

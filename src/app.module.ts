@@ -76,7 +76,7 @@ import { join } from 'path'
         //     : 'debug',
         // level: process.env.NODE_ENV !== 'production' ? 'debug' : 'info',
         // prettyPrint: process.env.NODE_ENV !== 'production',
-        level: 'silent',
+        level: 'info',
         redact: {
           paths: ['req.body.password', 'req.headers.authorization', 'req.headers.cookie'],
           censor: '********',
