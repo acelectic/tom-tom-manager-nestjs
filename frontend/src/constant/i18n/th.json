@@ -1,0 +1,10 @@
+{
+  "page": {
+    "dashboard": "Dashboard",
+    "users": "Users",
+    "resources": "Resources",
+    "transactions": "Transactions",
+    "payments": "Payments",
+    "admin": "Admin"
+  }
+}

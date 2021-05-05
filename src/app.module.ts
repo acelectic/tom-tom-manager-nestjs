@@ -17,7 +17,8 @@ import Joi from 'joi'
 import { ResouceModule } from './modules/resource/resouce.modules'
 import { TransactionModule } from './modules/transaction/transaction.modules'
 import { PaymentModule } from './modules/payment/payment.modules'
-
+import { ServeStaticModule } from '@nestjs/serve-static'
+import { join } from 'path'
 @Module({
   imports: [
     ConfigModule.forRoot({
@@ -34,7 +35,7 @@ import { PaymentModule } from './modules/payment/payment.modules'
         DB_PASSWORD: Joi.string().default('admin'),
         DB_NAME: Joi.string().default('tom_tom'),
         DB_TEST_NAME: Joi.string().default('tom_tom_test'),
-        DB_HEROKU_URL: Joi.string().required(),
+        DATABASE_URL: Joi.string().required(),
         PG_LOCAL: Joi.boolean()
           .valid(true, false)
           .default(1),
@@ -53,6 +54,9 @@ import { PaymentModule } from './modules/payment/payment.modules'
         port: Number(process.env.REDIS_PORT),
         password: process.env.REDIS_PASSWORD,
       },
+    }),
+    ServeStaticModule.forRoot({
+      rootPath: join(__dirname, '..', 'build'),
     }),
     UserModule,
     ConsoleModule,

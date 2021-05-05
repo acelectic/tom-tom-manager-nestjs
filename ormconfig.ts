@@ -9,12 +9,12 @@ const defaultConfig = {
 }
 
 // console.log({
-//   DB_HEROKU_URL: process.env.DB_HEROKU_URL,
+//   DATABASE_URL: process.env.DATABASE_URL,
 //   PG_LOCAL: process.env.PG_LOCAL,
 // });
-if (process.env.DB_HEROKU_URL && process.env.PG_LOCAL !== 'true') {
+if (process.env.DATABASE_URL && process.env.PG_LOCAL !== 'true') {
   const customConfig = {
-    url: process.env.DB_HEROKU_URL,
+    url: process.env.DATABASE_URL,
     ssl: {
       rejectUnauthorized: false,
     },

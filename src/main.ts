@@ -82,7 +82,7 @@ async function bootstrap() {
   //   }),
   // )
   app.enableCors({
-    origin: 'http://localhost:3000',
+    origin: true,
     // origin: [
     //   'https://tomtom-react.herokuapp.com',
     //   /\*.herokuapp.com$/,
@@ -90,6 +90,7 @@ async function bootstrap() {
     //   /\*.com$/,
     // ],
     // origin: (request, error) => {
+    //   console.log({ request })
     //   error(
     //     {
     //       name: 'Access-Control-Allow-Headers',
@@ -99,7 +100,7 @@ async function bootstrap() {
     //   )
     // },
     methods: ['GET', 'PUT', 'PATCH', 'POST', 'DELETE', 'OPTIONS'],
-    allowedHeaders: ['Content-Type', 'Authorization'],
+    // allowedHeaders: ['Content-Type', 'Authorization'],
     preflightContinue: false,
     optionsSuccessStatus: 204,
     credentials: true,
@@ -118,10 +119,10 @@ async function bootstrap() {
   )
 
   app.useGlobalFilters()
-  // app.useGlobalInterceptors(
-  //   // new ResponseInterceptor(),
-  //   new ClassSerializerInterceptor(app.get(Reflector)),
-  // )
+  app.useGlobalInterceptors(
+    // new ResponseInterceptor(),
+    new ClassSerializerInterceptor(app.get(Reflector)),
+  )
   const { httpAdapter } = app.get(HttpAdapterHost)
   app.useGlobalFilters(new DbExeptionFilter(), new ExceptionsLoggerFilter(httpAdapter))
   app.use(json({ limit: '50mb' }))
