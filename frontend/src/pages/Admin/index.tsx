@@ -1,4 +1,4 @@
-import { Box, Button } from '@material-ui/core'
+import { Button } from '@material-ui/core'
 import { capitalize } from 'lodash'
 import { useCallback, useContext } from 'react'
 import BasicList from '../../components/BasicList'
@@ -6,11 +6,7 @@ import Page from '../../components/commons/Page'
 import Space from '../../components/commons/Space'
 import { UpdateUserCtx } from '../../constant/contexts'
 import { Role, UserEntity } from '../../services/auth/auth-types'
-import {
-  useChangeRole,
-  useGetUsers,
-  useUpdateUser,
-} from '../../services/user/user-query'
+import { useChangeRole, useGetUsers } from '../../services/user/user-query'
 import { withCtx } from '../../utils/helper'
 import UpdateUser from './UpdateUser'
 
@@ -51,7 +47,7 @@ const Admin = () => {
       return (
         <Space spacing={10}>
           <Space spacing={10}>
-            {roles.map((role) => renderButtonAction(userId, userRole, role))}
+            {roles.map(role => renderButtonAction(userId, userRole, role))}
           </Space>
           <Button
             variant="outlined"

@@ -2,6 +2,7 @@ import dayjs from 'dayjs'
 import { groupBy } from 'lodash'
 import { useMutation, useQuery, useQueryClient } from 'react-query'
 import { api } from '../../utils/api'
+import { numberWithCommas } from '../../utils/helper'
 import {
   CreateTransactionParams,
   CreateTransactionResponse,
@@ -50,7 +51,7 @@ export const useCreateTransaction = () => {
         {
           userIds,
           resourceIds,
-          price: Number(price),
+          price: numberWithCommas(Number(price)),
         },
       )
       return data
@@ -77,6 +78,8 @@ const modifyTransaction = (transaction: TransactionEntity) => {
     ref: ref.toString().padStart(6, '0'),
     totalUser: users?.length || 0,
     completed: completed ? 'Completed' : 'Pending',
-    date: dayjs(createdAt).tz('Asia/Bangkok').format('DD/MM/YYYY hh:mm:ss'),
+    date: dayjs(createdAt)
+      .tz('Asia/Bangkok')
+      .format('DD/MM/YYYY hh:mm:ss'),
   }
 }

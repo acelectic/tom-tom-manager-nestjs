@@ -1,5 +1,6 @@
 import { useMutation, useQuery, useQueryClient } from 'react-query'
 import { api } from '../../utils/api'
+import { numberWithCommas } from '../../utils/helper'
 import {
   CreateResourceParams,
   CreateResourceResponse,
@@ -11,10 +12,11 @@ export const RESOURCE_URL = 'resources'
 export const useGetResources = () => {
   return useQuery([RESOURCE_URL], async () => {
     const { data } = await api.tomtom.get<GetResourcesResponse>(RESOURCE_URL)
-    return data.resources.map(({ ref, ...rest }) => ({
+    return (data.resources.map(({ ref, price, ...rest }) => ({
       ...rest,
+      price: numberWithCommas(price),
       ref: ref.toString().padStart(6, '0'),
-    }))
+    })) as unknown) as GetResourcesResponse['resources']
   })
 }
 export const useCreateResource = () => {

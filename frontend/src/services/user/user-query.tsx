@@ -1,5 +1,6 @@
 import { useMutation, useQuery, useQueryClient } from 'react-query'
 import { api } from '../../utils/api'
+import { numberWithCommas } from '../../utils/helper'
 import { SIGN_IN } from '../auth/auth-query'
 import { SigninParams, SigninResponse } from '../auth/auth-types'
 import {
@@ -15,7 +16,10 @@ export const UPDATE_USER_URL = `update`
 export const useGetUsers = () => {
   return useQuery([USER_URL], async () => {
     const { data } = await api.tomtom.get<GetUsersResponse>(USER_URL)
-    return data.users
+    return (data.users.map(d => ({
+      ...d,
+      balance: numberWithCommas(d.balance),
+    })) as unknown) as GetUsersResponse['users']
   })
 }
 
