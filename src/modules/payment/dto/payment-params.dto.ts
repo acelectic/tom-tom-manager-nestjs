@@ -37,10 +37,10 @@ export class CreatePaymentParamsDto {
   @ApiProperty()
   @IsUUID('all')
   @ValidateIf(o => o.type === PaymentType.BUY)
-  resourceId: string
+  resourceId?: string
 
   @ApiProperty()
   @IsUUID('all')
   @ValidateIf(o => o.type === PaymentType.PAID)
-  transactionId: string
+  transactionId?: string
 }

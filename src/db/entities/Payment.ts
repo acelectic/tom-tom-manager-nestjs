@@ -23,6 +23,12 @@ import { Resource } from './Resource'
 import { Transaction } from './Transaction'
 import { User } from './User'
 
+export enum PaymentStatus {
+  PENDING = 'pending',
+  FAILED = 'failed',
+  SETTLED = 'settled',
+}
+
 export enum PaymentType {
   BUY = 'buy',
   PAID = 'paid',
@@ -83,6 +89,15 @@ export class Payment extends AppEntity {
     nullable: false,
   })
   userId: string
+
+  @Column({
+    name: 'status',
+    type: 'enum',
+    enum: PaymentStatus,
+    default: PaymentStatus.PENDING,
+    nullable: true,
+  })
+  status: PaymentStatus
 
   @Column({
     name: 'resource_id',

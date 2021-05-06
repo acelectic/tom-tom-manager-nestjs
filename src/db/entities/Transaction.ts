@@ -26,36 +26,36 @@ import { User } from './User'
 
 @Entity({ name: 'transactions' })
 export class Transaction extends AppEntity {
-  @AfterInsert()
-  updateUserBalance() {
-    const connection: Connection = getConnection()
-    const etm: EntityManager = connection.createEntityManager()
+  // @AfterInsert()
+  // updateUserBalance() {
+  //   const connection: Connection = getConnection()
+  //   const etm: EntityManager = connection.createEntityManager()
 
-    const transaction = this
-    const users = transaction.users
-    const trPrice = transaction.price
-    transaction.remain = transaction.price
+  //   const transaction = this
+  //   const users = transaction.users
+  //   const trPrice = transaction.price
+  //   transaction.remain = transaction.price
 
-    const mustPay = roundUpOnly(trPrice / users.length)
-    users.map(user => {
-      const userBalance = user.balance
-      user.balance = userBalance - mustPay
-      etm.save(user)
-    })
-    etm.save(transaction)
-  }
+  //   const mustPay = roundUpOnly(trPrice / users.length)
+  //   users.map(user => {
+  //     const userBalance = user.balance
+  //     user.balance = userBalance - mustPay
+  //     etm.save(user)
+  //   })
+  //   etm.save(transaction)
+  // }
 
-  @AfterUpdate()
-  onUpdate() {
-    const connection: Connection = getConnection()
-    const etm: EntityManager = connection.createEntityManager()
+  // @AfterUpdate()
+  // onUpdate() {
+  //   const connection: Connection = getConnection()
+  //   const etm: EntityManager = connection.createEntityManager()
 
-    const transaction = this
-    if (Number(transaction.remain) <= 0) {
-      transaction.completed = true
-    }
-    etm.save(transaction)
-  }
+  //   const transaction = this
+  //   if (Number(transaction.remain) <= 0) {
+  //     transaction.completed = true
+  //   }
+  //   etm.save(transaction)
+  // }
 
   @Column({
     name: 'price',

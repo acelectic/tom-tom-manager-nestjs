@@ -28,10 +28,10 @@ export class PaymentService {
     const payment = await Payment.findOrInit({ price, type, userId, transactionId, resourceId })
     payment.user = user
 
-    if (type === PaymentType.PAID) {
+    if (type === PaymentType.PAID && transaction) {
       payment.transaction = transaction
     }
-    if (type === PaymentType.BUY) {
+    if (type === PaymentType.BUY && resource) {
       payment.resource = resource
     }
 

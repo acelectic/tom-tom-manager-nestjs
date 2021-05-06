@@ -11,10 +11,16 @@ import { TransactionService } from '../transaction/transaction.service'
 import { Connection, createConnection, EntityManager, getConnection } from 'typeorm'
 import { debugLog } from 'src/utils/helper'
 import { Transaction } from 'src/db/entities/Transaction'
+import { PaymentService } from '../payment/payment.service'
+import { PaymentType } from 'src/db/entities/Payment'
+import { CreatePaymentParamsDto } from '../payment/dto/payment-params.dto'
 
 @Console()
 export class AppConsoleService {
-  constructor(private readonly transactionService: TransactionService) {}
+  constructor(
+    private readonly transactionService: TransactionService,
+    private readonly paymentService: PaymentService,
+  ) {}
 
   @Command({
     command: 'test-cosole',
@@ -29,7 +35,7 @@ export class AppConsoleService {
     command: 'truncates',
   })
   async truncates() {
-    truncates('transactions', 'users', 'payments', 'resources')
+    await truncates('transactions', 'users', 'payments', 'resources')
   }
 
   @Command({
@@ -87,6 +93,41 @@ export class AppConsoleService {
     //   await etm.save(transaction)
     // })
     // await Promise.all(temp)
+  }
+
+  @Command({
+    command: 'mock-payments',
+  })
+  async mockPayments() {
+    const connection: Connection = getConnection()
+    const users = await User.find({
+      relations: ['transactions'],
+    })
+    const resources = await Resource.find()
+
+    for (const i in range(
+      Chance().integer({
+        min: 5,
+        max: 30,
+      }),
+    )) {
+      const etm: EntityManager = connection.createEntityManager()
+      const price = Chance().integer({ min: 200, max: 300 })
+      const resource = sample(resources)
+      const user = sample(users)
+      const type = sample([PaymentType.BUY, PaymentType.PAID])
+      const { transactions } = user
+      const transaction = sample(transactions)
+      const params: CreatePaymentParamsDto = {
+        price,
+        type,
+        transactionId: transaction?.id,
+        resourceId: resource?.id,
+        userId: user?.id,
+      }
+      const payment = await this.paymentService.createPayment(params, etm)
+      await etm.save(payment)
+    }
   }
 }
 

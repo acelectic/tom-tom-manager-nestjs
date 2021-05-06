@@ -1,4 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger'
+import { Transform } from 'class-transformer'
 import {
   ArrayMaxSize,
   ArrayMinSize,
@@ -17,6 +18,7 @@ export class CreateTransactionParamsDto {
   @Min(0)
   @Max(30000)
   @IsNumber()
+  @Transform(({ value }) => Number(value))
   price: number
 
   @ApiProperty()

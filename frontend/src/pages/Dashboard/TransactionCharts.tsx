@@ -1,6 +1,6 @@
 import { useMemo } from 'react'
 import { useGetTransactions } from '../../services/transaction/transaction-query'
-import { Bar } from 'react-chartjs-2'
+import { Bar, Line } from 'react-chartjs-2'
 import dayjs from 'dayjs'
 
 const colors = ['#91cf96', '#c881d2', '#ffbaa2', '#29b6f6'] as const
@@ -31,7 +31,7 @@ const TransactionChart = () => {
   const data = useMemo(() => {
     const data = {
       labels: transactions
-        ? transactions.map((d) => dayjs(d.date).format('DD/MM/YYYY hh:mm'))
+        ? transactions.map(d => dayjs(d.date).format('DD/MM/YYYY hh:mm'))
         : [],
       datasets: [
         {
@@ -42,7 +42,7 @@ const TransactionChart = () => {
           pointBorderColor: colors[0],
           pointHoverBackgroundColor: colors[0],
           // pointHoverBorderColor: colors[1],
-          data: transactions ? transactions.map((d) => d.price) : [],
+          data: transactions ? transactions.map(d => d.price) : [],
         },
         {
           // ...dataSetOpts,
@@ -52,7 +52,7 @@ const TransactionChart = () => {
           pointBorderColor: colors[1],
           pointHoverBackgroundColor: colors[1],
           // pointHoverBorderColor: colors[1],
-          data: transactions ? transactions.map((d) => d.remain) : [],
+          data: transactions ? transactions.map(d => d.remain) : [],
         },
         {
           // ...dataSetOpts,
@@ -62,7 +62,7 @@ const TransactionChart = () => {
           pointBorderColor: colors[2],
           pointHoverBackgroundColor: colors[2],
           // pointHoverBorderColor: colors[0],
-          data: transactions ? transactions.map((d) => d.totalUser) : [],
+          data: transactions ? transactions.map(d => d.totalUser) : [],
         },
       ],
     }
@@ -71,8 +71,8 @@ const TransactionChart = () => {
 
   return (
     <div>
-      <Bar
-        type="bar"
+      <Line
+        type="line"
         height={100}
         data={data}
         options={{
