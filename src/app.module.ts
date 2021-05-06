@@ -19,6 +19,7 @@ import { TransactionModule } from './modules/transaction/transaction.modules'
 import { PaymentModule } from './modules/payment/payment.modules'
 import { ServeStaticModule } from '@nestjs/serve-static'
 import { join } from 'path'
+import { TemplateModule } from './modules/template/template.modules'
 @Module({
   imports: [
     ConfigModule.forRoot({
@@ -66,6 +67,7 @@ import { join } from 'path'
     ResouceModule,
     TransactionModule,
     PaymentModule,
+    TemplateModule,
     LoggerModule.forRoot({
       pinoHttp: {
         // level:

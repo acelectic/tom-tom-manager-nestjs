@@ -14,6 +14,7 @@ import {
 } from 'typeorm'
 import { AppEntity } from './AppEntity'
 import { Payment } from './Payment'
+import { Template } from './Template'
 import { Transaction } from './Transaction'
 
 @Entity({ name: 'resources' })
@@ -40,6 +41,12 @@ export class Resource extends AppEntity {
   })
   ref: string
 
+  @OneToMany(
+    () => Payment,
+    payments => payments.transaction,
+  )
+  payments: Payment[]
+
   @ManyToMany(
     () => Transaction,
     transactions => transactions.resources,
@@ -57,9 +64,20 @@ export class Resource extends AppEntity {
   })
   transactions: Transaction[]
 
-  @OneToMany(
-    () => Payment,
-    payments => payments.transaction,
+  @ManyToMany(
+    () => Template,
+    templates => templates.resources,
   )
-  payments: Payment[]
+  @JoinTable({
+    name: 'templates_resources',
+    joinColumn: {
+      name: 'resourceId',
+      referencedColumnName: 'id',
+    },
+    inverseJoinColumn: {
+      name: 'templateId',
+      referencedColumnName: 'id',
+    },
+  })
+  templates: Template[]
 }
