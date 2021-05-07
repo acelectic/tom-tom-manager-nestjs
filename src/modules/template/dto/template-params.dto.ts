@@ -1,9 +1,11 @@
 import { ApiProperty } from '@nestjs/swagger'
+import { Transform } from 'class-transformer'
 import {
   ArrayMaxSize,
   ArrayMinSize,
   IsBoolean,
   IsBooleanString,
+  IsIn,
   IsNotEmpty,
   IsOptional,
   IsUUID,
@@ -12,6 +14,8 @@ import {
 export class GetTemplatesParamsDto {
   @ApiProperty()
   @IsBoolean()
+  @Transform(({ value }) => (value === 'true' ? true : false))
+  @IsIn(['true', 'false', true, false])
   @IsOptional()
   isActive?: boolean
 }
@@ -46,4 +50,11 @@ export class UpdateTemplateParamsDto {
   @IsBoolean()
   @IsOptional()
   isActive?: boolean
+}
+
+export class UpdateTemplateIsActiveParamsDto {
+  @ApiProperty()
+  @Transform(({ value }) => (value === 'true' ? true : false))
+  @IsBooleanString()
+  isActive: boolean
 }

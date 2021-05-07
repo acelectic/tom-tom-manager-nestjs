@@ -1,11 +1,18 @@
 import styled from '@emotion/styled'
+import { sumBy } from 'lodash'
 import { useMemo } from 'react'
 import { Form } from 'react-final-form'
-import { InputField, MultiSelectField } from '../../components/fields'
+import {
+  InputField,
+  MultiSelectField,
+  SelectField,
+} from '../../components/fields'
 import { useGetResources } from '../../services/resource/resource-query'
+import { useGetTemplates } from '../../services/template/template-query'
 import { useCreateTransaction } from '../../services/transaction/transaction-query'
 import { CreateTransactionParams } from '../../services/transaction/transaction-types'
 import { useGetUsers } from '../../services/user/user-query'
+import { numberWithCommas } from '../../utils/helper'
 
 const FormLayout = styled.form`
   margin: 20px;
@@ -21,6 +28,9 @@ const TransactionForm = () => {
   const { mutate: createTransaction } = useCreateTransaction()
   const { data: users } = useGetUsers()
   const { data: resources } = useGetResources()
+  const { data: templates } = useGetTemplates({
+    isActive: true,
+  })
   const usersOption = useMemo(() => {
     return (
       users?.map(
@@ -37,9 +47,23 @@ const TransactionForm = () => {
     )
   }, [resources])
 
+  const templatesOption = useMemo(() => {
+    return (
+      templates?.map(
+        ({ id, ref, resources }) =>
+          ({
+            value: id,
+            label: `ref:${ref} | cost = ${numberWithCommas(
+              sumBy(resources, 'price'),
+            )}`,
+          } as BaseOptions),
+      ) || []
+    )
+  }, [templates])
+
   return (
     <Form<CreateTransactionFormValues>
-      onSubmit={(values) => {
+      onSubmit={values => {
         createTransaction(values)
       }}
       initialValues={{
@@ -51,6 +75,11 @@ const TransactionForm = () => {
         return (
           <FormLayout>
             <InputField name="price" label="Price" required />
+            <SelectField
+              name="templateId"
+              label="Template"
+              options={templatesOption}
+            />
             <MultiSelectField
               name="userIds"
               label="User"

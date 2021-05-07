@@ -1,3 +1,4 @@
+import { unionBy } from 'lodash'
 import { transformerDecimalToNumber } from 'src/utils/entity-transform'
 import {
   Column,
@@ -11,6 +12,7 @@ import {
   ManyToMany,
   JoinTable,
   Generated,
+  RelationId,
 } from 'typeorm'
 import { AppEntity } from './AppEntity'
 import { Payment } from './Payment'
@@ -68,19 +70,20 @@ export class Resource extends AppEntity {
     () => Template,
     templates => templates.resources,
     {
-      cascade: true,
+      lazy: true,
     },
   )
-  @JoinTable({
-    name: 'templates_resources',
-    joinColumn: {
-      name: 'resourceId',
-      referencedColumnName: 'id',
-    },
-    inverseJoinColumn: {
-      name: 'templateId',
-      referencedColumnName: 'id',
-    },
-  })
   templates: Template[]
+
+  @RelationId((resource: Resource) => resource.templates)
+  resourceIds: string[]
+
+  // async addTemplateRelation(templates: Template[]) {
+  //   const curTemplates = this.templates || []
+  //   const newTemplates = unionBy(curTemplates.concat(templates), id => id)
+  //   this.templates = newTemplates
+  //   await this.save({
+  //     transaction: true,
+  //   })
+  // }
 }

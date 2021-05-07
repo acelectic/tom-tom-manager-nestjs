@@ -7,19 +7,30 @@ import { FieldProps, FieldRenderProps } from 'react-final-form'
 import { Field as FieldFinalForm } from 'react-final-form'
 // import Text from '../../components/common/Text'
 
-import { ComponentType, useMemo } from 'react'
+import { ComponentType, CSSProperties, useMemo } from 'react'
 import Text from '../commons/Text'
+import { without } from 'lodash'
+
+interface BaseFieldProps extends AnyObject {
+  style?: CSSProperties
+  className?: string
+}
 
 export const modifyComponent = <T extends unknown>(
   Component: ComponentType<any>,
-) => (props: FieldRenderProps<T>) => {
+) => (props: FieldRenderProps<T> & BaseFieldProps) => {
   const { input, meta, style, className, ...restProps } = props
   const { error, touched } = meta
   const isError = useMemo(() => {
     return error && touched
   }, [error, touched])
+  const classNames = useMemo(() => {
+    const temp = ['field-wrapper', className]
+    return without(temp, '', null, undefined).join(' ')
+  }, [className])
+
   return (
-    <div className={`${className}`} style={style}>
+    <div className={classNames} style={style}>
       <Component {...input} {...restProps} />
       {isError && (
         <Text color={'red'} size={12}>
@@ -30,7 +41,9 @@ export const modifyComponent = <T extends unknown>(
   )
 }
 
-export const makeField = <T extends any>(component: ComponentType<any>) => {
+export const makeField = <T extends BaseFieldProps>(
+  component: ComponentType<any>,
+) => {
   const newComponent = modifyComponent<T>(component)
   const returnField = (
     props: FieldProps<string, FieldRenderProps<string>> & T,

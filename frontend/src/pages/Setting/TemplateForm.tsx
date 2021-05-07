@@ -4,18 +4,21 @@ import { useCallback, useContext, useMemo } from 'react'
 import { Form, FormSpy } from 'react-final-form'
 import BaseModal from '../../components/commons/BaseModal'
 import Text from '../../components/commons/Text'
-import {
-  MultiSelectField,
-  SelectField,
-  SwitchField,
-} from '../../components/fields'
-import { TemplateFormCtx, UpdateUserCtx } from '../../constant/contexts'
+import { MultiSelectField, SwitchField } from '../../components/fields'
+import { TemplateFormCtx } from '../../constant/contexts'
 import { useGetResources } from '../../services/resource/resource-query'
 import { TemplateEntity } from '../../services/template/template-types'
 
 const useStyles = makeStyles({
-  layout: {
+  modalLayout: {
     minWidth: '40%',
+  },
+  formLayout: {
+    minHeight: '400px',
+    minWidth: '100%%',
+    '& > .field-wrapper > *': {
+      width: '100%',
+    },
   },
 })
 
@@ -34,7 +37,7 @@ const TemplateForm = (props: TemplateFormProps) => {
   const classes = useStyles()
 
   const [state, setState, { reset }] = useContext(TemplateFormCtx)
-  const { visible, isActive = true, resourceIds } = state
+  const { id, visible, isActive = true, resourceIds } = state
   const { data: resources } = useGetResources()
 
   const handleClose = useCallback(() => {
@@ -54,18 +57,23 @@ const TemplateForm = (props: TemplateFormProps) => {
     <BaseModal
       visible={visible}
       closeModal={handleClose}
-      className={classes.layout}
+      className={classes.modalLayout}
     >
       <Form<TemplateFormValues>
-        onSubmit={onSubmit}
+        onSubmit={(values, form) => {
+          onSubmit(values)
+          form.reset()
+          handleClose()
+        }}
         initialValues={{
+          id,
           isActive,
           resourceIds,
         }}
       >
         {({ handleSubmit }) => {
           return (
-            <Grid style={{ minHeight: '400px', minWidth: '100%%' }}>
+            <Grid container direction="column" className={classes.formLayout}>
               <FormSpy<TemplateFormValues>>
                 {({ values }) => {
                   const { resourceIds } = values

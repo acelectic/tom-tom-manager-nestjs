@@ -7,6 +7,9 @@ export interface TemplateEntity {
   resources?: ResourceEntity[]
 }
 
+export interface GetTemplateParams {
+  isActive?: boolean
+}
 export interface GetTemplateResponse {
   templates: TemplateEntity[]
 }
@@ -23,3 +26,9 @@ export interface UpdateTemplateParams {
   isActive?: boolean
 }
 export interface UpdateTemplateResponse extends TemplateEntity {}
+
+export interface UpdateTemplateIsActiveParams {
+  templateId: string
+  isActive: boolean
+}
+export interface UpdateTemplateIsActiveResponse extends TemplateEntity {}

@@ -78,7 +78,7 @@ import { TemplateModule } from './modules/template/template.modules'
         //     : 'debug',
         // level: process.env.NODE_ENV !== 'production' ? 'debug' : 'info',
         // prettyPrint: process.env.NODE_ENV !== 'production',
-        level: 'info',
+        level: 'silent',
         redact: {
           paths: ['req.body.password', 'req.headers.authorization', 'req.headers.cookie'],
           censor: '********',

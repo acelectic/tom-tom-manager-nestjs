@@ -45,7 +45,9 @@ const logger: NestApplicationOptions =
     ? { logger: loggerProduction }
     : {}
 async function bootstrap() {
-  const app = await NestFactory.create(AppModule, logger)
+  const app = await NestFactory.create(AppModule, {
+    logger: ['error', 'log', 'debug'],
+  })
   // app.use(
   //   cors({
   //     origin: '*',

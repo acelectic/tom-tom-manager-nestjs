@@ -1,10 +1,11 @@
-import { Body, Controller, Get, Param, ParseUUIDPipe, Post, Query } from '@nestjs/common'
+import { Body, Controller, Get, Param, ParseUUIDPipe, Patch, Post, Query } from '@nestjs/common'
 import { TemplateService } from './template.service'
 import { Auth } from '../auth/auth.decorator'
 import { ApiTags } from '@nestjs/swagger'
 import {
   CreateTemplateParamsDto,
   GetTemplatesParamsDto,
+  UpdateTemplateIsActiveParamsDto,
   UpdateTemplateParamsDto,
 } from './dto/template-params.dto'
 import { TransactionManager, EntityManager, Transaction } from 'typeorm'
@@ -30,7 +31,7 @@ export class TemplateController {
     return this.templateService.createTemplate(bodyParams, etm)
   }
 
-  @Post(':templateId')
+  @Patch(':templateId')
   @Transaction()
   async updateTemplate(
     @Param('templateId', new ParseUUIDPipe()) templateId: string,
@@ -38,5 +39,15 @@ export class TemplateController {
     @TransactionManager() etm: EntityManager,
   ) {
     return this.templateService.updateTemplate(templateId, bodyParams, etm)
+  }
+
+  @Patch(':templateId/set-active')
+  @Transaction()
+  async updateTemplateActiveStatus(
+    @Param('templateId', new ParseUUIDPipe()) templateId: string,
+    @Body() bodyParams: UpdateTemplateIsActiveParamsDto,
+    @TransactionManager() etm: EntityManager,
+  ) {
+    return this.templateService.updateTemplateActiveStatus(templateId, bodyParams, etm)
   }
 }

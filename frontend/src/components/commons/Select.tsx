@@ -10,11 +10,12 @@ import React, { useCallback } from 'react'
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
     formControl: {
-      marginTop: 20,
-      marginBottom: 20,
+      // marginTop: 20,
+      // marginBottom: 20,
       minWidth: 120,
     },
-    selectEmpty: {
+    select: {
+      // width: '100%',
       marginTop: theme.spacing(2),
     },
   }),
@@ -25,9 +26,10 @@ export interface SelectProps {
   value?: any
   options: BaseOptions[]
   onChange?: (value: string) => void
+  disabled?: boolean
 }
 const Select = (props: SelectProps) => {
-  const { label, value, options, onChange } = props
+  const { label, value, options, disabled, onChange } = props
   const classes = useStyles()
 
   const handleChange = useCallback(
@@ -48,13 +50,16 @@ const Select = (props: SelectProps) => {
       </InputLabel>
       <SelectMui
         native
+        className={classes.select}
+        // defaultValue={value}
         value={value}
         onChange={handleChange}
-        label="Age"
+        // label={label}
         inputProps={{
-          name: label,
+          name: 'label',
           id: 'outlined-age-native-simple',
         }}
+        disabled={disabled || !options.length}
       >
         {/* <option aria-label="None" value="" /> */}
         {options.map(({ value, label }) => (

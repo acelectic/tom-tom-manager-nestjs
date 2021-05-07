@@ -45,7 +45,7 @@ if (process.env.DATABASE_URL && process.env.PG_LOCAL !== 'true') {
     migrations: ['dist/db/migrations/*{.js,.ts}'],
     subscribers: ['dist/db/subscriber/**/*{.js,.ts}'],
     synchronize: false,
-    logging: true,
+    logging: ['error'],
     // autoLoadEntities: true,
     // ssl: {
     //   rejectUnauthorized: false,

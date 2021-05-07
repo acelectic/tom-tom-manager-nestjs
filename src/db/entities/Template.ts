@@ -19,6 +19,7 @@ import {
   EntityManager,
   AfterUpdate,
   Generated,
+  RelationId,
 } from 'typeorm'
 import { AppEntity } from './AppEntity'
 import { Payment } from './Payment'
@@ -42,7 +43,8 @@ export class Template extends AppEntity {
     () => Resource,
     resources => resources.templates,
     {
-      nullable: true,
+      // cascade: true,
+      lazy: true,
     },
   )
   @JoinTable({
@@ -57,4 +59,7 @@ export class Template extends AppEntity {
     },
   })
   resources: Resource[]
+
+  @RelationId((template: Template) => template.resources)
+  resourceIds: string[]
 }
