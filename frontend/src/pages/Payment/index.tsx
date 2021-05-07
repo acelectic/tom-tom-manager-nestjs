@@ -11,7 +11,7 @@ const Payment = () => {
 
   return (
     <Page title={'Payment Management'}>
-      <Authenlize role={[Role.ADMIN, Role.MANAGER]}>
+      <Authenlize roles={[Role.ADMIN, Role.MANAGER]}>
         <Suspense fallback={<div>Loading...</div>}>
           <PaymentForm />
         </Suspense>

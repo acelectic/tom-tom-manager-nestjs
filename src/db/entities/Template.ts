@@ -42,7 +42,7 @@ export class Template extends AppEntity {
     () => Resource,
     resources => resources.templates,
     {
-      cascade: true,
+      nullable: true,
     },
   )
   @JoinTable({

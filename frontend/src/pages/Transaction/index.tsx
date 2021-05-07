@@ -10,7 +10,7 @@ const Transaction = () => {
 
   return (
     <Page title={'Transaction Management'}>
-      <Authenlize role={[Role.ADMIN, Role.MANAGER]}>
+      <Authenlize roles={[Role.ADMIN, Role.MANAGER]}>
         <TransactionForm />
       </Authenlize>
       <BasicList

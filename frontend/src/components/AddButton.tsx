@@ -7,11 +7,13 @@ const Layout = styled.div`
   margin: 20px 0;
 `
 
-interface AddButtonProps
-  extends Omit<ModalCreateProps, 'visible' | 'closeModal'> {
+interface AddButtonProps<T, K extends keyof T>
+  extends Omit<ModalCreateProps<T, K>, 'visible' | 'closeModal'> {
   name: string
 }
-const AddButton = (props: AddButtonProps) => {
+const AddButton = <T extends AnyObject, K extends keyof T = keyof T>(
+  props: AddButtonProps<T, K>,
+) => {
   const { name, fieldNames, onSubmit } = props
   const [visible, setVisible] = useState(false)
   const openModal = useCallback(() => {
@@ -23,7 +25,7 @@ const AddButton = (props: AddButtonProps) => {
   }, [])
 
   const onModalSubmit = useCallback(
-    (values: AnyObject) => {
+    (values: T) => {
       onSubmit(values)
     },
     [onSubmit],

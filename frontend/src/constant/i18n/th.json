@@ -5,6 +5,7 @@
     "resources": "Resources",
     "transactions": "Transactions",
     "payments": "Payments",
-    "admin": "Admin"
+    "admin": "Admin",
+    "setting": "Setting"
   }
 }

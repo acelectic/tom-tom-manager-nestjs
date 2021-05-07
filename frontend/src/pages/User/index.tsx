@@ -11,11 +11,11 @@ const Users = () => {
 
   return (
     <Page title={'User Management'}>
-      <Authenlize role={[Role.ADMIN]}>
+      <Authenlize roles={[Role.ADMIN]}>
         <AddButton
           fieldNames={['name', 'email', 'password']}
           name={'Add User'}
-          onSubmit={(v) => {
+          onSubmit={v => {
             const { email, password, name } = v as SigninParams
             console.log(v)
             createUser({

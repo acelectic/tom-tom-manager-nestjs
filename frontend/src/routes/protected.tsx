@@ -1,10 +1,12 @@
 import { Switch, Route, Redirect } from 'react-router-dom'
+import Authenlize from '../components/commons/Authenlize'
 import Layout from '../components/layout'
 import paths from '../constant/paths'
 import Admin from '../pages/Admin'
 import Dashboard from '../pages/Dashboard'
 import Payment from '../pages/Payment'
 import Resource from '../pages/Resource'
+import Setting from '../pages/Setting'
 import Transaction from '../pages/Transaction'
 import Users from '../pages/User'
 import { useCurrUser } from '../services/auth/auth-query'
@@ -20,10 +22,10 @@ export const ProtectedRoute = () => {
         <Route path={paths.resources()} component={Resource} />
         <Route path={paths.transactions()} component={Transaction} />
         <Route path={paths.payments()} component={Payment} />
-        {process.env.REACT_APP_ADMIN_EMAIL &&
-          user?.email === process.env.REACT_APP_ADMIN_EMAIL && (
-            <Route path={paths.admin()} component={Admin} />
-          )}
+        <Route path={paths.setting()} component={Setting} />
+        <Authenlize allowLocalAdmin>
+          <Route path={paths.admin()} component={Admin} />
+        </Authenlize>
         <Redirect to={paths.notFound()} />
       </Switch>
     </Layout>

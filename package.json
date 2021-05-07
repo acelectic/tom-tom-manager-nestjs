@@ -16,6 +16,7 @@
     "build:c": "cd frontend && yarn install --dev && yarn build",
     "format": "prettier --write \"src/**/*.ts\" \"libs/**/*.ts\"",
     "start": "yarn prebuild && nest start --watch",
+    "start:c": "cd frontend && yarn start",
     "start:debug": "nest start --debug --watch",
     "start:staging": "node dist/main",
     "start:prod": "node dist/main",

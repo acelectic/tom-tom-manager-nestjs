@@ -14,11 +14,11 @@ const Resource = () => {
   const { mutate: createResource } = useCreateResource()
   return (
     <Page title="Resource">
-      <Authenlize role={[Role.ADMIN, Role.MANAGER]}>
+      <Authenlize roles={[Role.ADMIN, Role.MANAGER]}>
         <AddButton
           fieldNames={['name', 'price']}
           name={'Add Resource'}
-          onSubmit={(v) => {
+          onSubmit={v => {
             const { name, price } = v as CreateResourceParams
             console.log(v)
             createResource({

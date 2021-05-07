@@ -67,6 +67,9 @@ export class Resource extends AppEntity {
   @ManyToMany(
     () => Template,
     templates => templates.resources,
+    {
+      cascade: true,
+    },
   )
   @JoinTable({
     name: 'templates_resources',

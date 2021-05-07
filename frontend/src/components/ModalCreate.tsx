@@ -2,6 +2,7 @@ import { makeStyles, Modal } from '@material-ui/core'
 import { capitalize } from 'lodash'
 import { useCallback } from 'react'
 import { Form } from 'react-final-form'
+import BaseModal from './commons/BaseModal'
 import { InputField } from './fields'
 export const useAppModalStyles = makeStyles({
   appModal: {
@@ -43,23 +44,26 @@ export const useAppModalStyles = makeStyles({
   },
 })
 
-export interface ModalCreateProps {
+export interface ModalCreateProps<T extends AnyObject, K extends keyof T> {
   visible: boolean
-  fieldNames: string[]
-  onSubmit: (values: AnyObject) => void
+  fieldNames: K[]
+  onSubmit: (values: T) => void
   closeModal: () => void
   className?: string
 }
-const ModalCreate = (props: ModalCreateProps) => {
+const ModalCreate = <T extends AnyObject, K extends keyof T = keyof T>(
+  props: ModalCreateProps<T, K>,
+) => {
   const { visible, className, fieldNames, onSubmit, closeModal } = props
 
-  const renderField = useCallback((fieldName: string) => {
+  const renderField = useCallback((fieldName: K) => {
+    const temp = fieldName as string
     return (
       <InputField
-        key={fieldName}
-        name={fieldName}
-        label={capitalize(fieldName)}
-        placeholder={capitalize(fieldName)}
+        key={temp}
+        name={temp}
+        label={capitalize(temp)}
+        placeholder={capitalize(temp)}
         required={true}
       />
     )
@@ -68,21 +72,11 @@ const ModalCreate = (props: ModalCreateProps) => {
   const classes = useAppModalStyles()
 
   return (
-    <Modal
-      open={visible}
-      className={`${classes.appModal} ${className}`}
-      aria-labelledby="app-modal-title"
-      aria-describedby="app-modal-description"
-      disablePortal
-      disableEnforceFocus
-      disableAutoFocus
-      disableRestoreFocus
-      onBackdropClick={closeModal}
-    >
+    <BaseModal visible={visible} closeModal={closeModal} className={className}>
       <div className={`content ${classes.layout}`}>
-        <Form
+        <Form<T>
           initialValues={{}}
-          onSubmit={async (v) => {
+          onSubmit={async v => {
             try {
               await onSubmit(v)
               closeModal()
@@ -104,7 +98,7 @@ const ModalCreate = (props: ModalCreateProps) => {
           }}
         </Form>
       </div>
-    </Modal>
+    </BaseModal>
   )
 }
 

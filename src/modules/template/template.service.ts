@@ -1,6 +1,7 @@
 import { Injectable } from '@nestjs/common'
 import { Resource } from 'src/db/entities/Resource'
 import { Template } from 'src/db/entities/Template'
+import { debugLog } from 'src/utils/helper'
 import { EntityManager } from 'typeorm'
 import {
   CreateTemplateParamsDto,
@@ -13,23 +14,25 @@ export class TemplateService {
   constructor() {}
   async getTemplates(queryParams: GetTemplatesParamsDto) {
     const { isActive = true } = queryParams
-    const resources = await Template.find({
+    const templates = await Template.find({
       where: { isActive },
       relations: ['resources'],
     })
     return {
-      resources,
+      templates,
     }
   }
-
-  // async getUserWithId(userId: string) {
-  //   return await User.findOne(userId)
-  // }
 
   async createTemplate(params: CreateTemplateParamsDto, etm: EntityManager) {
     const { resourceIds, isActive = true } = params
     const resources = await Resource.findByIds(resourceIds)
-    const template = await Template.create({ isActive, resources })
+    debugLog({ resourceIds, resources })
+    const template = await etm.create(Template, { isActive })
+    await etm.save(template)
+    await etm.update(Template, template, {
+      resources,
+    })
+    debugLog({ template })
     return await etm.save(template)
   }
 

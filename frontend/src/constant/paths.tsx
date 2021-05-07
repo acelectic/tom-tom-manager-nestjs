@@ -22,7 +22,7 @@ export const generate = <
   if (routeParam) {
     const urls = url.split('/')
     newUrl = urls
-      .map((u) => {
+      .map(u => {
         if (/:.+/.test(u)) {
           return routeParam[u.slice(1)]
         }
@@ -44,6 +44,7 @@ const transactions = generate('/transactions')
 const payments = generate('/payments')
 
 const admin = generate('/admin')
+const setting = generate('/setting')
 
 // eslint-disable-next-line import/no-anonymous-default-export
 export default {
@@ -56,4 +57,5 @@ export default {
   transactions,
   payments,
   admin,
+  setting,
 }
