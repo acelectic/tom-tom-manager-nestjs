@@ -3,6 +3,7 @@ import dayjs from 'dayjs'
 import humps from 'humps'
 import { getToken } from '../../services/auth/auth-action'
 import { customRequestData, deepLoop } from './tools'
+
 require('dotenv').config()
 
 const createClient = () => {
@@ -10,11 +11,10 @@ const createClient = () => {
     withCredentials: true,
   })
   ax.interceptors.request.use((request: any) => {
-    // const host = process.env.REACT_APP_API_HOST
-    const host = 'http://127.0.0.1:8626/api/v1'
+    const host =
+      process.env.REACT_APP_API_HOST || 'http://127.0.0.1:8626/api/v1'
 
     request.url = `${host}/${request.url}`
-
     const token = getToken()
     request.headers.common['Authorization'] = `Bearer ${token}`
 
