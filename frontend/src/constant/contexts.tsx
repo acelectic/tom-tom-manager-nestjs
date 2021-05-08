@@ -1,8 +1,16 @@
+import { AppSnackbarProps } from '../components/AppSnackbar'
 import { TemplateFormValues } from '../pages/Setting/TemplateForm'
 import { Role } from '../services/auth/auth-types'
 import { createCtx } from '../utils/helper'
 
-export const AppCtx = createCtx({})
+const AppSnackbarOption: AppSnackbarProps = {
+  visible: false,
+  message: '',
+  type: 'info',
+}
+export const AppCtx = createCtx({
+  appSnackbar: AppSnackbarOption,
+})
 export const UpdateUserCtx = createCtx({
   visible: false,
   userId: '',

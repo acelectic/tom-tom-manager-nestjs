@@ -1,5 +1,6 @@
 import { useMutation, useQuery, useQueryClient } from 'react-query'
 import { api } from '../../utils/api'
+import { useSnackbar } from '../../utils/custom-hook'
 import { USER_URL } from '../user/user-query'
 import { getToken, removeToken, setToken } from './auth-action'
 import { SigninParams, SigninResponse, UserEntity } from './auth-types'
@@ -12,9 +13,15 @@ export const SIGN_OUT = `${AUTH}/sign-out`
 export const CURRENT_USER = `${USER_URL}/current-user`
 
 export const useApiHealth = () => {
+  const { snackbar } = useSnackbar()
   return useQuery([HEALTH_URL], () => api.tomtom.get(HEALTH_URL), {
     onSuccess: () => {
       console.log(' Server is running '.padStart(10, '-').padEnd(10, '-'))
+    },
+    onError: () => {
+      snackbar({
+        message: 'Server Connection fail',
+      })
     },
     retry: 2,
     cacheTime: 10 * 60 * 1000,
@@ -65,7 +72,7 @@ export const useSignIn = () => {
       return data
     },
     {
-      onSuccess: (data) => {
+      onSuccess: data => {
         const { accessToken, user } = data
         setToken(accessToken)
         queryClient.setQueryData([USER_URL, CURRENT_USER], user)
