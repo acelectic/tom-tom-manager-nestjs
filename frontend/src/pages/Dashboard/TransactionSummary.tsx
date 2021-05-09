@@ -6,9 +6,13 @@ import {
 import { Bar, Line } from 'react-chartjs-2'
 import dayjs from 'dayjs'
 import { groupBy, now, range, sortBy, sumBy } from 'lodash'
-import { SelectField } from '../../components/fields'
+import { DatePickerField, SelectField } from '../../components/fields'
 import { Form } from 'react-final-form'
 import { OnChange } from 'react-final-form-listeners'
+import { Grid, Typography } from '@material-ui/core'
+import { numberWithCommas } from '../../utils/helper'
+import Space from '../../components/commons/Space'
+import TransactionChart from '../../components/TransactionChart'
 
 const colors = ['#91cf96', '#c881d2', '#ffbaa2', '#29b6f6'] as const
 
@@ -32,7 +36,7 @@ const dataSetOpts = {
   responsive: true,
 }
 
-const TransactionChart = () => {
+const TransactionSummary = () => {
   const [startDate, setStartDate] = useState(dayjs().subtract(7, 'day'))
   const [endDate, setEndDate] = useState(dayjs())
   const [status, setStatus] = useState()
@@ -75,7 +79,7 @@ const TransactionChart = () => {
         Number(users?.length || 0),
       )
       return {
-        date: curDate,
+        date: curDate.format('DD/MM/YYYY'),
         sumPrice,
         sumRemainPrice,
         sumUsers,
@@ -88,7 +92,7 @@ const TransactionChart = () => {
   const data = useMemo(() => {
     const data = {
       labels: transactionData
-        ? transactionData.map(d => dayjs(d.date).format('DD/MM/YYYY hh:mm'))
+        ? transactionData.map(d => dayjs(d.date).format('DD/MM/YYYY'))
         : [],
       datasets: [
         {
@@ -140,8 +144,8 @@ const TransactionChart = () => {
   const statusOptions = useMemo((): BaseOptions[] => {
     return [
       {
-        label: '',
-        value: undefined,
+        label: 'All',
+        value: 'All',
       },
       {
         label: 'Pending',
@@ -153,27 +157,144 @@ const TransactionChart = () => {
       },
     ]
   }, [])
+
+  const totalPrice = useMemo(
+    () => sumBy(transactionData, ({ sumPrice }) => sumPrice),
+    [transactionData],
+  )
+  const totalRemianPrice = useMemo(
+    () => sumBy(transactionData, ({ sumRemainPrice }) => sumRemainPrice),
+    [transactionData],
+  )
+  const totalUser = useMemo(
+    () => sumBy(transactionData, ({ sumUsers }) => sumUsers),
+    [transactionData],
+  )
+  const totalTr = useMemo(() => sumBy(transactionData, ({ numTr }) => numTr), [
+    transactionData,
+  ])
   return (
     <div>
-      <Form onSubmit={() => {}} subscription={{ values: true }}>
-        {() => {
+      <Grid container>
+        <Grid item md={3}>
+          <Typography variant="h6">{`TotalPrice: ${numberWithCommas(
+            totalPrice,
+          )}`}</Typography>
+        </Grid>
+        <Grid item md={3}>
+          <Typography variant="h6">{`TotalRemianPrice: ${numberWithCommas(
+            totalRemianPrice,
+          )}`}</Typography>
+        </Grid>
+        <Grid item md={3}>
+          <Typography variant="h6">{`TotalUser: ${numberWithCommas(
+            totalUser,
+          )}`}</Typography>
+        </Grid>
+        <Grid item md={3}>
+          <Typography variant="h6">{`TotalTr: ${numberWithCommas(
+            totalTr,
+          )}`}</Typography>
+        </Grid>
+      </Grid>
+      <Form
+        onSubmit={() => {}}
+        subscription={{ values: true }}
+        initialValues={{
+          startDate,
+          endDate,
+        }}
+      >
+        {({ form }) => {
           return (
-            <>
-              <SelectField
-                name="status"
-                label="Status"
-                options={statusOptions}
-              />
-              <OnChange name="status">
-                {value => {
-                  setStatus(value)
-                }}
-              </OnChange>
-            </>
+            <Space direction="row" style={{ marginTop: 20, marginBottom: 20 }}>
+              <div>
+                <SelectField
+                  name="status"
+                  label="Status"
+                  options={statusOptions}
+                />
+                <OnChange name="status">
+                  {value => {
+                    setStatus(value)
+                  }}
+                </OnChange>
+              </div>
+              <div>
+                <DatePickerField
+                  name="startDate"
+                  label="StartDate"
+                  minDate={dayjs()
+                    .subtract(30, 'day')
+                    .toDate()}
+                  maxDate={endDate.toDate()}
+                  allowNull
+                  todayLabel="Today"
+                  showTodayButton
+                />
+                <OnChange name="startDate">
+                  {value => {
+                    const newDate = dayjs(value)
+                    if (startDate.diff(newDate) !== 0) {
+                      setStartDate(newDate)
+                    }
+                  }}
+                </OnChange>
+              </div>
+              <div>
+                <DatePickerField
+                  name="endDate"
+                  label="EndDate"
+                  maxDate={dayjs().toDate()}
+                  allowNull
+                  todayLabel="Today"
+                  showTodayButton
+                />
+                <OnChange name="endDate">
+                  {value => {
+                    console.log({ value, type: typeof value })
+                    const newDate = dayjs(value)
+                    if (endDate.diff(newDate) !== 0) {
+                      setEndDate(newDate)
+                    }
+                    if (endDate < startDate && startDate.diff(newDate) !== 0) {
+                      setStartDate(newDate)
+                    }
+                  }}
+                </OnChange>
+              </div>
+            </Space>
           )
         }}
       </Form>
-      <Line
+      <TransactionChart
+        data={transactionData}
+        xAixKey={'date'}
+        renderOptions={[
+          {
+            label: 'RemainPrice',
+            key: 'sumRemainPrice',
+            color: colors[0],
+          },
+          {
+            label: 'Price',
+            key: 'sumPrice',
+            color: colors[1],
+          },
+          {
+            label: 'Users',
+            key: 'sumUsers',
+            color: colors[3],
+          },
+        ]}
+        chartOption={{
+          sumUsers: {
+            position: 'right',
+            type: 'category',
+          },
+        }}
+      />
+      {/* <Line
         type="line"
         height={100}
         data={data}
@@ -223,8 +344,8 @@ const TransactionChart = () => {
             },
           },
         }}
-      />
+      /> */}
     </div>
   )
 }
-export default TransactionChart
+export default TransactionSummary

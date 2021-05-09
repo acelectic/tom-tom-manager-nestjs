@@ -97,6 +97,15 @@ export const useLayoutStyles = makeStyles(theme => ({
     paddingRight: theme.spacing(4),
     backgroundColor: 'white',
   },
+  breadcrumb: {
+    marginTop: theme.spacing(4),
+    marginBottom: theme.spacing(2),
+    paddingTop: theme.spacing(0),
+    paddingBottom: theme.spacing(0),
+    paddingLeft: theme.spacing(0),
+    paddingRight: theme.spacing(0),
+    backgroundColor: 'unset',
+  },
   paper: {
     padding: theme.spacing(2),
     display: 'flex',
@@ -164,8 +173,13 @@ const Layout = (props: PropsWithChildren<LayoutProps>) => {
       </Drawer>
       <main className={classes.content}>
         <div className={classes.appBarSpacer} />
-        <Container maxWidth="lg" className={classes.container}>
+        <Container
+          maxWidth="lg"
+          className={`${classes.container} ${classes.breadcrumb}`}
+        >
           <Breadcrumbs />
+        </Container>
+        <Container maxWidth="lg" className={classes.container}>
           <>{children}</>
         </Container>
       </main>

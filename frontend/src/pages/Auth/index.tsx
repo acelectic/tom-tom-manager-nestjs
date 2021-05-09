@@ -22,7 +22,7 @@ const SignIn = () => {
           email: 'test@gmail.com',
           password: '123456',
         }}
-        onSubmit={async (values) => {
+        onSubmit={async values => {
           try {
             await signIn(values)
           } catch (error) {
@@ -44,7 +44,7 @@ const SignIn = () => {
                   <label htmlFor="email">Email</label>
                   <InputField id="email" name="email" type="email" />
                   <label htmlFor="password">Password</label>
-                  <InputField id="password" name="email" type="password" />
+                  <InputField id="password" name="password" type="password" />
                   <button type="button" onClick={handleSubmit}>
                     Submit
                   </button>

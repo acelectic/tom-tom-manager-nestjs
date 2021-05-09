@@ -19,7 +19,7 @@ const useStyles = makeStyles((theme: Theme) =>
     },
     select: {
       // width: '100%',
-      marginTop: theme.spacing(2),
+      // marginTop: theme.spacing(2),
     },
   }),
 )
@@ -66,7 +66,7 @@ const Select = (props: SelectProps) => {
     return `${selectId}-label`
   }, [selectId])
   return (
-    <FormControl variant="outlined" className={classes.formControl}>
+    <FormControl variant="standard" className={classes.formControl}>
       {/* <InputLabel id={selectLabelId}>{label}</InputLabel> */}
       <InputLabel
         htmlFor={selectId}

@@ -1,3 +1,4 @@
+import DatePicker, { DatePickerProps } from '../commons/DatePicker'
 import Input, { InputProps } from '../commons/Input'
 import MultiSelect, { MultiSelectProps } from '../commons/MultiSelect'
 import Radio, { RadioProps } from '../commons/Radio'
@@ -10,3 +11,4 @@ export const MultiSelectField = makeField<MultiSelectProps>(MultiSelect)
 export const SelectField = makeField<SelectProps>(Select)
 export const RadioField = makeField<RadioProps>(Radio)
 export const SwitchField = makeField<SwitchProps>(Switch)
+export const DatePickerField = makeField<DatePickerProps>(DatePicker)

@@ -5,6 +5,7 @@ import { isUUID } from 'class-validator'
 import { capitalize } from 'lodash'
 import { Link } from 'react-router-dom'
 import { Typography } from '@material-ui/core'
+import NavigateNextIcon from '@material-ui/icons/NavigateNext'
 
 const customLabel: { [key: string]: string } = {}
 export type ItemProps = {
@@ -37,7 +38,10 @@ const Breadcrumbs = () => {
     return paths
   }, [pathname])
   return (
-    <BreadcrumbsMui aria-label="breadcrumb">
+    <BreadcrumbsMui
+      aria-label="breadcrumb"
+      separator={<NavigateNextIcon fontSize="small" />}
+    >
       {pathList.map((p, i) => {
         return (
           <Link

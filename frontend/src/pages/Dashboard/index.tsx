@@ -1,11 +1,11 @@
 import React from 'react'
 import Page from '../../components/commons/Page'
-import TransactionChart from './TransactionCharts'
+import TransactionSummary from './TransactionSummary'
 
 const Dashboard = () => {
   return (
     <Page title="Dashboard">
-      <TransactionChart />
+      <TransactionSummary />
     </Page>
   )
 }
