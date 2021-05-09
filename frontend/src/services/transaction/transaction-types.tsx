@@ -21,8 +21,8 @@ export interface GetTransactionsResponse
   extends Pagination<TransactionEntity> {}
 
 export interface GetTransactionsHistoryParams {
-  startDate?: Dayjs
-  endDate?: Dayjs
+  startDate?: string
+  endDate?: string
   status?: boolean
   userId?: string
 }

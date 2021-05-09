@@ -1,57 +1,210 @@
 import styled from '@emotion/styled'
-import { PropsWithChildren } from 'react'
+import {
+  AppBar,
+  Container,
+  CssBaseline,
+  Divider,
+  Drawer,
+  IconButton,
+  List,
+  makeStyles,
+  Toolbar,
+} from '@material-ui/core'
+import React, { PropsWithChildren, useCallback, useState } from 'react'
 import NavBar from './Navbar'
 import SideMenu from './SideMenu'
+import clsx from 'clsx'
+import MenuIcon from '@material-ui/icons/Menu'
+import ChevronLeftIcon from '@material-ui/icons/ChevronLeft'
+
+const drawerWidth = 240
+export const useLayoutStyles = makeStyles(theme => ({
+  offset: theme.mixins.toolbar,
+  root: {
+    display: 'flex',
+  },
+  toolbar: {
+    paddingRight: 24, // keep right padding when drawer closed
+  },
+  toolbarIcon: {
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'flex-end',
+    padding: '0 8px',
+    ...theme.mixins.toolbar,
+  },
+  appBar: {
+    zIndex: theme.zIndex.drawer + 1,
+    transition: theme.transitions.create(['width', 'margin'], {
+      easing: theme.transitions.easing.sharp,
+      duration: theme.transitions.duration.leavingScreen,
+    }),
+  },
+  appBarShift: {
+    marginLeft: drawerWidth,
+    width: `calc(100% - ${drawerWidth}px)`,
+    transition: theme.transitions.create(['width', 'margin'], {
+      easing: theme.transitions.easing.sharp,
+      duration: theme.transitions.duration.enteringScreen,
+    }),
+  },
+  menuButton: {
+    marginRight: 36,
+  },
+  menuButtonHidden: {
+    display: 'none',
+  },
+  title: {
+    flexGrow: 1,
+    fontWeight: 'bold',
+    textShadow: '2px 2px rgba(0,0,0,0.5)',
+  },
+  subTitle: {
+    textShadow: '2px 2px rgba(0,0,0,0.5)',
+  },
+  drawerPaper: {
+    position: 'relative',
+    whiteSpace: 'nowrap',
+    width: drawerWidth,
+    transition: theme.transitions.create('width', {
+      easing: theme.transitions.easing.sharp,
+      duration: theme.transitions.duration.enteringScreen,
+    }),
+  },
+  drawerPaperClose: {
+    overflowX: 'hidden',
+    transition: theme.transitions.create('width', {
+      easing: theme.transitions.easing.sharp,
+      duration: theme.transitions.duration.leavingScreen,
+    }),
+    width: theme.spacing(7),
+    [theme.breakpoints.up('sm')]: {
+      width: theme.spacing(9),
+    },
+  },
+  appBarSpacer: theme.mixins.toolbar,
+  content: {
+    flexGrow: 1,
+    height: '100vh',
+    overflow: 'auto',
+  },
+  container: {
+    marginTop: theme.spacing(4),
+    marginBottom: theme.spacing(4),
+    paddingTop: theme.spacing(4),
+    paddingBottom: theme.spacing(4),
+    paddingLeft: theme.spacing(4),
+    paddingRight: theme.spacing(4),
+    backgroundColor: 'white',
+  },
+  paper: {
+    padding: theme.spacing(2),
+    display: 'flex',
+    overflow: 'auto',
+    flexDirection: 'column',
+  },
+  fixedHeight: {
+    height: 240,
+  },
+}))
+
 const Wrapper = styled.section`
   width: 100%;
-  height: 100vh;
+  /* height: 100vh; */
   display: grid;
   grid-template-rows: max-content auto;
 `
-const Container = styled.div`
-  display: grid;
-  grid-template-columns: max-content auto;
+// const Container = styled.div`
+//   display: grid;
+//   grid-template-columns: max-content auto;
 
-  main,
-  aside {
-    height: 100%;
-    width: 100%;
-  }
-  main {
-    > div {
-      padding: 20px;
-    }
-  }
-  aside {
-    width: 300px;
-    background-color: rgb(211, 230, 224);
-    > div {
-      padding: 15px 0;
-      > div,
-      > a {
-        padding: 10px 30px;
-      }
-    }
-  }
-`
+//   main,
+//   aside {
+//     height: 100%;
+//     width: 100%;
+//   }
+//   main {
+//     > div {
+//       padding: 20px;
+//       overflow-y: scroll;
+//       height: 100%;
+//       flex: 1;
+//     }
+//   }
+//   aside {
+//     width: 300px;
+//     background-color: rgb(211, 230, 224);
+//     > div {
+//       padding: 15px 0;
+//       > div,
+//       > a {
+//         padding: 10px 30px;
+//       }
+//     }
+//   }
+// `
 
 interface LayoutProps {}
 const Layout = (props: PropsWithChildren<LayoutProps>) => {
   const { children } = props
+  const classes = useLayoutStyles()
+
+  const [open, setOpen] = useState(true)
+  const handleDrawerOpen = useCallback(() => {
+    setOpen(true)
+  }, [])
+  const handleDrawerClose = useCallback(() => {
+    setOpen(false)
+  }, [])
+  // const fixedHeightPaper = clsx(classes.paper, classes.fixedHeight)
+
   return (
-    <Wrapper>
-      <nav>
-        <NavBar />
-      </nav>
-      <Container>
-        <aside>
+    <div className={classes.root}>
+      <CssBaseline />
+      <AppBar
+        position="absolute"
+        className={clsx(classes.appBar, open && classes.appBarShift)}
+      >
+        <Toolbar className={classes.toolbar}>
+          <IconButton
+            edge="start"
+            color="inherit"
+            aria-label="open drawer"
+            onClick={handleDrawerOpen}
+            className={clsx(
+              classes.menuButton,
+              open && classes.menuButtonHidden,
+            )}
+          >
+            <MenuIcon />
+          </IconButton>
+          <NavBar />
+        </Toolbar>
+      </AppBar>
+      <Drawer
+        variant="permanent"
+        classes={{
+          paper: clsx(classes.drawerPaper, !open && classes.drawerPaperClose),
+        }}
+        open={open}
+      >
+        <div className={classes.toolbarIcon}>
+          <IconButton onClick={handleDrawerClose}>
+            <ChevronLeftIcon />
+          </IconButton>
+        </div>
+        <Divider />
+        <List>
           <SideMenu />
-        </aside>
-        <main>
-          <div>{children}</div>
-        </main>
-      </Container>
-    </Wrapper>
+        </List>
+      </Drawer>
+      <main className={classes.content}>
+        <div className={classes.appBarSpacer} />
+        <Container maxWidth="lg" className={classes.container}>
+          <>{children}</>
+        </Container>
+      </main>
+    </div>
   )
 }
 export default Layout

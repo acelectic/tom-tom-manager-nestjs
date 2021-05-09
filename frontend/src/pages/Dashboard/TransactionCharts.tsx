@@ -39,6 +39,18 @@ const TransactionChart = () => {
 
   const { data: transactions } = useGetTransactionsHistory({
     status,
+    // endDate: endDate
+    //   .millisecond(0)
+    //   .second(0)
+    //   .minute(0)
+    //   .hour(0)
+    //   .toISOString(),
+    startDate: startDate
+      .millisecond(0)
+      .second(0)
+      .minute(0)
+      .hour(0)
+      .toISOString(),
   })
 
   const transactionsGroupByDate = useMemo(
@@ -50,14 +62,7 @@ const TransactionChart = () => {
   )
   const transactionData = useMemo(() => {
     const start = startDate
-
     const dateRange = endDate.diff(start, 'day') + 1
-
-    console.log({
-      start: start.format(),
-      endDate: endDate.format(),
-      dateRange,
-    })
     const data = range(dateRange).map(d => {
       const curDate = start.add(d, 'day')
       const transactionByCurDate =
@@ -69,7 +74,6 @@ const TransactionChart = () => {
       const sumUsers = sumBy(transactionByCurDate, ({ users }) =>
         Number(users?.length || 0),
       )
-      console.log({ transactionByCurDate, transactionsGroupByDate })
       return {
         date: curDate,
         sumPrice,

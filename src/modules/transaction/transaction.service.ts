@@ -50,6 +50,10 @@ export class TransactionService {
 
   async getTransactionsHistory(parmas: GetTransactionHistoryParamsDto) {
     const { userId, status, endDate, startDate = dayjs().subtract(30, 'day') } = parmas
+    debugLog({
+      typeOfEndDate: typeof endDate,
+      typeOfStartDate: typeof startDate,
+    })
     const queryBuilder = Transaction.createQueryBuilder('transaction')
       .leftJoinAndSelect('transaction.users', 'users')
       .orderBy('transaction.completed', 'ASC')
@@ -57,12 +61,16 @@ export class TransactionService {
 
     if (startDate) {
       queryBuilder.andWhere('transaction.created_at > :startDate', {
-        startDate: startDate.toISOString(),
+        startDate: dayjs(startDate)
+          .tz()
+          .toISOString(),
       })
     }
     if (endDate) {
       queryBuilder.andWhere('transaction.created_at < :endDate', {
-        endDate: endDate.toISOString(),
+        endDate: dayjs(endDate)
+          .tz()
+          .toISOString(),
       })
     }
     if (userId) {
@@ -70,7 +78,7 @@ export class TransactionService {
         userId,
       })
     }
-    if (status) {
+    if (status !== undefined) {
       queryBuilder.andWhere('transaction.completed = :status', {
         status,
       })
@@ -95,7 +103,7 @@ export class TransactionService {
       validateError('Resources must least one')
     }
     const price = sumBy(resources, ({ price }) => Number(price))
-    const transaction = await Transaction.create({ price, users, template })
+    const transaction = await Transaction.create({ price, remain: price, users, template })
     await etm.save(transaction)
 
     const paymentPrice = ceil(price / users.length, 0)
@@ -113,6 +121,6 @@ export class TransactionService {
       return payment
     })
     await Promise.all(payments)
-    return { ...transaction, payments: [] }
+    return { transaction, payments }
   }
 }

@@ -15,7 +15,7 @@ import { PaymentService } from '../payment/payment.service'
 import { PaymentType } from 'src/db/entities/Payment'
 import { CreatePaymentParamsDto } from '../payment/dto/payment-params.dto'
 import { Template } from 'src/db/entities/Template'
-
+import { hash } from 'bcrypt'
 @Console()
 export class AppConsoleService {
   constructor(
@@ -45,12 +45,16 @@ export class AppConsoleService {
   async mockTransactions() {
     const connection: Connection = getConnection()
     const users = await User.find()
-    const templates = await Template.find()
+    const templates = await Template.find({
+      where: {
+        isActive: true,
+      },
+    })
 
     for (const i in range(
       Chance().integer({
-        min: 5,
-        max: 30,
+        min: 20,
+        max: 20,
       }),
     )) {
       const etm: EntityManager = connection.createEntityManager()
@@ -58,14 +62,18 @@ export class AppConsoleService {
       const userSample = sampleSize(users, usersSize)
       const userIds = userSample.map(d => d.id)
       const template = sample(templates)
-      const transaction = await this.transactionService.createTransaction(
+      const { transaction } = await this.transactionService.createTransaction(
         {
           userIds,
           templateId: template.id,
         },
         etm,
       )
-      transaction.createdAt = Chance().date()
+      const dateRandom = Chance().integer({ max: 5, min: 1 })
+      transaction.createdAt = dayjs()
+        .tz()
+        .subtract(dateRandom, 'day')
+        .toDate()
       debugLog({ transaction })
       await etm.save(transaction)
     }
@@ -93,37 +101,30 @@ export class AppConsoleService {
   }
 
   @Command({
-    command: 'mock-payments',
+    command: 'mock-users',
   })
   async mockPayments() {
     const connection: Connection = getConnection()
-    const users = await User.find({
-      relations: ['transactions'],
-    })
-    const resources = await Resource.find()
-
+    const etm: EntityManager = connection.createEntityManager()
+    const password = '123456'
+    const encryptPassword = await hash(password, 10)
     for (const i in range(
       Chance().integer({
         min: 5,
         max: 30,
       }),
     )) {
-      const etm: EntityManager = connection.createEntityManager()
-      const price = Chance().integer({ min: 200, max: 300 })
-      const resource = sample(resources)
-      const user = sample(users)
-      const type = sample([PaymentType.BUY, PaymentType.PAID])
-      const { transactions } = user
-      const transaction = sample(transactions)
-      const params: CreatePaymentParamsDto = {
-        price,
-        type,
-        transactionId: transaction?.id,
-        resourceId: resource?.id,
-        userId: user?.id,
-      }
-      const payment = await this.paymentService.createPayment(params, etm)
-      await etm.save(payment)
+      const name = Chance().name({ middle: true, middle_initial: true })
+      const email = Chance().email({
+        domain: 'test.com',
+        length: 10,
+      })
+      const user = await User.findOrInit({
+        email,
+        name,
+      })
+      user.password = encryptPassword
+      await etm.save(user)
     }
   }
 }

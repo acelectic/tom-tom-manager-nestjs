@@ -5,8 +5,10 @@ import {
   ArrayMinSize,
   IsArray,
   IsBoolean,
+  IsDate,
   IsDateString,
   IsOptional,
+  IsString,
   IsUUID,
 } from 'class-validator'
 import dayjs, { Dayjs } from 'dayjs'
@@ -39,21 +41,20 @@ export class GetTransactionParamsDto extends BasePaginateParamsDto {
 export class GetTransactionHistoryParamsDto {
   @ApiProperty()
   @Type(() => Dayjs)
+  // @IsDateString()
   @Transform(({ value }) => dayjs(value))
-  @IsDateString()
   @IsOptional()
   startDate?: Dayjs
 
   @ApiProperty()
   @Type(() => Dayjs)
+  // @IsDateString()
   @Transform(({ value }) => dayjs(value))
-  @IsDateString()
   @IsOptional()
   endDate?: Dayjs
 
   @ApiProperty()
-  @IsBoolean()
-  @Transform(({ value }) => (value === 'true' ? true : false))
+  @Transform(({ value }) => (value === 'true' ? true : value === 'false' ? false : undefined))
   @IsOptional()
   status?: boolean
 
