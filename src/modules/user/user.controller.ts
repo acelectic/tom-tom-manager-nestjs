@@ -1,10 +1,10 @@
-import { Body, Controller, Get, Param, ParseUUIDPipe, Patch } from '@nestjs/common'
+import { Body, Controller, Get, Param, ParseUUIDPipe, Patch, Query } from '@nestjs/common'
 import { UserService } from './user.service'
 import { ReqUser, Auth } from '../auth/auth.decorator'
 import { ApiTags } from '@nestjs/swagger'
 import { User } from '../../db/entities/User'
 import { EntityManager, Transaction, TransactionManager } from 'typeorm'
-import { ChangeRoleDto, UpdateUserDto } from './dto/user-params.dto'
+import { ChangeRoleDto, GetUsersParamsDto, UpdateUserDto } from './dto/user-params.dto'
 
 @ApiTags('users')
 @Controller('v1/users')
@@ -13,8 +13,8 @@ export class UserController {
   constructor(private readonly userService: UserService) {}
 
   @Get()
-  async getUsers() {
-    return this.userService.getUsers()
+  async getUsers(@Query() queryParams: GetUsersParamsDto) {
+    return this.userService.getUsers(queryParams)
   }
 
   @Get('/current-user')

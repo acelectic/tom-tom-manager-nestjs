@@ -12,6 +12,7 @@ import {
 } from '../../services/payment/payment-types'
 import { useGetResources } from '../../services/resource/resource-query'
 import { useGetUsers } from '../../services/user/user-query'
+import { numberWithCommas } from '../../utils/helper'
 
 const FormLayout = styled.form`
   margin: 20px;
@@ -26,11 +27,23 @@ interface CreatePaymentFormValues extends CreatePaymentParams {}
 const PaymentForm = () => {
   const { mutate: createPayment } = useCreatePayment()
   const [formValues, setFormValues] = useState<CreatePaymentFormValues>()
-  const { data: users } = useGetUsers()
+  const { data: usersPagination } = useGetUsers()
   const { data: resources } = useGetResources()
   // const { data: transactions } = useGetTransactions({
   //   userId: formValues?.userId,
   // })
+  type UsersType = typeof users
+  const users = useMemo(
+    () =>
+      usersPagination
+        ? usersPagination?.items.map(d => ({
+            ...d,
+            balance: numberWithCommas(d.balance),
+          }))
+        : [],
+    [usersPagination],
+  )
+
   const usersOption = useMemo(() => {
     return (
       users?.map(

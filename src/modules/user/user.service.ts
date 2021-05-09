@@ -3,24 +3,36 @@ import { Transaction } from 'src/db/entities/Transaction'
 import { EntityManager, Not, SelectQueryBuilder } from 'typeorm'
 import { User } from '../../db/entities/User'
 import { Role } from '../auth/auth.constant'
-import { UpdateUserDto } from './dto/user-params.dto'
+import { GetUsersParamsDto, UpdateUserDto } from './dto/user-params.dto'
 import { ParamsCreateUserSignIn } from './user.interface'
 import bcrypt from 'bcrypt'
 import { validateError } from 'src/utils/response-error'
+import { paginate } from 'nestjs-typeorm-paginate'
 
 @Injectable()
 export class UserService {
   constructor() {}
 
-  async getUsers() {
-    const users = await User.find({
-      order: {
-        name: 'ASC',
-      },
-    })
-    return {
-      users,
+  async getUsers(params: GetUsersParamsDto) {
+    const { transactionId, page = 1, limit = 5 } = params
+    if (transactionId) {
+      const transaction = await Transaction.createQueryBuilder('transaction')
+        .leftJoinAndSelect('transaction.users', 'users')
+        .where('transaction.id = :transactionId', { transactionId })
+        .getOne()
+      const userIds = transaction.users.map(({ id }) => id)
+      const queryBuilder = User.createQueryBuilder('user')
+        .orderBy('user.name', 'ASC')
+        .where('user.id in (:...userIds)', { userIds })
+
+      const users = await paginate(queryBuilder, { page, limit })
+      return users
     }
+
+    const queryBuilder = User.createQueryBuilder('user').orderBy('user.name', 'ASC')
+
+    const users = await paginate(queryBuilder, { page, limit })
+    return users
   }
   async getUser(userId: string) {
     return await User.findOne(userId)

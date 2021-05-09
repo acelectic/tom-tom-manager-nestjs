@@ -1,41 +1,17 @@
 import { useCreateUser, useGetUsers } from '../../services/user/user-query'
 import Page from '../../components/commons/Page'
-import BasicList from '../../components/BasicList'
-import { Role, SigninParams, UserEntity } from '../../services/auth/auth-types'
+import { Role, SigninParams } from '../../services/auth/auth-types'
 import Authenlize from '../../components/commons/Authenlize'
 import AddButton from '../../components/AddButton'
-import { useCallback } from 'react'
+import { useCallback, useMemo } from 'react'
 import { Button } from '@material-ui/core'
 import { Link } from 'react-router-dom'
 import paths from '../../constant/paths'
+import { numberWithCommas } from '../../utils/helper'
+import TableUsers from '../../components/TableUsers'
 
 const Users = () => {
-  const { data: users } = useGetUsers()
   const { mutate: createUser } = useCreateUser()
-
-  const renderActions = useCallback((data: UserEntity) => {
-    return (
-      <>
-        <Link
-          to={paths.userDetail({
-            routeParam: {
-              userId: data.id,
-            },
-          })}
-        >
-          <Button
-            variant="outlined"
-            color={'primary'}
-            style={{ fontWeight: 'bold' }}
-            size="small"
-          >
-            See Detail
-          </Button>
-        </Link>
-      </>
-    )
-  }, [])
-
   return (
     <Page title={'User Management'}>
       <Authenlize roles={[Role.ADMIN]}>
@@ -53,11 +29,7 @@ const Users = () => {
           }}
         />
       </Authenlize>
-      <BasicList
-        data={users}
-        columns={['name', 'email', 'balance']}
-        renderActions={renderActions}
-      />
+      <TableUsers />
     </Page>
   )
 }

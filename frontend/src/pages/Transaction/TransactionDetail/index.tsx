@@ -1,6 +1,7 @@
 import Page from '../../../components/commons/Page'
 import Space from '../../../components/commons/Space'
 import TablePayments from '../../../components/TablePayments'
+import TableUsers from '../../../components/TableUsers'
 import { useGetTransaction } from '../../../services/transaction/transaction-query'
 import { useRouter } from '../../../utils/helper'
 
@@ -14,6 +15,7 @@ const TransactionDetail = () => {
   return (
     <Page title={''}>
       <Space direction="column" spacing={40}>
+        <TableUsers transactionId={transactionId} />
         <TablePayments transactionId={transactionId} />
       </Space>
     </Page>

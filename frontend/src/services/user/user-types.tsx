@@ -1,8 +1,9 @@
 import { Role, UserEntity } from '../auth/auth-types'
 
-export interface GetUsersResponse {
-  users: UserEntity[]
+export interface GetUsersParams extends PaginationParams {
+  transactionId?: string
 }
+export interface GetUsersResponse extends Pagination<UserEntity> {}
 
 export interface GetUserResponse extends UserEntity {}
 export interface ChangeRoleParams {

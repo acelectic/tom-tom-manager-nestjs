@@ -7,10 +7,12 @@ import {
   IsEmail,
   IsIn,
   IsEnum,
+  IsUUID,
 } from 'class-validator'
 import { ApiProperty } from '@nestjs/swagger'
 import { Transform, Type } from 'class-transformer'
 import { Role } from 'src/modules/auth/auth.constant'
+import { BasePaginateParamsDto } from 'src/modules/dto/base.dto'
 
 export class UploadImageDto {
   @ApiProperty()
@@ -19,22 +21,11 @@ export class UploadImageDto {
   image: string
 }
 
-export class GetUsersDto {
-  @ApiProperty({ required: false })
+export class GetUsersParamsDto extends BasePaginateParamsDto {
+  @ApiProperty()
+  @IsUUID()
   @IsOptional()
-  limit: number
-
-  @ApiProperty({ required: false })
-  @IsOptional()
-  page: number
-
-  @ApiProperty({ required: false })
-  @IsOptional()
-  q: string
-
-  @ApiProperty({ required: false })
-  @IsOptional()
-  userId: string
+  transactionId?: string
 }
 
 export class SearchUserDto {

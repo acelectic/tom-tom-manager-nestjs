@@ -28,10 +28,21 @@ interface CreateTransactionFormValues extends CreateTransactionParams {}
 
 const TransactionForm = () => {
   const { mutate: createTransaction } = useCreateTransaction()
-  const { data: users } = useGetUsers()
+  const { data: usersPagination } = useGetUsers()
   const { data: templates } = useGetTemplates({
     isActive: true,
   })
+  type UsersType = typeof users
+  const users = useMemo(
+    () =>
+      usersPagination
+        ? usersPagination?.items.map(d => ({
+            ...d,
+            balance: numberWithCommas(d.balance),
+          }))
+        : [],
+    [usersPagination],
+  )
   const usersOption = useMemo(() => {
     return (
       users?.map(
