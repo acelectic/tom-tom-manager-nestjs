@@ -3,6 +3,7 @@ import { Payment, PaymentType } from 'src/db/entities/Payment'
 import { Resource } from 'src/db/entities/Resource'
 import { Transaction } from 'src/db/entities/Transaction'
 import { User } from 'src/db/entities/User'
+import { debugLog } from 'src/utils/helper'
 import { validateError } from 'src/utils/response-error'
 import { EntityManager } from 'typeorm'
 import { CreatePaymentParamsDto } from './dto/payment-params.dto'
@@ -20,12 +21,13 @@ export class PaymentService {
   }
 
   async createPayment(params: CreatePaymentParamsDto, etm: EntityManager) {
-    await this.validateCreatePayment(params)
+    await this.validateCreatePayment(params, etm)
     const { price, type, resourceId, transactionId, userId } = params
-    const user = await User.findOne(userId)
-    const transaction = await Transaction.findOne(transactionId)
-    const resource = await Resource.findOne(resourceId)
-    const payment = await Payment.findOrInit({ price, type, userId, transactionId, resourceId })
+    const user = await etm.findOne(User, userId)
+    const transaction = await etm.findOne(Transaction, transactionId)
+
+    const resource = await etm.findOne(Resource, resourceId)
+    const payment = await Payment.findOrInit({ price, type, userId, transactionId })
     payment.user = user
 
     if (type === PaymentType.PAID && transaction) {
@@ -38,17 +40,16 @@ export class PaymentService {
     return await etm.save(payment)
   }
 
-  private async validateCreatePayment(params: CreatePaymentParamsDto) {
+  private async validateCreatePayment(params: CreatePaymentParamsDto, etm: EntityManager) {
     const { price, type, resourceId, transactionId, userId } = params
-    const user = await User.findOne(userId, { relations: ['transactions'] })
-    const resource = await Resource.findOne({
+    const user = await etm.findOne(User, userId, { relations: ['transactions'] })
+    const resource = await etm.findOne(Resource, {
       id: resourceId,
     })
-    const transaction = await Transaction.findOne({
+    const transaction = await etm.findOne(Transaction, {
       id: transactionId,
     })
-
-    const payment = await Payment.findOne({
+    const payment = await etm.findOne(Payment, {
       where: [
         {
           price,

@@ -35,38 +35,37 @@ export enum PaymentType {
 }
 @Entity({ name: 'payments' })
 export class Payment extends AppEntity {
-  @AfterInsert()
-  updateUserBalance() {
-    const connection: Connection = getConnection()
-    const etm: EntityManager = connection.createEntityManager()
+  // @AfterInsert()
+  // updateUserBalance() {
+  //   const connection: Connection = getConnection()
+  //   const etm: EntityManager = connection.createEntityManager()
 
-    const paymentType = this.type
-    const paymentAmount = this.price
-    if (paymentType === PaymentType.PAID) {
-      const transaction = this.transaction
-      const { id: transactionId } = transaction
-      etm
-        .find(Payment, {
-          transactionId,
-        })
-        .then(payments => {
-          const sumPayment = sumBy(payments, p => p.price)
-          transaction.remain = Math.max(transaction.price - sumPayment, 0)
-          etm.save(transaction)
-          if (transaction.remain <= 0) {
-            transaction.completed = true
-            etm.save(transaction)
-          }
-        })
-    }
+  //   const paymentType = this.type
+  //   const paymentAmount = this.price
+  //   if (paymentType === PaymentType.PAID) {
+  //     const transaction = this.transaction
+  //     const { id: transactionId } = transaction
+  //     etm
+  //       .find(Payment, {
+  //         transactionId,
+  //       })
+  //       .then(payments => {
+  //         const sumPayment = sumBy(payments, p => p.price)
+  //         transaction.remain = Math.max(transaction.price - sumPayment, 0)
+  //         etm.save(transaction)
+  //         if (transaction.remain <= 0) {
+  //           transaction.completed = true
+  //           etm.save(transaction)
+  //         }
+  //       })
+  //   }
 
-    const userId = this.userId
-    User.findOne(userId).then(user => {
-      user.balance = user.balance + paymentAmount
-      etm.save(user)
-    })
-  }
-
+  //   const userId = this.userId
+  //   User.findOne(userId).then(user => {
+  //     user.balance = user.balance + paymentAmount
+  //     etm.save(user)
+  //   })
+  // }
   @Column({
     name: 'price',
     type: 'numeric',

@@ -10,7 +10,7 @@ import {
 } from '@nestjs/common'
 import { AppModule } from './app.module'
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger'
-import { urlencoded, json } from 'express'
+import { urlencoded, json, Request } from 'express'
 import { DbExeptionFilter } from './db-exeption.filter'
 import { router, setQueues } from 'bull-board'
 import basicAuth from 'express-basic-auth'
@@ -18,9 +18,9 @@ import basicAuth from 'express-basic-auth'
 import './initialize'
 import cors from 'cors'
 import { ResponseInterceptor } from './utils/interceptors/response.interceptor'
+import { debugLog } from './utils/helper'
 // const sreviceAccount = require('../test-man-savvy-firebase-adminsdk-f2848-982951f18b.json')
 // const cors = require('cors')
-// import cors from 'cors'
 // import { createProxyMiddleware } from 'http-proxy-middleware'
 @Catch()
 export class ExceptionsLoggerFilter extends BaseExceptionFilter {
@@ -48,62 +48,10 @@ async function bootstrap() {
   const app = await NestFactory.create(AppModule, {
     logger: ['error', 'log', 'debug'],
   })
-  // app.use(
-  //   cors({
-  //     origin: '*',
-  //     methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
-  //     preflightContinue: false,
-  //     optionsSuccessStatus: 204,
-  //   }),
-  // )
-  // app.use(
-  //   createProxyMiddleware({ target: 'https://tomtom-react.herokuapp.com', changeOrigin: true }),
-  // )
-  // app.use(
-  //   cors({
-  //     // origin: true,
-  //     // origin: [
-  //     //   'https://tomtom-react.herokuapp.com',
-  //     //   /\*.herokuapp.com$/,
-  //     //   'http://localhost:3000',
-  //     //   /\*.com$/,
-  //     // ],
-  //     origin: (request, errorHandle) => {
-  //       console.log({ request })
-  //       errorHandle({ message: 'Reject', name: 'Test', stack: 'what' }, [
-  //         'https://tomtom-react.herokuapp.com',
-  //         /\*.herokuapp.com$/,
-  //         'http://localhost:3000',
-  //         /\*.com$/,
-  //       ])
-  //       // errorHandle()
-  //     },
-  //     methods: ['GET', 'PUT', 'PATCH', 'POST', 'DELETE', 'OPTIONS'],
-  //     preflightContinue: false,
-  //     optionsSuccessStatus: 204,
-  //     credentials: true,
-  //   }),
-  // )
   app.enableCors({
     origin: true,
-    // origin: [
-    //   'https://tomtom-react.herokuapp.com',
-    //   /\*.herokuapp.com$/,
-    //   'http://localhost:3000',
-    //   /\*.com$/,
-    // ],
-    // origin: (request, error) => {
-    //   console.log({ request })
-    //   error(
-    //     {
-    //       name: 'Access-Control-Allow-Headers',
-    //       message: request,
-    //     },
-    //     [request],
-    //   )
-    // },
-    methods: ['GET', 'PUT', 'PATCH', 'POST', 'DELETE', 'OPTIONS'],
-    // allowedHeaders: ['Content-Type', 'Authorization'],
+    methods: ['GET', 'PUT', 'PATCH', 'POST', 'DELETE'],
+    allowedHeaders: ['Content-Type', 'Authorization', 'authorization'],
     preflightContinue: false,
     optionsSuccessStatus: 204,
     credentials: true,

@@ -6,6 +6,11 @@ export enum PaymentType {
   BUY = 'buy',
   PAID = 'paid',
 }
+export enum PaymentStatus {
+  PENDING = 'pending',
+  FAILED = 'failed',
+  SETTLED = 'settled',
+}
 
 export interface PaymentEntity {
   ref: number
@@ -15,6 +20,7 @@ export interface PaymentEntity {
   resource: ResourceEntity
   transaction: TransactionEntity
   createdAt: string
+  status: PaymentStatus
 }
 
 export interface GetPaymentsResponse {

@@ -54,7 +54,6 @@ export class UpdateTemplateParamsDto {
 
 export class UpdateTemplateIsActiveParamsDto {
   @ApiProperty()
-  @Transform(({ value }) => (value === 'true' ? true : false))
-  @IsBooleanString()
+  @IsBoolean()
   isActive: boolean
 }

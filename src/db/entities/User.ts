@@ -13,6 +13,7 @@ import {
   ViewEntity,
   Connection,
   ManyToMany,
+  RelationId,
 } from 'typeorm'
 import { AppEntity } from './AppEntity'
 import { Role } from '../../modules/auth/auth.constant'
@@ -71,18 +72,9 @@ export class User extends AppEntity {
     () => Transaction,
     transactions => transactions.users,
   )
-  @JoinTable({
-    name: 'users_transactions',
-    joinColumn: {
-      name: 'userId',
-      referencedColumnName: 'id',
-    },
-    inverseJoinColumn: {
-      name: 'transactionId',
-      referencedColumnName: 'id',
-    },
-  })
   transactions: Transaction[]
+  // @RelationId((user: User) => user.transactions)
+  // transactionIds: string[]
 
   @OneToMany(
     () => Payment,

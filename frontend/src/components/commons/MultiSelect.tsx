@@ -9,6 +9,7 @@ import {
   Select,
   Theme,
   useTheme,
+  MenuProps as MenuPropsType,
 } from '@material-ui/core'
 import React, { useCallback, useMemo } from 'react'
 
@@ -34,7 +35,7 @@ const useStyles = makeStyles((theme: Theme) =>
 
 const ITEM_HEIGHT = 48
 const ITEM_PADDING_TOP = 8
-const MenuProps = {
+export const MenuProps: Partial<MenuPropsType> = {
   PaperProps: {
     style: {
       maxHeight: ITEM_HEIGHT * 4.5 + ITEM_PADDING_TOP,
@@ -42,12 +43,13 @@ const MenuProps = {
     },
   },
 }
-function getStyles(name: string, personName: string[], theme: Theme) {
+export function getStyles(name: string, personName: string[], theme: Theme) {
   return {
     fontWeight:
       personName.indexOf(name) === -1
         ? theme.typography.fontWeightRegular
         : theme.typography.fontWeightMedium,
+    padding: 10,
   }
 }
 
@@ -89,9 +91,9 @@ const MultiSelect = (props: MultiSelectProps) => {
         value={value}
         onChange={handleChange}
         input={<Input id="select-multiple-chip" />}
-        renderValue={(selected) => (
+        renderValue={selected => (
           <div className={classes.chips}>
-            {(selected as string[]).map((value) => (
+            {(selected as string[]).map(value => (
               <Chip
                 key={value}
                 label={optionsHash[value]}

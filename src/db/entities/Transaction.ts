@@ -18,10 +18,14 @@ import {
   EntityManager,
   AfterUpdate,
   Generated,
+  OneToOne,
+  RelationId,
+  ManyToOne,
 } from 'typeorm'
 import { AppEntity } from './AppEntity'
 import { Payment } from './Payment'
 import { Resource } from './Resource'
+import { Template } from './Template'
 import { User } from './User'
 
 @Entity({ name: 'transactions' })
@@ -90,9 +94,6 @@ export class Transaction extends AppEntity {
   @ManyToMany(
     () => User,
     users => users.transactions,
-    {
-      cascade: true,
-    },
   )
   @JoinTable({
     name: 'users_transactions',
@@ -106,26 +107,8 @@ export class Transaction extends AppEntity {
     },
   })
   users: User[]
-
-  @ManyToMany(
-    () => Resource,
-    resources => resources.transactions,
-    {
-      cascade: true,
-    },
-  )
-  @JoinTable({
-    name: 'resources_transactions',
-    joinColumn: {
-      name: 'transactionId',
-      referencedColumnName: 'id',
-    },
-    inverseJoinColumn: {
-      name: 'resourceId',
-      referencedColumnName: 'id',
-    },
-  })
-  resources: Resource[]
+  // @RelationId((transaction: Transaction) => transaction.users)
+  // userIds: string[]
 
   @OneToMany(
     () => Payment,
@@ -135,4 +118,16 @@ export class Transaction extends AppEntity {
     },
   )
   payments: Payment[]
+
+  @ManyToOne(
+    () => Template,
+    template => template.transactions,
+    {
+      lazy: true,
+      nullable: true,
+    },
+  )
+  template: Template
+  @RelationId((transaction: Transaction) => transaction.template)
+  templateId: string
 }

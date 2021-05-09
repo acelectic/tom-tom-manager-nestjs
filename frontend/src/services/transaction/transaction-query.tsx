@@ -45,13 +45,12 @@ export const useCreateTransaction = () => {
   return useMutation(
     [TRANSACTION_URL],
     async (params: CreateTransactionParams) => {
-      const { userIds, resourceIds, price } = params
+      const { userIds, templateId } = params
       const { data } = await api.tomtom.post<CreateTransactionResponse>(
         TRANSACTION_URL,
         {
           userIds,
-          resourceIds,
-          price: numberWithCommas(Number(price)),
+          templateId,
         },
       )
       return data

@@ -20,13 +20,15 @@ interface LayoutType {
 
 const Layout = styled.div<LayoutType>`
   display: flex;
+  flex: 1;
+  width: 100%;
   flex-flow: ${({ direction }) => direction};
   justify-content: ${({ justify }) => justify};
   align-items: ${({ alignItem }) => alignItem};
   align-content: ${({ alignContent }) => alignContent};
 
   > .space-item {
-    width: max-content;
+    width: 100%;
     ${({ direction, spacing }) =>
       direction === 'row'
         ? `margin-right: ${spacing}px`

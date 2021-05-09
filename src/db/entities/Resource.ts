@@ -50,23 +50,6 @@ export class Resource extends AppEntity {
   payments: Payment[]
 
   @ManyToMany(
-    () => Transaction,
-    transactions => transactions.resources,
-  )
-  @JoinTable({
-    name: 'resources_transactions',
-    joinColumn: {
-      name: 'resourceId',
-      referencedColumnName: 'id',
-    },
-    inverseJoinColumn: {
-      name: 'transactionId',
-      referencedColumnName: 'id',
-    },
-  })
-  transactions: Transaction[]
-
-  @ManyToMany(
     () => Template,
     templates => templates.resources,
     {

@@ -25,8 +25,7 @@ export interface GetTransactionsHistoryResponse {
 }
 
 export interface CreateTransactionParams {
-  price: number
   userIds: string[]
-  resourceIds: string[]
+  templateId: string
 }
 export interface CreateTransactionResponse extends TransactionEntity {}

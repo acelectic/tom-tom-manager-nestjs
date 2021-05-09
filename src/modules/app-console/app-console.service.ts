@@ -14,6 +14,7 @@ import { Transaction } from 'src/db/entities/Transaction'
 import { PaymentService } from '../payment/payment.service'
 import { PaymentType } from 'src/db/entities/Payment'
 import { CreatePaymentParamsDto } from '../payment/dto/payment-params.dto'
+import { Template } from 'src/db/entities/Template'
 
 @Console()
 export class AppConsoleService {
@@ -44,7 +45,7 @@ export class AppConsoleService {
   async mockTransactions() {
     const connection: Connection = getConnection()
     const users = await User.find()
-    const resources = await Resource.find()
+    const templates = await Template.find()
 
     for (const i in range(
       Chance().integer({
@@ -53,18 +54,14 @@ export class AppConsoleService {
       }),
     )) {
       const etm: EntityManager = connection.createEntityManager()
-      const price = Chance().integer({ min: 200, max: 300 })
-      const resourcesSize = Chance().integer({ min: 1, max: users.length })
       const usersSize = Chance().integer({ min: 1, max: users.length })
-      const resourceSample = sampleSize(resources, resourcesSize)
       const userSample = sampleSize(users, usersSize)
-      const resourceIds = resourceSample.map(d => d.id)
       const userIds = userSample.map(d => d.id)
+      const template = sample(templates)
       const transaction = await this.transactionService.createTransaction(
         {
-          price,
-          resourceIds,
           userIds,
+          templateId: template.id,
         },
         etm,
       )

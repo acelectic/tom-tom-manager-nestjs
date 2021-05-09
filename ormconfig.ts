@@ -20,7 +20,7 @@ if (process.env.DATABASE_URL && process.env.PG_LOCAL !== 'true') {
     },
     synchronize: false,
     // logging: false,
-    logging: ['error'],
+    logging: true,
     // logging: ['log', 'query'],
     // entities: ['dist/db/entities/*{.js,.ts}'],
     migrations: ['dist/db/migrations/*{.js,.ts}'],
@@ -42,10 +42,11 @@ if (process.env.DATABASE_URL && process.env.PG_LOCAL !== 'true') {
     cli: {
       migrationsDir: 'db/migrations',
     },
+    entities: ['dist/db/entities/*{.js,.ts}'],
     migrations: ['dist/db/migrations/*{.js,.ts}'],
     subscribers: ['dist/db/subscriber/**/*{.js,.ts}'],
     synchronize: false,
-    logging: ['error'],
+    logging: true,
     // autoLoadEntities: true,
     // ssl: {
     //   rejectUnauthorized: false,

@@ -16,10 +16,6 @@ export class TemplateService {
   constructor() {}
   async getTemplates(queryParams: GetTemplatesParamsDto) {
     const { isActive } = queryParams
-    debugLog({
-      isActive,
-      isActiveType: typeof isActive,
-    })
     const queryBuilder = Template.createQueryBuilder('template')
       .leftJoinAndSelect('template.resources', 'resources')
       .orderBy('template.is_active', 'DESC')
@@ -73,6 +69,8 @@ export class TemplateService {
     const template = await Template.findOne(templateId)
 
     template.isActive = isActive
+    debugLog({ isActive, template })
+
     return await etm.save(template)
   }
 

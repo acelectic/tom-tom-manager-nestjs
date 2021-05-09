@@ -24,6 +24,7 @@ import {
 import { AppEntity } from './AppEntity'
 import { Payment } from './Payment'
 import { Resource } from './Resource'
+import { Transaction } from './Transaction'
 import { User } from './User'
 
 @Entity({ name: 'templates' })
@@ -38,6 +39,18 @@ export class Template extends AppEntity {
 
   @Column({ name: 'is_active', type: 'boolean', default: false, nullable: true })
   isActive: boolean
+
+  @OneToMany(
+    () => Transaction,
+    transaction => transaction.template,
+    {
+      lazy: true,
+      nullable: true,
+    },
+  )
+  transactions: Transaction[]
+  @RelationId((template: Template) => template.transactions)
+  transactionIds: string[]
 
   @ManyToMany(
     () => Resource,

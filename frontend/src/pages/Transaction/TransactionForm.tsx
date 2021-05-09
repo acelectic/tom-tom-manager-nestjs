@@ -1,7 +1,9 @@
 import styled from '@emotion/styled'
-import { sumBy } from 'lodash'
+import { ceil, sumBy } from 'lodash'
 import { useMemo } from 'react'
-import { Form } from 'react-final-form'
+import { Form, FormSpy } from 'react-final-form'
+import Space from '../../components/commons/Space'
+import Text from '../../components/commons/Text'
 import {
   InputField,
   MultiSelectField,
@@ -27,7 +29,6 @@ interface CreateTransactionFormValues extends CreateTransactionParams {}
 const TransactionForm = () => {
   const { mutate: createTransaction } = useCreateTransaction()
   const { data: users } = useGetUsers()
-  const { data: resources } = useGetResources()
   const { data: templates } = useGetTemplates({
     isActive: true,
   })
@@ -38,14 +39,6 @@ const TransactionForm = () => {
       ) || []
     )
   }, [users])
-
-  const resourcesOption = useMemo(() => {
-    return (
-      resources?.map(
-        ({ id, name }) => ({ value: id, label: name } as BaseOptions),
-      ) || []
-    )
-  }, [resources])
 
   const templatesOption = useMemo(() => {
     return (
@@ -68,13 +61,12 @@ const TransactionForm = () => {
       }}
       initialValues={{
         userIds: [],
-        resourceIds: [],
+        templateId: templates?.length ? templates[0].id : '',
       }}
     >
       {({ handleSubmit }) => {
         return (
           <FormLayout>
-            <InputField name="price" label="Price" required />
             <SelectField
               name="templateId"
               label="Template"
@@ -86,13 +78,37 @@ const TransactionForm = () => {
               options={usersOption}
               required
             />
-            <MultiSelectField
-              name="resourceIds"
-              label="Resource"
-              options={resourcesOption}
-              required
-            />
+            <FormSpy<CreateTransactionFormValues>>
+              {({ values }) => {
+                const { templateId, userIds } = values
+                const templateSelected = templates?.find(
+                  ({ id }) => id === templateId,
+                )
+                const sumPrice = sumBy(templateSelected?.resources, 'price')
 
+                return templateSelected ? (
+                  <Space
+                    direction="column"
+                    spacing={10}
+                    style={{ marginTop: 40 }}
+                  >
+                    <Text>
+                      Template:{' '}
+                      {`${templateSelected?.ref}: ${numberWithCommas(
+                        sumPrice,
+                      )}`}
+                    </Text>
+                    <>
+                      {userIds?.length ? (
+                        <Text>
+                          Price per User: {`${ceil(sumPrice / userIds.length)}`}
+                        </Text>
+                      ) : null}
+                    </>
+                  </Space>
+                ) : null
+              }}
+            </FormSpy>
             <button type="button" title="button" onClick={handleSubmit}>
               Submit
             </button>

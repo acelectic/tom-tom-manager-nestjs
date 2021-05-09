@@ -78,7 +78,7 @@ const Setting = () => {
               )
             }}
           </Form>
-          <Button
+          {/* <Button
             variant="outlined"
             color={'primary'}
             style={{ fontWeight: 'bold' }}
@@ -94,7 +94,7 @@ const Setting = () => {
             }}
           >
             Edit
-          </Button>
+          </Button> */}
         </Space>
       )
     },
@@ -109,18 +109,20 @@ const Setting = () => {
 
   return (
     <Page title={t('Setting')}>
-      <Button
-        variant="outlined"
-        color="primary"
-        onClick={onButtonAddTemplateClick}
-      >
-        Add Template
-      </Button>
-      <BasicList
-        data={templates}
-        columns={['ref', 'cost', 'isActiveLabel']}
-        renderActions={renderActions}
-      />
+      <Space direction="column" spacing={30}>
+        <Button
+          variant="outlined"
+          color="primary"
+          onClick={onButtonAddTemplateClick}
+        >
+          Add Template
+        </Button>
+        <BasicList
+          data={templates}
+          columns={['ref', 'cost', 'isActiveLabel']}
+          renderActions={renderActions}
+        />
+      </Space>
       <TemplateForm onSubmit={onSubmitTemplateForm} />
     </Page>
   )

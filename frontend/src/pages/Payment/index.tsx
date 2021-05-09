@@ -26,6 +26,7 @@ const Payment = () => {
           'resource',
           'transaction',
           'date',
+          'status',
         ]}
       />
     </Page>

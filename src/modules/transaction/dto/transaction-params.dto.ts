@@ -15,13 +15,6 @@ import {
 
 export class CreateTransactionParamsDto {
   @ApiProperty()
-  @Min(0)
-  @Max(30000)
-  @IsNumber()
-  @Transform(({ value }) => Number(value))
-  price: number
-
-  @ApiProperty()
   @IsUUID('all', {
     each: true,
   })
@@ -31,19 +24,8 @@ export class CreateTransactionParamsDto {
   userIds: string[]
 
   @ApiProperty()
-  @IsUUID('all', {
-    each: true,
-  })
-  @ArrayMaxSize(6)
-  @ArrayMinSize(1)
-  @IsArray()
-  resourceIds: string[]
-
-  @ApiProperty()
-  @Length(1, 200)
-  @IsString()
-  @IsOptional()
-  detail?: string
+  @IsUUID()
+  templateId: string
 }
 
 export class GetTransactionParamsDto {
