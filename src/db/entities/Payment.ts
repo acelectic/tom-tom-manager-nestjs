@@ -1,3 +1,4 @@
+import { Transform } from 'class-transformer'
 import { sumBy } from 'lodash'
 import { transformerDecimalToNumber } from 'src/utils/entity-transform'
 import { debugLog } from 'src/utils/helper'
@@ -117,6 +118,7 @@ export class Payment extends AppEntity {
     name: 'ref',
     nullable: true,
   })
+  @Transform(({ value }) => `${value}`.padStart(6, '0'))
   ref: string
 
   @ManyToOne(

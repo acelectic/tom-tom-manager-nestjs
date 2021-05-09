@@ -4,6 +4,7 @@ import { ApiTags } from '@nestjs/swagger'
 import { PaymentService } from './payment.service'
 import {
   ConfirmPaymentParamsDto,
+  ConfirmUserAllPaymentParamsDto,
   CreatePaymentParamsDto,
   GetPaymentsParamsDto,
 } from './dto/payment-params.dto'
@@ -36,5 +37,14 @@ export class PaymentController {
     @TransactionManager() etm: EntityManager,
   ) {
     return this.paymentService.confirmPayment(params, etm)
+  }
+
+  @Post('/confirm-all')
+  @Transaction()
+  async confirmUserAllPayments(
+    @Body() bodyParams: ConfirmUserAllPaymentParamsDto,
+    @TransactionManager() etm: EntityManager,
+  ) {
+    return this.paymentService.confirmUserAllPayments(bodyParams, etm)
   }
 }

@@ -8,6 +8,9 @@
 // export type GetUserParams = {
 //   userId: string
 //   relations?: GetUserIncludesRelation
+
+import { PaymentEntity } from '../payment/payment-types'
+
 // }
 export enum Role {
   ADMIN = 'admin',
@@ -26,6 +29,7 @@ export interface UserEntity {
   name: string
   role: Role
   balance: number
+  payments?: PaymentEntity[]
 }
 export type SigninParams = {
   email: string

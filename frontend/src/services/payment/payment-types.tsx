@@ -44,3 +44,10 @@ export interface ConfirmPaymentParams {
 }
 
 export interface ConfirmPaymentResponse extends PaymentEntity {}
+
+export interface ConfirmUserAllPaymentParams {
+  userId: string
+}
+export interface ConfirmUserAllPaymentResponse {
+  payments: PaymentEntity[]
+}

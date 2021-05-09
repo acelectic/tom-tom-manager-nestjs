@@ -34,7 +34,7 @@ export class Template extends AppEntity {
     name: 'ref',
     nullable: true,
   })
-  @Transform(({ value }) => `${value}`.padStart(5))
+  @Transform(({ value }) => `${value}`.padStart(6))
   ref: string
 
   @Column({ name: 'is_active', type: 'boolean', default: false, nullable: true })

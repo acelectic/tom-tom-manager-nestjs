@@ -15,22 +15,17 @@ export class UserService {
 
   async getUsers(params: GetUsersParamsDto) {
     const { transactionId, page = 1, limit = 5 } = params
+
+    const queryBuilder = User.createQueryBuilder('user')
     if (transactionId) {
       const transaction = await Transaction.createQueryBuilder('transaction')
         .leftJoinAndSelect('transaction.users', 'users')
         .where('transaction.id = :transactionId', { transactionId })
         .getOne()
       const userIds = transaction.users.map(({ id }) => id)
-      const queryBuilder = User.createQueryBuilder('user')
-        .orderBy('user.name', 'ASC')
-        .where('user.id in (:...userIds)', { userIds })
-
-      const users = await paginate(queryBuilder, { page, limit })
-      return users
+      queryBuilder.where('user.id in (:...userIds)', { userIds })
     }
-
-    const queryBuilder = User.createQueryBuilder('user').orderBy('user.name', 'ASC')
-
+    queryBuilder.orderBy('user.name', 'ASC').leftJoinAndSelect('user.payments', 'payments')
     const users = await paginate(queryBuilder, { page, limit })
     return users
   }

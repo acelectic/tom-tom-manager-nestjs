@@ -10,6 +10,7 @@ import { validateError } from 'src/utils/response-error'
 import { EntityManager, Not } from 'typeorm'
 import {
   ConfirmPaymentParamsDto,
+  ConfirmUserAllPaymentParamsDto,
   CreatePaymentParamsDto,
   GetPaymentsParamsDto,
 } from './dto/payment-params.dto'
@@ -24,6 +25,7 @@ export class PaymentService {
       .leftJoinAndSelect('payment.resource', 'resource')
       .leftJoinAndSelect('payment.transaction', 'transaction')
       .orderBy('payment.status', 'ASC')
+      .addOrderBy('payment.createdAt', 'ASC')
 
     if (userId) {
       queryBuilder.where('payment.user_id = :userId', { userId })
@@ -62,53 +64,37 @@ export class PaymentService {
     payment.status = PaymentStatus.SETTLED
     await etm.save(payment)
 
-    const { user, userId, transaction } = payment
-    await this.updateUserBalance(payment, user, etm)
-    await this.updateTransaction(transaction, etm)
+    const { user, transaction } = payment
+    await user.updateBalance(etm)
+    await transaction.updateRemain(etm)
     return payment
   }
 
-  async updateUserBalance(payment: Payment, user: User, etm: EntityManager) {
-    const { id: paymentId } = payment
-    const { id: userId } = user
-    const paymentsMustPaid = await Payment.find({
+  async confirmUserAllPayments(params: ConfirmUserAllPaymentParamsDto, etm: EntityManager) {
+    const { userId } = params
+    const user = await User.findOne(userId)
+    const payments = await Payment.find({
       where: {
-        id: Not(paymentId),
         userId,
         status: PaymentStatus.PENDING,
-        type: PaymentType.PAID,
       },
+      relations: ['transaction', 'user'],
     })
-
-    const paymentsPlus = await Payment.find({
-      where: {
-        id: Not(paymentId),
-        userId,
-        status: PaymentStatus.PENDING,
-        type: PaymentType.BUY,
-      },
+    const resultPayments = await payments.map(async payment => {
+      const { id: paymentId } = payment
+      const resultPayment = await this.confirmPayment(
+        {
+          paymentId,
+        },
+        etm,
+      )
+      return resultPayment
     })
-    const mustPaid = sumBy(paymentsMustPaid, payment => Number(payment.price))
-    const totalPlus = sumBy(paymentsPlus, payment => Number(payment.price))
-    user.balance = totalPlus - mustPaid
-    await etm.save(user)
-  }
-
-  async updateTransaction(transaction: Transaction, etm: EntityManager) {
-    const { id: transactionId } = transaction
-    const paymentsPaided = await etm.find(Payment, {
-      where: {
-        transactionId,
-        status: PaymentStatus.SETTLED,
-        type: PaymentType.PAID,
-      },
-    })
-    const { price } = transaction
-    const totalPaided = sumBy(paymentsPaided, payment => Number(payment.price))
-    const remain = price - totalPaided
-    transaction.remain = remain
-    if (remain <= 0) transaction.completed = true
-    await etm.save(transaction)
+    await Promise.all(resultPayments)
+    await user.updateBalance(etm)
+    return {
+      payments: resultPayments,
+    }
   }
 
   private async validateCreatePayment(params: CreatePaymentParamsDto, etm: EntityManager) {

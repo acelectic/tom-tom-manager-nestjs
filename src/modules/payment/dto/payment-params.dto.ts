@@ -62,3 +62,9 @@ export class ConfirmPaymentParamsDto {
   @IsUUID()
   paymentId: string
 }
+
+export class ConfirmUserAllPaymentParamsDto {
+  @ApiProperty()
+  @IsUUID()
+  userId: string
+}

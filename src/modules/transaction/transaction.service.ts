@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common'
 import dayjs from 'dayjs'
-import { ceil, sumBy } from 'lodash'
+import { ceil, isBoolean, sumBy } from 'lodash'
 import { paginate } from 'nestjs-typeorm-paginate'
 import { PaymentType } from 'src/db/entities/Payment'
 import { Resource } from 'src/db/entities/Resource'
@@ -32,7 +32,7 @@ export class TransactionService {
       const queryBuilder = Transaction.createQueryBuilder('transaction')
         .leftJoinAndSelect('transaction.users', 'users')
         .orderBy('transaction.completed', 'ASC')
-        .addOrderBy('transaction.createdAt', 'DESC')
+        .addOrderBy('transaction.createdAt', 'ASC')
         .where('transaction.id in (:...transactionIds)', { transactionIds })
 
       const transactions = await paginate(queryBuilder, { page, limit })
@@ -42,7 +42,7 @@ export class TransactionService {
     const queryBuilder = Transaction.createQueryBuilder('transaction')
       .leftJoinAndSelect('transaction.users', 'users')
       .orderBy('transaction.completed', 'ASC')
-      .addOrderBy('transaction.createdAt', 'DESC')
+      .addOrderBy('transaction.createdAt', 'ASC')
 
     const transactions = await paginate(queryBuilder, { page, limit })
     return transactions
@@ -50,10 +50,6 @@ export class TransactionService {
 
   async getTransactionsHistory(parmas: GetTransactionHistoryParamsDto) {
     const { userId, status, endDate, startDate = dayjs().subtract(30, 'day') } = parmas
-    debugLog({
-      typeOfEndDate: typeof endDate,
-      typeOfStartDate: typeof startDate,
-    })
     const queryBuilder = Transaction.createQueryBuilder('transaction')
       .leftJoinAndSelect('transaction.users', 'users')
       .orderBy('transaction.completed', 'ASC')
@@ -78,7 +74,7 @@ export class TransactionService {
         userId,
       })
     }
-    if (status !== undefined) {
+    if (isBoolean(status)) {
       queryBuilder.andWhere('transaction.completed = :status', {
         status,
       })
@@ -127,8 +123,7 @@ export class TransactionService {
         userId: userId,
       }
       const payment = await this.paymentService.createPayment(params, etm)
-      user.balance = user.balance - paymentPrice
-      await etm.save(user)
+      await user.updateBalance(etm)
       return payment
     })
     await Promise.all(payments)

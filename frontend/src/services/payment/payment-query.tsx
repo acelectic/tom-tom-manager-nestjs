@@ -14,6 +14,8 @@ import { USER_URL } from '../user/user-query'
 import {
   ConfirmPaymentParams,
   ConfirmPaymentResponse,
+  ConfirmUserAllPaymentParams,
+  ConfirmUserAllPaymentResponse,
   CreatePaymentParams,
   CreatePaymentResponse,
   GetPaymentsParams,
@@ -22,6 +24,7 @@ import {
 } from './payment-types'
 
 export const PAYMENT_URL = 'payments'
+export const CONFIRM_USER_PAYMENTS = `${PAYMENT_URL}/confirm-all`
 
 export const useGetPayments = (
   params?: GetPaymentsParams,
@@ -72,6 +75,27 @@ export const useConfirmPayment = () => {
       const { paymentId } = params
       const { data } = await api.tomtom.post<ConfirmPaymentResponse>(
         `${PAYMENT_URL}/${paymentId}/confirm`,
+      )
+      return data
+    },
+    {
+      onSuccess: () => {
+        queryClient.invalidateQueries([PAYMENT_URL])
+        queryClient.invalidateQueries([TRANSACTION_URL])
+        queryClient.invalidateQueries([TRANSACTION_HISTORY_URL])
+        queryClient.invalidateQueries([USER_URL])
+      },
+    },
+  )
+}
+
+export const useConfirmUserAllPayments = () => {
+  const queryClient = useQueryClient()
+  return useMutation(
+    async (params: ConfirmUserAllPaymentParams) => {
+      const { data } = await api.tomtom.post<ConfirmUserAllPaymentResponse>(
+        `${CONFIRM_USER_PAYMENTS}`,
+        params,
       )
       return data
     },

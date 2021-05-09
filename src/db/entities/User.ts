@@ -14,13 +14,15 @@ import {
   Connection,
   ManyToMany,
   RelationId,
+  EntityManager,
 } from 'typeorm'
 import { AppEntity } from './AppEntity'
 import { Role } from '../../modules/auth/auth.constant'
 import { Transaction } from './Transaction'
-import { Payment } from './Payment'
+import { Payment, PaymentStatus } from './Payment'
 import { transformerDecimalToNumber } from 'src/utils/entity-transform'
 import { Exclude, Expose } from 'class-transformer'
+import { sumBy } from 'lodash'
 
 export enum UserSignInType {
   GOOGLE = 'google',
@@ -78,7 +80,23 @@ export class User extends AppEntity {
 
   @OneToMany(
     () => Payment,
-    payments => payments.transaction,
+    payments => payments.user,
   )
   payments: Payment[]
+  @RelationId((user: User) => user.payments)
+  paymentIds: string[]
+
+  async updateBalance(etm: EntityManager) {
+    const userId = this.id
+    const payments = await etm.find(Payment, {
+      where: {
+        userId,
+        status: PaymentStatus.PENDING,
+      },
+      relations: ['transaction'],
+    })
+    const sumPayments = sumBy(payments, ({ price }) => price)
+    this.balance = -sumPayments
+    return await etm.save(this)
+  }
 }

@@ -1,3 +1,5 @@
+import { Transform } from 'class-transformer'
+import { sumBy } from 'lodash'
 import { transformerDecimalToNumber } from 'src/utils/entity-transform'
 import { debugLog, roundUpOnly } from 'src/utils/helper'
 import {
@@ -23,44 +25,13 @@ import {
   ManyToOne,
 } from 'typeorm'
 import { AppEntity } from './AppEntity'
-import { Payment } from './Payment'
+import { Payment, PaymentStatus, PaymentType } from './Payment'
 import { Resource } from './Resource'
 import { Template } from './Template'
 import { User } from './User'
 
 @Entity({ name: 'transactions' })
 export class Transaction extends AppEntity {
-  // @AfterInsert()
-  // updateUserBalance() {
-  //   const connection: Connection = getConnection()
-  //   const etm: EntityManager = connection.createEntityManager()
-
-  //   const transaction = this
-  //   const users = transaction.users
-  //   const trPrice = transaction.price
-  //   transaction.remain = transaction.price
-
-  //   const mustPay = roundUpOnly(trPrice / users.length)
-  //   users.map(user => {
-  //     const userBalance = user.balance
-  //     user.balance = userBalance - mustPay
-  //     etm.save(user)
-  //   })
-  //   etm.save(transaction)
-  // }
-
-  // @AfterUpdate()
-  // onUpdate() {
-  //   const connection: Connection = getConnection()
-  //   const etm: EntityManager = connection.createEntityManager()
-
-  //   const transaction = this
-  //   if (Number(transaction.remain) <= 0) {
-  //     transaction.completed = true
-  //   }
-  //   etm.save(transaction)
-  // }
-
   @Column({
     name: 'price',
     type: 'numeric',
@@ -89,6 +60,7 @@ export class Transaction extends AppEntity {
     name: 'ref',
     nullable: true,
   })
+  @Transform(({ value }) => `${value}`.padStart(6, '0'))
   ref: string
 
   @ManyToMany(
@@ -130,4 +102,19 @@ export class Transaction extends AppEntity {
   template: Template
   @RelationId((transaction: Transaction) => transaction.template)
   templateId: string
+
+  async updateRemain(etm: EntityManager) {
+    const transactionId = this.id
+    const paymentsWaitPaid = await etm.find(Payment, {
+      where: {
+        transactionId,
+        status: PaymentStatus.PENDING,
+      },
+    })
+    const totalWaitPaided = sumBy(paymentsWaitPaid, payment => Number(payment.price))
+    const remain = totalWaitPaided
+    this.remain = Math.max(0, remain)
+    if (remain <= 0) this.completed = true
+    await etm.save(this)
+  }
 }

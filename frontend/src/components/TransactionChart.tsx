@@ -3,7 +3,24 @@ import { Line } from 'react-chartjs-2'
 import { ScaleChartOptions } from 'chart.js'
 import deepmerge from 'deepmerge'
 
-interface LineScalesOption extends DeepPartial<ScaleChartOptions['scales']> {}
+// type LineScalesOption<
+//   T,
+//   K extends keyof T,
+//   TType extends ChartType = ChartType
+// > = DeepPartial<
+//   {
+//     [P in K]: DeepPartial<
+//       ScaleOptionsByType<ChartTypeRegistry[TType]['scales']>
+//     >
+//   }
+// >
+type ScalesOptionTyeeInf = ScaleChartOptions['scales'][string]
+
+type LineScalesOption<T, K extends keyof T> = DeepPartial<
+  {
+    [P in K]: DeepPartial<ScalesOptionTyeeInf>
+  }
+>
 interface TransactionChartProps<T, K extends keyof T> {
   data: T[]
   xAixKey: K
@@ -12,8 +29,9 @@ interface TransactionChartProps<T, K extends keyof T> {
     label: string
     color: string
   }[]
-  chartOption?: LineScalesOption
+  chartOption?: LineScalesOption<T, K>
 }
+
 const TransactionChart = <T, K extends keyof T>(
   props: TransactionChartProps<T, K>,
 ) => {
@@ -41,10 +59,10 @@ const TransactionChart = <T, K extends keyof T>(
   }, [data, datasets, xAixKey])
 
   const scalesOptions = useMemo(() => {
-    const baseScales: LineScalesOption = {}
+    const baseScales: Record<string, DeepPartial<ScalesOptionTyeeInf>> = {}
     renderOptions.forEach(({ key, color, label }) => {
-      const yAxisKey = key as string
-      baseScales[yAxisKey] = {
+      const keyTemp = key as string
+      baseScales[keyTemp] = {
         title: {
           text: label,
           display: true,

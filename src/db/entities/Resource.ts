@@ -1,3 +1,4 @@
+import { Transform } from 'class-transformer'
 import { unionBy } from 'lodash'
 import { transformerDecimalToNumber } from 'src/utils/entity-transform'
 import {
@@ -41,6 +42,7 @@ export class Resource extends AppEntity {
     name: 'ref',
     nullable: true,
   })
+  @Transform(({ value }) => `${value}`.padStart(6, '0'))
   ref: string
 
   @OneToMany(

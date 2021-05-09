@@ -10,7 +10,6 @@ import './initialize'
 import { withCtx } from './utils/helper'
 import { AppCtx } from './constant/contexts'
 import { AppSnackbar } from './components/AppSnackbar'
-
 const queryClient = new QueryClient()
 
 const App = () => {

@@ -21,6 +21,8 @@ import SettingsIcon from '@material-ui/icons/Settings'
 import LayersIcon from '@material-ui/icons/Layers'
 import AssignmentIcon from '@material-ui/icons/Assignment'
 import SecurityIcon from '@material-ui/icons/Security'
+import MoneyOff from '@material-ui/icons/MoneyOff'
+import MoneyRounded from '@material-ui/icons/MoneyRounded'
 
 interface MenuProps {
   path: string
@@ -92,7 +94,7 @@ const SideMenu = () => {
       <Menu
         path={paths.payments()}
         label={t('page.payments')}
-        icon={<LayersIcon />}
+        icon={<MoneyRounded />}
       />
       <Authenlize roles={[Role.ADMIN, Role.MANAGER]} allowLocalAdmin>
         <Menu

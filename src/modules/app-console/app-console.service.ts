@@ -53,7 +53,7 @@ export class AppConsoleService {
 
     for (const i in range(
       Chance().integer({
-        min: 20,
+        min: 15,
         max: 20,
       }),
     )) {

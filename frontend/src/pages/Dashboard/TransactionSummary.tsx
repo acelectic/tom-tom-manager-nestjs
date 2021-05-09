@@ -288,63 +288,20 @@ const TransactionSummary = () => {
           },
         ]}
         chartOption={{
+          sumPrice: {
+            min: 0,
+            max: 3000,
+          },
+          sumRemainPrice: {
+            min: 0,
+            max: 3000,
+          },
           sumUsers: {
             position: 'right',
-            type: 'category',
+            type: 'linear',
           },
         }}
       />
-      {/* <Line
-        type="line"
-        height={100}
-        data={data}
-        options={{
-          scales: {
-            Price: {
-              title: {
-                text: 'Price',
-                display: true,
-              },
-              type: 'linear',
-              position: 'left',
-              min: -500,
-              max: 3000,
-              ticks: {
-                stepSize: 100,
-                color: colors[0],
-              },
-            },
-            Remain: {
-              title: {
-                text: 'Remain',
-                display: true,
-              },
-              type: 'linear',
-              position: 'left',
-              min: -500,
-              max: 3000,
-              ticks: {
-                stepSize: 100,
-                color: colors[1],
-              },
-            },
-            TotalUser: {
-              title: {
-                text: 'TotalUser',
-                display: true,
-              },
-              type: 'linear',
-              position: 'right',
-              min: 0,
-              // max: 5,
-              ticks: {
-                stepSize: 1,
-                color: colors[2],
-              },
-            },
-          },
-        }}
-      /> */}
     </div>
   )
 }
