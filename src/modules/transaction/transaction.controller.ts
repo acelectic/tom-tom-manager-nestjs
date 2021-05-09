@@ -3,7 +3,11 @@ import { Auth } from '../auth/auth.decorator'
 import { ApiTags } from '@nestjs/swagger'
 import { EntityManager, Transaction, TransactionManager } from 'typeorm'
 import { TransactionService } from './transaction.service'
-import { CreateTransactionParamsDto, GetTransactionParamsDto } from './dto/transaction-params.dto'
+import {
+  CreateTransactionParamsDto,
+  GetTransactionHistoryParamsDto,
+  GetTransactionParamsDto,
+} from './dto/transaction-params.dto'
 
 @ApiTags('transactions')
 @Controller('v1/transactions')
@@ -17,8 +21,8 @@ export class TransactionController {
   }
 
   @Get('history')
-  async getTransactionsHistory() {
-    return this.transactionService.getTransactionsHistory()
+  async getTransactionsHistory(@Query() queryParams: GetTransactionHistoryParamsDto) {
+    return this.transactionService.getTransactionsHistory(queryParams)
   }
 
   @Post()

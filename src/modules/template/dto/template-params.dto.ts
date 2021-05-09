@@ -4,7 +4,6 @@ import {
   ArrayMaxSize,
   ArrayMinSize,
   IsBoolean,
-  IsBooleanString,
   IsIn,
   IsNotEmpty,
   IsOptional,

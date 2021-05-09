@@ -1,17 +1,15 @@
 import { ApiProperty } from '@nestjs/swagger'
-import { Transform } from 'class-transformer'
+import { Transform, Type } from 'class-transformer'
 import {
   ArrayMaxSize,
   ArrayMinSize,
   IsArray,
-  IsNumber,
+  IsBoolean,
+  IsDateString,
   IsOptional,
-  IsString,
   IsUUID,
-  Length,
-  Max,
-  Min,
 } from 'class-validator'
+import dayjs, { Dayjs } from 'dayjs'
 import { BasePaginateParamsDto } from 'src/modules/dto/base.dto'
 
 export class CreateTransactionParamsDto {
@@ -34,6 +32,33 @@ export class GetTransactionParamsDto extends BasePaginateParamsDto {
   @IsUUID('all', {
     each: true,
   })
+  @IsOptional()
+  userId?: string
+}
+
+export class GetTransactionHistoryParamsDto {
+  @ApiProperty()
+  @Type(() => Dayjs)
+  @Transform(({ value }) => dayjs(value))
+  @IsDateString()
+  @IsOptional()
+  startDate?: Dayjs
+
+  @ApiProperty()
+  @Type(() => Dayjs)
+  @Transform(({ value }) => dayjs(value))
+  @IsDateString()
+  @IsOptional()
+  endDate?: Dayjs
+
+  @ApiProperty()
+  @IsBoolean()
+  @Transform(({ value }) => (value === 'true' ? true : false))
+  @IsOptional()
+  status?: boolean
+
+  @ApiProperty()
+  @IsUUID()
   @IsOptional()
   userId?: string
 }

@@ -1,11 +1,17 @@
 import dayjs from 'dayjs'
 import { groupBy } from 'lodash'
-import { useMutation, useQuery, useQueryClient } from 'react-query'
+import {
+  useMutation,
+  useQuery,
+  useQueryClient,
+  UseQueryOptions,
+} from 'react-query'
 import { api } from '../../utils/api'
 import { numberWithCommas } from '../../utils/helper'
 import {
   CreateTransactionParams,
   CreateTransactionResponse,
+  GetTransactionsHistoryParams,
   GetTransactionsHistoryResponse,
   GetTransactionsParams,
   GetTransactionsResponse,
@@ -15,28 +21,38 @@ import {
 export const TRANSACTION_URL = 'transactions'
 export const TRANSACTION_HISTORY_URL = `${TRANSACTION_URL}/history`
 
-export const useGetTransactions = (params?: GetTransactionsParams) => {
-  return useQuery([TRANSACTION_URL, params], async () => {
-    const { data } = await api.tomtom.get<GetTransactionsResponse>(
-      TRANSACTION_URL,
-      params,
-    )
-    return data
-  })
+export const useGetTransactions = (
+  params?: GetTransactionsParams,
+  option?: UseQueryOptions<GetTransactionsResponse>,
+) => {
+  return useQuery(
+    [TRANSACTION_URL, params],
+    async () => {
+      const { data } = await api.tomtom.get<GetTransactionsResponse>(
+        TRANSACTION_URL,
+        params,
+      )
+      return data
+    },
+    {
+      ...option,
+    },
+  )
 }
 
-export const useGetTransactionsHistory = () => {
-  return useQuery([TRANSACTION_URL, TRANSACTION_HISTORY_URL], async () => {
-    const { data } = await api.tomtom.get<GetTransactionsHistoryResponse>(
-      TRANSACTION_HISTORY_URL,
-    )
-    const modify = data.transactions.map(modifyTransaction)
-
-    const transactions = groupBy(modify, ({ date }) =>
-      dayjs(date).format('DD/MM/YYYY hh:mm'),
-    )
-    return transactions
-  })
+export const useGetTransactionsHistory = (
+  params?: GetTransactionsHistoryParams,
+) => {
+  return useQuery(
+    [TRANSACTION_URL, TRANSACTION_HISTORY_URL, { ...params }],
+    async () => {
+      const { data } = await api.tomtom.get<GetTransactionsHistoryResponse>(
+        TRANSACTION_HISTORY_URL,
+        params,
+      )
+      return data.transactions
+    },
+  )
 }
 
 export const useCreateTransaction = () => {

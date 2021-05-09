@@ -11,7 +11,7 @@ import { PaymentStatus } from '../../../services/payment/payment-types'
 import { usePageRunner } from '../../../utils/custom-hook'
 
 interface UserPaymentProps {
-  userId: string
+  userId?: string
 }
 const UserPayment = (props: UserPaymentProps) => {
   const { userId } = props
@@ -22,39 +22,16 @@ const UserPayment = (props: UserPaymentProps) => {
     },
   })
 
-  const { data: paymentsPaginate } = useGetPayments({
-    userId,
-    page,
-    limit: pageSize,
-  })
-  const { mutate: confirmPayment } = useConfirmPayment()
-  type PaymentType = Exclude<typeof payments, undefined>
-
-  const renderActions = useCallback(
-    (data: PaymentType[number]) => {
-      const { id: paymentId, status } = data
-      return (
-        <>
-          <Button
-            variant="outlined"
-            color={'primary'}
-            style={{ fontWeight: 'bold' }}
-            size="small"
-            onClick={() => {
-              confirmPayment({
-                paymentId,
-              })
-            }}
-            disabled={status !== PaymentStatus.PENDING}
-          >
-            Confirm
-          </Button>
-        </>
-      )
+  const { data: paymentsPaginate } = useGetPayments(
+    {
+      userId,
+      page,
+      limit: pageSize,
     },
-    [confirmPayment],
+    {
+      enabled: !!userId,
+    },
   )
-
   const payments = useMemo(() => {
     return paymentsPaginate
       ? paymentsPaginate?.items.map(payment => {
@@ -94,7 +71,6 @@ const UserPayment = (props: UserPaymentProps) => {
           'date',
           'status',
         ]}
-        renderActions={renderActions}
         paginate
         page={page}
         limit={pageSize}

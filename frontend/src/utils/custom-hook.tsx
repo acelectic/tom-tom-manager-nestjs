@@ -83,9 +83,9 @@ export const usePageRunner = (params?: UsePageRunngerParam) => {
     [setPerPage],
   )
   return {
-    page,
+    page: Number(page),
     setNewPage,
-    pageSize: perPage,
+    pageSize: Number(perPage),
     changePageSize,
   }
 }

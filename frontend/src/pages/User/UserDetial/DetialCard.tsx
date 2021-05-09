@@ -11,8 +11,8 @@ interface UserDetailCardProps {
 const UserDetailCard = (props: UserDetailCardProps) => {
   const { name, role, balance } = props.user || {}
   return (
-    <Paper>
-      <Space direction="column" spacing={6}>
+    <Paper variant="elevation" elevation={5} style={{ padding: 20 }}>
+      <Space direction="column" spacing={10}>
         <Text>{`Name: ${name ? capitalize(name) : '-'}`}</Text>
         <Text>{`Role: ${role ? capitalize(role) : '-'}`}</Text>
         <Text>{`Balance: ${

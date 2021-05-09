@@ -1,7 +1,14 @@
-import { useMemo } from 'react'
-import { useGetTransactions } from '../../services/transaction/transaction-query'
+import { useMemo, useState } from 'react'
+import {
+  useGetTransactions,
+  useGetTransactionsHistory,
+} from '../../services/transaction/transaction-query'
 import { Bar, Line } from 'react-chartjs-2'
 import dayjs from 'dayjs'
+import { groupBy, now, range, sortBy, sumBy } from 'lodash'
+import { SelectField } from '../../components/fields'
+import { Form } from 'react-final-form'
+import { OnChange } from 'react-final-form-listeners'
 
 const colors = ['#91cf96', '#c881d2', '#ffbaa2', '#29b6f6'] as const
 
@@ -26,14 +33,58 @@ const dataSetOpts = {
 }
 
 const TransactionChart = () => {
-  const { data: transactionsPaginate } = useGetTransactions()
+  const [startDate, setStartDate] = useState(dayjs().subtract(7, 'day'))
+  const [endDate, setEndDate] = useState(dayjs())
+  const [status, setStatus] = useState()
+
+  const { data: transactions } = useGetTransactionsHistory({
+    status,
+  })
+
+  const transactionsGroupByDate = useMemo(
+    () =>
+      groupBy(transactions, ({ createdAt }) =>
+        dayjs(createdAt).format('DD/MM/YYYY'),
+      ),
+    [transactions],
+  )
+  const transactionData = useMemo(() => {
+    const start = startDate
+
+    const dateRange = endDate.diff(start, 'day') + 1
+
+    console.log({
+      start: start.format(),
+      endDate: endDate.format(),
+      dateRange,
+    })
+    const data = range(dateRange).map(d => {
+      const curDate = start.add(d, 'day')
+      const transactionByCurDate =
+        transactionsGroupByDate[curDate.format('DD/MM/YYYY')]
+      const sumPrice = sumBy(transactionByCurDate, ({ price }) => Number(price))
+      const sumRemainPrice = sumBy(transactionByCurDate, ({ remain }) =>
+        Number(remain),
+      )
+      const sumUsers = sumBy(transactionByCurDate, ({ users }) =>
+        Number(users?.length || 0),
+      )
+      console.log({ transactionByCurDate, transactionsGroupByDate })
+      return {
+        date: curDate,
+        sumPrice,
+        sumRemainPrice,
+        sumUsers,
+        numTr: transactionByCurDate?.length || 0,
+      }
+    })
+    return sortBy(data, ({ date }) => date)
+  }, [endDate, startDate, transactionsGroupByDate])
   // const { data: transactionsHistory } = useGetTransactionsHistory()
   const data = useMemo(() => {
     const data = {
-      labels: transactionsPaginate
-        ? transactionsPaginate.items.map(d =>
-            dayjs(d.createdAt).format('DD/MM/YYYY hh:mm'),
-          )
+      labels: transactionData
+        ? transactionData.map(d => dayjs(d.date).format('DD/MM/YYYY hh:mm'))
         : [],
       datasets: [
         {
@@ -44,9 +95,7 @@ const TransactionChart = () => {
           pointBorderColor: colors[0],
           pointHoverBackgroundColor: colors[0],
           // pointHoverBorderColor: colors[1],
-          data: transactionsPaginate
-            ? transactionsPaginate.items.map(d => d.price)
-            : [],
+          data: transactionData ? transactionData.map(d => d.sumPrice) : [],
         },
         {
           // ...dataSetOpts,
@@ -56,8 +105,8 @@ const TransactionChart = () => {
           pointBorderColor: colors[1],
           pointHoverBackgroundColor: colors[1],
           // pointHoverBorderColor: colors[1],
-          data: transactionsPaginate
-            ? transactionsPaginate.items.map(d => d.remain)
+          data: transactionData
+            ? transactionData.map(d => d.sumRemainPrice)
             : [],
         },
         {
@@ -68,17 +117,58 @@ const TransactionChart = () => {
           pointBorderColor: colors[2],
           pointHoverBackgroundColor: colors[2],
           // pointHoverBorderColor: colors[0],
-          data: transactionsPaginate
-            ? transactionsPaginate.items.map(d => d.users?.length)
-            : [],
+          data: transactionData ? transactionData.map(d => d.sumUsers) : [],
+        },
+        {
+          // ...dataSetOpts,
+          label: 'Total Transaction',
+          yAxisID: 'TotalUser',
+          borderColor: colors[3],
+          pointBorderColor: colors[3],
+          pointHoverBackgroundColor: colors[3],
+          // pointHoverBorderColor: colors[0],
+          data: transactionData ? transactionData.map(d => d.numTr) : [],
         },
       ],
     }
     return data
-  }, [transactionsPaginate])
-
+  }, [transactionData])
+  const statusOptions = useMemo((): BaseOptions[] => {
+    return [
+      {
+        label: '',
+        value: undefined,
+      },
+      {
+        label: 'Pending',
+        value: false,
+      },
+      {
+        label: 'Completed',
+        value: true,
+      },
+    ]
+  }, [])
   return (
     <div>
+      <Form onSubmit={() => {}} subscription={{ values: true }}>
+        {() => {
+          return (
+            <>
+              <SelectField
+                name="status"
+                label="Status"
+                options={statusOptions}
+              />
+              <OnChange name="status">
+                {value => {
+                  setStatus(value)
+                }}
+              </OnChange>
+            </>
+          )
+        }}
+      </Form>
       <Line
         type="line"
         height={100}
@@ -92,8 +182,8 @@ const TransactionChart = () => {
               },
               type: 'linear',
               position: 'left',
-              min: 0,
-              max: 1000,
+              min: -500,
+              max: 3000,
               ticks: {
                 stepSize: 100,
                 color: colors[0],
@@ -106,8 +196,8 @@ const TransactionChart = () => {
               },
               type: 'linear',
               position: 'left',
-              min: 0,
-              max: 1000,
+              min: -500,
+              max: 3000,
               ticks: {
                 stepSize: 100,
                 color: colors[1],
@@ -121,7 +211,7 @@ const TransactionChart = () => {
               type: 'linear',
               position: 'right',
               min: 0,
-              max: 5,
+              // max: 5,
               ticks: {
                 stepSize: 1,
                 color: colors[2],

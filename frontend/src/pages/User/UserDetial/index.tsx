@@ -16,22 +16,12 @@ import UserPayment from './UserPayment'
 import UserTransaction from './UserTransaction'
 
 const UserDetial = () => {
-  const history = useHistory()
   const { query } = useRouter<{ userId: string }>()
   const { data: user } = useGetUser(query.userId)
-  const { id: userId = '' } = user || {}
-  const { data: transactionsPaginate } = useGetTransactions({
-    userId,
-  })
-
-  const transactions = useMemo(() => {
-    return transactionsPaginate
-      ? transactionsPaginate?.items.map(modifyTransaction)
-      : []
-  }, [transactionsPaginate])
+  const { id: userId } = user || {}
 
   return (
-    <Page title={'User Detail'}>
+    <Page title={''}>
       <Space direction="column" spacing={40}>
         <UserDetailCard user={user} />
         <UserTransaction userId={userId} />

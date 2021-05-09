@@ -11,7 +11,7 @@ import { usePageRunner } from '../../../utils/custom-hook'
 import TransactionForm from '../../Transaction/TransactionForm'
 
 interface UserTransactionProps {
-  userId: string
+  userId?: string
 }
 const UserTransaction = (props: UserTransactionProps) => {
   const { userId } = props
@@ -22,11 +22,16 @@ const UserTransaction = (props: UserTransactionProps) => {
     },
   })
 
-  const { data: transactionsPaginate } = useGetTransactions({
-    userId,
-    page,
-    limit: pageSize,
-  })
+  const { data: transactionsPaginate } = useGetTransactions(
+    {
+      userId,
+      page,
+      limit: pageSize,
+    },
+    {
+      enabled: !!userId,
+    },
+  )
   const transactions = useMemo(() => {
     return transactionsPaginate
       ? transactionsPaginate?.items.map(modifyTransaction)

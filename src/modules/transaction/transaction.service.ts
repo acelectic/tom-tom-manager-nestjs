@@ -1,4 +1,5 @@
 import { Injectable } from '@nestjs/common'
+import dayjs from 'dayjs'
 import { ceil, sumBy } from 'lodash'
 import { paginate } from 'nestjs-typeorm-paginate'
 import { PaymentType } from 'src/db/entities/Payment'
@@ -11,7 +12,11 @@ import { validateError } from 'src/utils/response-error'
 import { EntityManager, In } from 'typeorm'
 import { CreatePaymentParamsDto } from '../payment/dto/payment-params.dto'
 import { PaymentService } from '../payment/payment.service'
-import { CreateTransactionParamsDto, GetTransactionParamsDto } from './dto/transaction-params.dto'
+import {
+  CreateTransactionParamsDto,
+  GetTransactionHistoryParamsDto,
+  GetTransactionParamsDto,
+} from './dto/transaction-params.dto'
 
 @Injectable()
 export class TransactionService {
@@ -43,13 +48,34 @@ export class TransactionService {
     return transactions
   }
 
-  async getTransactionsHistory() {
-    const transactions = await Transaction.find({
-      relations: ['users'],
-      order: {
-        createdAt: 'DESC',
-      },
-    })
+  async getTransactionsHistory(parmas: GetTransactionHistoryParamsDto) {
+    const { userId, status, endDate, startDate = dayjs().subtract(30, 'day') } = parmas
+    const queryBuilder = Transaction.createQueryBuilder('transaction')
+      .leftJoinAndSelect('transaction.users', 'users')
+      .orderBy('transaction.completed', 'ASC')
+      .addOrderBy('transaction.createdAt', 'DESC')
+
+    if (startDate) {
+      queryBuilder.andWhere('transaction.created_at > :startDate', {
+        startDate: startDate.toISOString(),
+      })
+    }
+    if (endDate) {
+      queryBuilder.andWhere('transaction.created_at < :endDate', {
+        endDate: endDate.toISOString(),
+      })
+    }
+    if (userId) {
+      queryBuilder.andWhere('transaction.user_id = :userId', {
+        userId,
+      })
+    }
+    if (status) {
+      queryBuilder.andWhere('transaction.completed = :status', {
+        status,
+      })
+    }
+    const transactions = await queryBuilder.getMany()
     return { transactions }
   }
 

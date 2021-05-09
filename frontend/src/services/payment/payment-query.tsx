@@ -1,5 +1,10 @@
 import dayjs from 'dayjs'
-import { useMutation, useQuery, useQueryClient } from 'react-query'
+import {
+  useMutation,
+  useQuery,
+  useQueryClient,
+  UseQueryOptions,
+} from 'react-query'
 import { api } from '../../utils/api'
 import { USER_URL } from '../user/user-query'
 import {
@@ -14,14 +19,21 @@ import {
 
 export const PAYMENT_URL = 'payments'
 
-export const useGetPayments = (params?: GetPaymentsParams) => {
-  return useQuery([PAYMENT_URL, { params }], async () => {
-    const { data } = await api.tomtom.get<GetPaymentsResponse>(
-      PAYMENT_URL,
-      params,
-    )
-    return data
-  })
+export const useGetPayments = (
+  params?: GetPaymentsParams,
+  option?: UseQueryOptions<GetPaymentsResponse>,
+) => {
+  return useQuery(
+    [PAYMENT_URL, { params }],
+    async () => {
+      const { data } = await api.tomtom.get<GetPaymentsResponse>(
+        PAYMENT_URL,
+        params,
+      )
+      return data
+    },
+    { ...option },
+  )
 }
 
 export const useCreatePayment = () => {
