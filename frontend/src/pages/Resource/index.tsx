@@ -20,7 +20,6 @@ const Resource = () => {
           name={'Add Resource'}
           onSubmit={v => {
             const { name, price } = v as CreateResourceParams
-            console.log(v)
             createResource({
               name,
               price,

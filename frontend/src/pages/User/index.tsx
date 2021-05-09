@@ -20,7 +20,6 @@ const Users = () => {
           name={'Add User'}
           onSubmit={v => {
             const { email, password, name } = v as SigninParams
-            console.log(v)
             createUser({
               email,
               password,

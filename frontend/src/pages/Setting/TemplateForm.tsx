@@ -83,7 +83,6 @@ const TemplateForm = (props: TemplateFormProps) => {
                   const cost = sumBy(selectedResources, ({ price }) =>
                     Number(price),
                   )
-                  console.log({ cost, resourceIds })
                   return <Text>{`Total cost: ${cost}`}</Text>
                 }}
               </FormSpy>

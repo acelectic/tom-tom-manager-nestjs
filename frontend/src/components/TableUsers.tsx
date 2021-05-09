@@ -46,10 +46,7 @@ const TableUsers = (props: TableUsersProps) => {
     const sumPrice = sumBy(data.payments, ({ status, price }) =>
       status === 'pending' ? price : 0,
     )
-    console.log({
-      ...data,
-      sumPrice,
-    })
+
     return (
       <Space spacing={10}>
         <Authenlize roles={[Role.ADMIN]} allowLocalAdmin>

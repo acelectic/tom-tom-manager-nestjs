@@ -32,8 +32,6 @@ const Setting = () => {
   const onSubmitTemplateForm = useCallback(
     (values: TemplateFormValues) => {
       const { id, isActive, resourceIds } = values
-      console.log({ ...values })
-
       if (id) {
         updateTemplate({
           templateId: id,

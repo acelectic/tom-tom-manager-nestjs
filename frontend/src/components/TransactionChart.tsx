@@ -79,7 +79,6 @@ const TransactionChart = <T, K extends keyof T>(
     })
     return deepmerge(baseScales, chartOption)
   }, [chartOption, renderOptions])
-  console.log({ chartData, scalesOptions })
   return (
     <Line
       type="line"

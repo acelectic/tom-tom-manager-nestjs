@@ -252,7 +252,6 @@ const TransactionSummary = () => {
                 />
                 <OnChange name="endDate">
                   {value => {
-                    console.log({ value, type: typeof value })
                     const newDate = dayjs(value)
                     if (endDate.diff(newDate) !== 0) {
                       setEndDate(newDate)

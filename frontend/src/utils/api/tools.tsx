@@ -89,14 +89,13 @@ export const customRequestData = (request: any) => {
       const formData = new FormData()
       Object.entries(request.data).forEach(([key, value]: any[]) => {
         if (value instanceof Array) {
-          value.forEach((val) => {
+          value.forEach(val => {
             formData.append(`${key}`, val)
           })
         } else {
           formData.append(key, value)
         }
       })
-      // console.log(formData.get('files')?.toString())
       request.data = formData
     }
   } else if (request.headers['Content-Type'] === ContentType.XFORM) {
@@ -112,11 +111,11 @@ export const deepLoop = (data: any, func: (data: any) => any): any => {
     return func(data)
   }
   if (data instanceof Array) {
-    return data.map((d) => deepLoop(d, func))
+    return data.map(d => deepLoop(d, func))
   }
   if (data instanceof Object) {
     const formatData: any = {}
-    Object.keys(data).forEach((key) => {
+    Object.keys(data).forEach(key => {
       formatData[key] = deepLoop(data[key], func)
     })
     return formatData
