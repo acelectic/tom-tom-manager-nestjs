@@ -1,5 +1,6 @@
 import { Injectable } from '@nestjs/common'
 import { ceil, sumBy } from 'lodash'
+import { paginate } from 'nestjs-typeorm-paginate'
 import { PaymentType } from 'src/db/entities/Payment'
 import { Resource } from 'src/db/entities/Resource'
 import { Template } from 'src/db/entities/Template'
@@ -16,19 +17,30 @@ import { CreateTransactionParamsDto, GetTransactionParamsDto } from './dto/trans
 export class TransactionService {
   constructor(private readonly paymentService: PaymentService) {}
   async getTransactions(params: GetTransactionParamsDto) {
-    const { userId } = params
+    const { userId, page = 1, limit = 5 } = params
+
+    if (userId) {
+      const { transactions: userTransactions } = await User.findOne(userId, {
+        relations: ['transactions'],
+      })
+      const transactionIds = userTransactions.map(({ id }) => id)
+      const queryBuilder = Transaction.createQueryBuilder('transaction')
+        .leftJoinAndSelect('transaction.users', 'users')
+        .orderBy('transaction.completed', 'ASC')
+        .addOrderBy('transaction.createdAt', 'DESC')
+        .where('transaction.id in (:...transactionIds)', { transactionIds })
+
+      const transactions = await paginate(queryBuilder, { page, limit })
+      return transactions
+    }
 
     const queryBuilder = Transaction.createQueryBuilder('transaction')
-      .leftJoinAndSelect('users', 'users')
+      .leftJoinAndSelect('transaction.users', 'users')
       .orderBy('transaction.completed', 'ASC')
-      .addOrderBy('transaction.created_at', 'DESC')
-    if (userId) {
-      queryBuilder.where({
-        userId,
-      })
-    }
-    const transactions = await queryBuilder.getMany()
-    return { transactions }
+      .addOrderBy('transaction.createdAt', 'DESC')
+
+    const transactions = await paginate(queryBuilder, { page, limit })
+    return transactions
   }
 
   async getTransactionsHistory() {

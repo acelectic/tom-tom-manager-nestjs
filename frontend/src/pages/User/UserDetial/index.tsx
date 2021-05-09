@@ -1,41 +1,41 @@
+import dayjs from 'dayjs'
+import { useMemo } from 'react'
 import { useHistory } from 'react-router'
 import BasicList from '../../../components/BasicList'
 import Page from '../../../components/commons/Page'
 import Space from '../../../components/commons/Space'
 import { useGetPayments } from '../../../services/payment/payment-query'
-import { useGetTransactions } from '../../../services/transaction/transaction-query'
+import {
+  modifyTransaction,
+  useGetTransactions,
+} from '../../../services/transaction/transaction-query'
 import { useGetUser } from '../../../services/user/user-query'
 import { useRouter } from '../../../utils/helper'
 import UserDetailCard from './DetialCard'
+import UserPayment from './UserPayment'
+import UserTransaction from './UserTransaction'
 
 const UserDetial = () => {
   const history = useHistory()
   const { query } = useRouter<{ userId: string }>()
   const { data: user } = useGetUser(query.userId)
-  const { data: transactions } = useGetTransactions()
-  const { data: payments } = useGetPayments()
-  const { name } = user || {}
+  const { id: userId = '' } = user || {}
+  const { data: transactionsPaginate } = useGetTransactions({
+    userId,
+  })
+
+  const transactions = useMemo(() => {
+    return transactionsPaginate
+      ? transactionsPaginate?.items.map(modifyTransaction)
+      : []
+  }, [transactionsPaginate])
+
   return (
     <Page title={'User Detail'}>
       <Space direction="column" spacing={40}>
         <UserDetailCard user={user} />
-        <BasicList
-          data={transactions}
-          columns={['ref', 'totalUser', 'remain', 'price', 'date', 'completed']}
-        />
-        <BasicList
-          data={payments}
-          columns={[
-            'ref',
-            'userName',
-            'price',
-            'type',
-            'resource',
-            'transaction',
-            'date',
-            'status',
-          ]}
-        />
+        <UserTransaction userId={userId} />
+        <UserPayment userId={userId} />
       </Space>
     </Page>
   )

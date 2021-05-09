@@ -8,7 +8,8 @@ import TableHead from '@material-ui/core/TableHead'
 import TableRow from '@material-ui/core/TableRow'
 import Paper from '@material-ui/core/Paper'
 import { withStyles, Theme, createStyles } from '@material-ui/core/styles'
-import { capitalize, isNumber } from 'lodash'
+import { capitalize, isNumber, uniq, uniqBy } from 'lodash'
+import { TablePagination } from '@material-ui/core'
 
 const StyledTableCell = withStyles((theme: Theme) =>
   createStyles({
@@ -36,11 +37,27 @@ type BasicListProps<T extends AnyObject[], K> = {
   data: T | undefined
   columns: K
   renderActions?: (data: T[number]) => ReactNode
+  paginate?: boolean
+  page?: number
+  limit?: number
+  total?: number
+  onChangePage?: (page: number) => void
+  onChangeRowsPerPage?: (limit: number) => void
 }
 const BasicList = <T extends AnyObject[], K extends (keyof T[number])[]>(
   props: BasicListProps<T, K>,
 ) => {
-  const { data, columns, renderActions } = props
+  const {
+    data,
+    columns,
+    renderActions,
+    page = 1,
+    limit = 5,
+    total = 0,
+    onChangePage,
+    onChangeRowsPerPage,
+    paginate,
+  } = props
 
   const renderRow = useCallback(
     (d: T[number], index: number) => {
@@ -78,7 +95,19 @@ const BasicList = <T extends AnyObject[], K extends (keyof T[number])[]>(
       </StyledTableCell>
     )
   }, [])
-
+  const onHanldleChangePage = useCallback(
+    (event: React.MouseEvent<HTMLButtonElement> | null, page: number) => {
+      onChangePage?.(page + 1)
+    },
+    [onChangePage],
+  )
+  const onHanldleChangeRowsPerPage = useCallback(
+    (event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+      const pageLimit = parseInt(event.target.value, 10)
+      onChangeRowsPerPage?.(pageLimit)
+    },
+    [onChangeRowsPerPage],
+  )
   return (
     <TableContainer component={Paper}>
       <Table aria-label="customized table">
@@ -98,6 +127,17 @@ const BasicList = <T extends AnyObject[], K extends (keyof T[number])[]>(
         </TableHead>
         <TableBody>{data && data.map(renderRow)}</TableBody>
       </Table>
+      {paginate ? (
+        <TablePagination
+          component="div"
+          rowsPerPageOptions={uniqBy([5, 10, 20].concat(Number(limit)), d => d)}
+          count={total}
+          page={page - 1}
+          rowsPerPage={limit}
+          onChangePage={onHanldleChangePage}
+          onChangeRowsPerPage={onHanldleChangeRowsPerPage}
+        />
+      ) : null}
     </TableContainer>
   )
 }

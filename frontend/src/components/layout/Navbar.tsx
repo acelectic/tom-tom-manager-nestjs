@@ -18,6 +18,7 @@ const Layout = styled.div`
   align-items: baseline;
   flex: 1;
   flex-flow: row;
+  width: calc(100% - 30px);
   padding: 15px;
 `
 const Right = styled.div`

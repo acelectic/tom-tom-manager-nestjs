@@ -105,3 +105,18 @@ export const useRouter = <TQuery extends any = any>() => {
     }
   }, [history.push, history.replace, history.goBack, location, query, match])
 }
+export const useQueryParams = <T extends object>() => {
+  const router = useRouter()
+  const setParam = useCallback(
+    (value: T) => {
+      router.push(
+        `${router.pathname}?${qs.stringify({ ...router.query, ...value })}`,
+      )
+    },
+    [router],
+  )
+  return {
+    query: router.query as T,
+    setParam,
+  }
+}

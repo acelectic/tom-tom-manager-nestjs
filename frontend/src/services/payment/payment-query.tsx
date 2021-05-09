@@ -20,19 +20,7 @@ export const useGetPayments = (params?: GetPaymentsParams) => {
       PAYMENT_URL,
       params,
     )
-    const payments = data.payments.map(payment => {
-      const { user, resource, transaction, createdAt, ...restPayment } = payment
-      return {
-        userName: user.name,
-        resource: resource ? [resource.name, resource.price].join(', ') : '-',
-        transaction: transaction?.ref.toString().padStart(6, '0'),
-        ...restPayment,
-        date: dayjs(createdAt)
-          .tz('Asia/Bangkok')
-          .format('DD/MM/YYYY hh:mm:ss'),
-      }
-    })
-    return payments
+    return data
   })
 }
 

@@ -29,9 +29,9 @@ const PaymentForm = () => {
   const [formValues, setFormValues] = useState<CreatePaymentFormValues>()
   const { data: users } = useGetUsers()
   const { data: resources } = useGetResources()
-  const { data: transactions } = useGetTransactions({
-    userId: formValues?.userId,
-  })
+  // const { data: transactions } = useGetTransactions({
+  //   userId: formValues?.userId,
+  // })
   const usersOption = useMemo(() => {
     return (
       users?.map(
@@ -48,13 +48,13 @@ const PaymentForm = () => {
     )
   }, [resources])
 
-  const transactionsOption = useMemo(() => {
-    return (
-      transactions?.map(
-        ({ id, ref }) => ({ value: id, label: ref } as BaseOptions),
-      ) || []
-    )
-  }, [transactions])
+  // const transactionsOption = useMemo(() => {
+  //   return (
+  //     transactions?.map(
+  //       ({ id, ref }) => ({ value: id, label: ref } as BaseOptions),
+  //     ) || []
+  //   )
+  // }, [transactions])
 
   const typeOptions = useMemo(
     (): BaseOptions[] => [
@@ -99,7 +99,7 @@ const PaymentForm = () => {
                 options={typeOptions}
               />
               <OnChange name="type">
-                {(value) => {
+                {value => {
                   switch (value) {
                     case PaymentType.BUY:
                       if (
@@ -122,13 +122,13 @@ const PaymentForm = () => {
                 {({ input }) => {
                   return (
                     <>
-                      <Hidden hide={input.value !== PaymentType.PAID}>
+                      {/* <Hidden hide={input.value !== PaymentType.PAID}>
                         <SelectField
                           name="transactionId"
                           label="Transaction"
                           options={transactionsOption}
                         />
-                      </Hidden>
+                      </Hidden> */}
                       <Hidden hide={input.value !== PaymentType.BUY}>
                         <SelectField
                           name="resourceId"

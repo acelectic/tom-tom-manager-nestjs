@@ -26,12 +26,14 @@ const dataSetOpts = {
 }
 
 const TransactionChart = () => {
-  const { data: transactions } = useGetTransactions()
+  const { data: transactionsPaginate } = useGetTransactions()
   // const { data: transactionsHistory } = useGetTransactionsHistory()
   const data = useMemo(() => {
     const data = {
-      labels: transactions
-        ? transactions.map(d => dayjs(d.date).format('DD/MM/YYYY hh:mm'))
+      labels: transactionsPaginate
+        ? transactionsPaginate.items.map(d =>
+            dayjs(d.createdAt).format('DD/MM/YYYY hh:mm'),
+          )
         : [],
       datasets: [
         {
@@ -42,7 +44,9 @@ const TransactionChart = () => {
           pointBorderColor: colors[0],
           pointHoverBackgroundColor: colors[0],
           // pointHoverBorderColor: colors[1],
-          data: transactions ? transactions.map(d => d.price) : [],
+          data: transactionsPaginate
+            ? transactionsPaginate.items.map(d => d.price)
+            : [],
         },
         {
           // ...dataSetOpts,
@@ -52,7 +56,9 @@ const TransactionChart = () => {
           pointBorderColor: colors[1],
           pointHoverBackgroundColor: colors[1],
           // pointHoverBorderColor: colors[1],
-          data: transactions ? transactions.map(d => d.remain) : [],
+          data: transactionsPaginate
+            ? transactionsPaginate.items.map(d => d.remain)
+            : [],
         },
         {
           // ...dataSetOpts,
@@ -62,12 +68,14 @@ const TransactionChart = () => {
           pointBorderColor: colors[2],
           pointHoverBackgroundColor: colors[2],
           // pointHoverBorderColor: colors[0],
-          data: transactions ? transactions.map(d => d.totalUser) : [],
+          data: transactionsPaginate
+            ? transactionsPaginate.items.map(d => d.users?.length)
+            : [],
         },
       ],
     }
     return data
-  }, [transactions])
+  }, [transactionsPaginate])
 
   return (
     <div>

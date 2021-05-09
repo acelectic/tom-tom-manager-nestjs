@@ -13,6 +13,7 @@ export const Routes = () => {
     return !!data
   }, [data])
 
+  console.log({ isAuthorized })
   return isLoading ? (
     <>Loading...</>
   ) : (

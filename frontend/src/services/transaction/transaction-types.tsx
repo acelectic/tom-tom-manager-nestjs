@@ -12,13 +12,12 @@ export interface TransactionEntity {
   createdAt: string
   completed: boolean
 }
-export interface GetTransactionsParams {
+export interface GetTransactionsParams extends PaginationParams {
   userId?: string
 }
 
-export interface GetTransactionsResponse {
-  transactions: TransactionEntity[]
-}
+export interface GetTransactionsResponse
+  extends Pagination<TransactionEntity> {}
 
 export interface GetTransactionsHistoryResponse {
   transactions: Omit<TransactionEntity, 'users' | 'resources'>[]

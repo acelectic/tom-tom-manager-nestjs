@@ -1,26 +1,29 @@
-import Page from '../../components/commons/Page'
-import BasicList from '../../components/BasicList'
-import {
-  useConfirmPayment,
-  useGetPayments,
-} from '../../services/payment/payment-query'
-import { Role } from '../../services/auth/auth-types'
-import Authenlize from '../../components/commons/Authenlize'
-import React, { lazy, ReactNode, Suspense, useCallback, useMemo } from 'react'
-import {
-  PaymentEntity,
-  PaymentStatus,
-} from '../../services/payment/payment-types'
-import Space from '../../components/commons/Space'
 import { Button } from '@material-ui/core'
 import dayjs from 'dayjs'
-import { usePageRunner } from '../../utils/custom-hook'
-const PaymentForm = lazy(() => import('./PaymentForm'))
+import { useCallback, useMemo } from 'react'
+import BasicList from '../../../components/BasicList'
+import Page from '../../../components/commons/Page'
+import {
+  useGetPayments,
+  useConfirmPayment,
+} from '../../../services/payment/payment-query'
+import { PaymentStatus } from '../../../services/payment/payment-types'
+import { usePageRunner } from '../../../utils/custom-hook'
 
-const Payment = () => {
-  const { page, pageSize, setNewPage, changePageSize } = usePageRunner()
+interface UserPaymentProps {
+  userId: string
+}
+const UserPayment = (props: UserPaymentProps) => {
+  const { userId } = props
+  const { page, pageSize, setNewPage, changePageSize } = usePageRunner({
+    alias: {
+      page: 'payment-page',
+      perPage: 'payment-per-page',
+    },
+  })
 
   const { data: paymentsPaginate } = useGetPayments({
+    userId,
     page,
     limit: pageSize,
   })
@@ -78,12 +81,7 @@ const Payment = () => {
   }, [paymentsPaginate])
 
   return (
-    <Page title={'Payment Management'}>
-      {/* <Authenlize roles={[Role.ADMIN, Role.MANAGER]}>
-        <Suspense fallback={<div>Loading...</div>}>
-          <PaymentForm />
-        </Suspense>
-      </Authenlize> */}
+    <Page title={'Payment'}>
       <BasicList
         data={payments}
         columns={[
@@ -107,4 +105,4 @@ const Payment = () => {
     </Page>
   )
 }
-export default Payment
+export default UserPayment

@@ -2,7 +2,7 @@ import { Paper } from '@material-ui/core'
 import { capitalize, isNumber } from 'lodash'
 import Space from '../../../components/commons/Space'
 import Text from '../../../components/commons/Text'
-import { Role, UserEntity } from '../../../services/auth/auth-types'
+import { UserEntity } from '../../../services/auth/auth-types'
 import { numberWithCommas } from '../../../utils/helper'
 
 interface UserDetailCardProps {

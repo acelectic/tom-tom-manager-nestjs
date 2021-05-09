@@ -1,5 +1,6 @@
 import { Injectable } from '@nestjs/common'
 import { sumBy } from 'lodash'
+import { paginate } from 'nestjs-typeorm-paginate'
 import { Payment, PaymentStatus, PaymentType } from 'src/db/entities/Payment'
 import { Resource } from 'src/db/entities/Resource'
 import { Transaction } from 'src/db/entities/Transaction'
@@ -7,21 +8,29 @@ import { User } from 'src/db/entities/User'
 import { debugLog } from 'src/utils/helper'
 import { validateError } from 'src/utils/response-error'
 import { EntityManager, Not } from 'typeorm'
-import { ConfirmPaymentParamsDto, CreatePaymentParamsDto } from './dto/payment-params.dto'
+import {
+  ConfirmPaymentParamsDto,
+  CreatePaymentParamsDto,
+  GetPaymentsParamsDto,
+} from './dto/payment-params.dto'
 
 @Injectable()
 export class PaymentService {
   constructor() {}
-  async getPayments() {
-    const payments = await Payment.find({
-      relations: ['user', 'resource', 'transaction'],
-      order: {
-        status: 'ASC',
-      },
-    })
-    return {
-      payments,
+  async getPayments(params: GetPaymentsParamsDto) {
+    const { userId, page = 1, limit = 5 } = params
+    const queryBuilder = Payment.createQueryBuilder('payment')
+      .leftJoinAndSelect('payment.user', 'user')
+      .leftJoinAndSelect('payment.resource', 'resource')
+      .leftJoinAndSelect('payment.transaction', 'transaction')
+      .orderBy('payment.status', 'ASC')
+
+    if (userId) {
+      queryBuilder.where('payment.user_id = :userId', { userId })
     }
+    debugLog({ query: queryBuilder.getSql() })
+    const payments = await paginate(queryBuilder, { limit, page })
+    return payments
   }
 
   async createPayment(params: CreatePaymentParamsDto, etm: EntityManager) {

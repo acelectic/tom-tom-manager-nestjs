@@ -21,8 +21,7 @@ export const useGetTransactions = (params?: GetTransactionsParams) => {
       TRANSACTION_URL,
       params,
     )
-    const transactions = data.transactions.map(modifyTransaction)
-    return transactions
+    return data
   })
 }
 
@@ -63,7 +62,7 @@ export const useCreateTransaction = () => {
   )
 }
 
-const modifyTransaction = (transaction: TransactionEntity) => {
+export const modifyTransaction = (transaction: TransactionEntity) => {
   const {
     ref,
     users,

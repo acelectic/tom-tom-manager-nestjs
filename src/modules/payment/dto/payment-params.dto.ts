@@ -15,7 +15,16 @@ import {
   ValidateIf,
 } from 'class-validator'
 import { PaymentType } from 'src/db/entities/Payment'
+import { BasePaginateParamsDto } from 'src/modules/dto/base.dto'
 
+export class GetPaymentsParamsDto extends BasePaginateParamsDto {
+  @ApiProperty()
+  @IsUUID('all', {
+    each: true,
+  })
+  @IsOptional()
+  userId?: string
+}
 export class CreatePaymentParamsDto {
   @ApiProperty()
   @Min(0)

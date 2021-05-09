@@ -107,7 +107,7 @@ export const useSignOut = () => {
     {
       onSuccess: () => {
         removeToken()
-        queryClient.invalidateQueries([USER_URL, CURRENT_USER])
+        queryClient.resetQueries([USER_URL, CURRENT_USER])
         queryClient.removeQueries()
       },
     },

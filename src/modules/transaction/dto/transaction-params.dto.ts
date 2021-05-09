@@ -12,6 +12,7 @@ import {
   Max,
   Min,
 } from 'class-validator'
+import { BasePaginateParamsDto } from 'src/modules/dto/base.dto'
 
 export class CreateTransactionParamsDto {
   @ApiProperty()
@@ -28,7 +29,7 @@ export class CreateTransactionParamsDto {
   templateId: string
 }
 
-export class GetTransactionParamsDto {
+export class GetTransactionParamsDto extends BasePaginateParamsDto {
   @ApiProperty()
   @IsUUID('all', {
     each: true,

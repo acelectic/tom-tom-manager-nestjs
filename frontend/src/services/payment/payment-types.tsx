@@ -12,8 +12,8 @@ export enum PaymentStatus {
   SETTLED = 'settled',
 }
 
-export interface GetPaymentsParams {
-  userId: string
+export interface GetPaymentsParams extends PaginationParams {
+  userId?: string
 }
 export interface PaymentEntity {
   id: string
@@ -27,9 +27,7 @@ export interface PaymentEntity {
   status: PaymentStatus
 }
 
-export interface GetPaymentsResponse {
-  payments: PaymentEntity[]
-}
+export interface GetPaymentsResponse extends Pagination<PaymentEntity> {}
 
 export interface CreatePaymentParams {
   price: number
