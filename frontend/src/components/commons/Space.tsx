@@ -29,6 +29,7 @@ const Layout = styled.div<LayoutType>`
 
   > .space-item {
     width: 100%;
+    min-width: max-content;
     ${({ direction, spacing }) =>
       direction === 'row'
         ? `margin-right: ${spacing}px`

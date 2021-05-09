@@ -4,6 +4,7 @@ export interface GetUsersResponse {
   users: UserEntity[]
 }
 
+export interface GetUserResponse extends UserEntity {}
 export interface ChangeRoleParams {
   userId: string
   role: Role

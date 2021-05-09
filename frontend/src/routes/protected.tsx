@@ -9,6 +9,7 @@ import Resource from '../pages/Resource'
 import Setting from '../pages/Setting'
 import Transaction from '../pages/Transaction'
 import Users from '../pages/User'
+import UserDetial from '../pages/User/UserDetial'
 import { useCurrUser } from '../services/auth/auth-query'
 
 export const ProtectedRoute = () => {
@@ -18,6 +19,7 @@ export const ProtectedRoute = () => {
       <Switch>
         <Redirect exact from="/" to={paths.dashboard()} />
         <Route path={paths.dashboard()} component={Dashboard} />
+        <Route path={paths.userDetail()} component={UserDetial} />
         <Route path={paths.users()} component={Users} />
         <Route path={paths.resources()} component={Resource} />
         <Route path={paths.transactions()} component={Transaction} />

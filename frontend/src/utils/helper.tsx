@@ -1,5 +1,6 @@
 import deepmerge from 'deepmerge'
 import { isEqual, isNumber } from 'lodash'
+import qs from 'qs'
 import {
   Context,
   createContext,
@@ -8,6 +9,12 @@ import {
   useRef,
   useState,
 } from 'react'
+import {
+  useParams,
+  useLocation,
+  useHistory,
+  useRouteMatch,
+} from 'react-router-dom'
 
 export const createCtx = <T extends object>(initValue: T) => {
   return createContext<
@@ -60,7 +67,7 @@ export const withCtx = <T extends AnyObject = AnyObject>(
 }
 
 export const sleep = (ms: number) =>
-  new Promise((resolve) => setTimeout(resolve, ms))
+  new Promise(resolve => setTimeout(resolve, ms))
 
 export const numberWithCommas = (
   value: number,
@@ -72,4 +79,29 @@ export const numberWithCommas = (
         maximumFractionDigits: digit,
       })
     : value
+}
+
+export const useRouter = <TQuery extends any = any>() => {
+  const params = useParams()
+  const location = useLocation()
+  const history = useHistory()
+  const match = useRouteMatch()
+  const query = useMemo(() => {
+    return {
+      ...qs.parse(location.search.slice(1)),
+      ...params,
+    } as TQuery
+  }, [location.search, params])
+
+  return useMemo(() => {
+    return {
+      push: history.push,
+      replace: history.replace,
+      goBack: history.goBack,
+      pathname: location.pathname,
+      query,
+      match,
+      location,
+    }
+  }, [history.push, history.replace, history.goBack, location, query, match])
 }

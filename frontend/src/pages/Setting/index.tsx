@@ -98,7 +98,7 @@ const Setting = () => {
         </Space>
       )
     },
-    [setState],
+    [setActiveStatus],
   )
 
   const onButtonAddTemplateClick = useCallback(() => {

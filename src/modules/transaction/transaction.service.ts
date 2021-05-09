@@ -18,20 +18,16 @@ export class TransactionService {
   async getTransactions(params: GetTransactionParamsDto) {
     const { userId } = params
 
+    const queryBuilder = Transaction.createQueryBuilder('transaction')
+      .leftJoinAndSelect('users', 'users')
+      .orderBy('transaction.completed', 'ASC')
+      .addOrderBy('transaction.created_at', 'DESC')
     if (userId) {
-      const user = await User.findOne(userId, {
-        relations: ['transactions', 'transactions.users', 'transactions.payments'],
+      queryBuilder.where({
+        userId,
       })
-      const transactions = user.transactions
-      return { transactions }
     }
-
-    const transactions = await Transaction.find({
-      relations: ['users'],
-      order: {
-        createdAt: 'DESC',
-      },
-    })
+    const transactions = await queryBuilder.getMany()
     return { transactions }
   }
 
@@ -63,10 +59,10 @@ export class TransactionService {
     const price = sumBy(resources, ({ price }) => Number(price))
     const transaction = await Transaction.create({ price, users, template })
     await etm.save(transaction)
-    debugLog('after create transaction')
 
     const paymentPrice = ceil(price / users.length, 0)
-    const payments = await users.map(async ({ id: userId }) => {
+    const payments = await users.map(async user => {
+      const { id: userId } = user
       const params: CreatePaymentParamsDto = {
         price: paymentPrice,
         type: PaymentType.PAID,
@@ -74,13 +70,11 @@ export class TransactionService {
         userId: userId,
       }
       const payment = await this.paymentService.createPayment(params, etm)
+      user.balance = user.balance - paymentPrice
+      await etm.save(user)
       return payment
     })
-
-    debugLog('after create payments')
-    // debugLog({ payments })
     await Promise.all(payments)
-    // await etm.save(payments)
     return { ...transaction, payments: [] }
   }
 }

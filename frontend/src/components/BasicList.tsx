@@ -47,7 +47,7 @@ const BasicList = <T extends AnyObject[], K extends (keyof T[number])[]>(
       return (
         <StyledTableRow key={d.id}>
           <StyledTableCell align="left">{index + 1}</StyledTableCell>
-          {columns.map((k) => {
+          {columns.map(k => {
             const colData = d[k]
             return (
               <StyledTableCell

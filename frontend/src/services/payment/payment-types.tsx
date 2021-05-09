@@ -12,7 +12,11 @@ export enum PaymentStatus {
   SETTLED = 'settled',
 }
 
+export interface GetPaymentsParams {
+  userId: string
+}
 export interface PaymentEntity {
+  id: string
   ref: number
   price: number
   type: PaymentType
@@ -35,3 +39,9 @@ export interface CreatePaymentParams {
   resourceId: string
 }
 export interface CreatePaymentResponse extends PaymentEntity {}
+
+export interface ConfirmPaymentParams {
+  paymentId: string
+}
+
+export interface ConfirmPaymentResponse extends PaymentEntity {}

@@ -44,3 +44,9 @@ export class CreatePaymentParamsDto {
   @ValidateIf(o => o.type === PaymentType.PAID)
   transactionId?: string
 }
+
+export class ConfirmPaymentParamsDto {
+  @ApiProperty()
+  @IsUUID()
+  paymentId: string
+}

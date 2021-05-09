@@ -5,6 +5,7 @@ import { SIGN_IN } from '../auth/auth-query'
 import { SigninParams, SigninResponse } from '../auth/auth-types'
 import {
   ChangeRoleParams,
+  GetUserResponse,
   GetUsersResponse,
   UpdateUserParams,
 } from './user-types'
@@ -20,6 +21,15 @@ export const useGetUsers = () => {
       ...d,
       balance: numberWithCommas(d.balance),
     })) as unknown) as GetUsersResponse['users']
+  })
+}
+
+export const useGetUser = (userId: string) => {
+  return useQuery([USER_URL, { userId }], async () => {
+    const { data } = await api.tomtom.get<GetUserResponse>(
+      `${USER_URL}/${userId}`,
+    )
+    return data
   })
 }
 
