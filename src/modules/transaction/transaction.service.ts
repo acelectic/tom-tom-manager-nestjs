@@ -87,6 +87,17 @@ export class TransactionService {
     return { transactions }
   }
 
+  async getTransaction(transactionId: string) {
+    const transaction = await Transaction.createQueryBuilder('transaction')
+      .leftJoinAndSelect('transaction.users', 'users')
+      .leftJoinAndSelect('transaction.payments', 'payments')
+      .leftJoinAndSelect('transaction.template', 'template')
+      .where('transaction.id = :transactionId', { transactionId })
+      .getOne()
+
+    return transaction
+  }
+
   async createTransaction(params: CreateTransactionParamsDto, etm: EntityManager) {
     const { userIds, templateId } = params
     const users = await User.find({

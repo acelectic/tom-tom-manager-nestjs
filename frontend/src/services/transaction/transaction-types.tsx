@@ -1,4 +1,3 @@
-import { Dayjs } from 'dayjs'
 import { UserEntity } from '../auth/auth-types'
 import { ResourceEntity } from '../resource/resource-types'
 
@@ -16,10 +15,13 @@ export interface TransactionEntity {
 export interface GetTransactionsParams extends PaginationParams {
   userId?: string
 }
-
 export interface GetTransactionsResponse
   extends Pagination<TransactionEntity> {}
 
+export interface GetTransactionParams {
+  transactionId?: string
+}
+export interface GetTransactionResponse extends TransactionEntity {}
 export interface GetTransactionsHistoryParams {
   startDate?: string
   endDate?: string

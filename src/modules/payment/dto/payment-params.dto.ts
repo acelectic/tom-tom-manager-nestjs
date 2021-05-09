@@ -19,11 +19,14 @@ import { BasePaginateParamsDto } from 'src/modules/dto/base.dto'
 
 export class GetPaymentsParamsDto extends BasePaginateParamsDto {
   @ApiProperty()
-  @IsUUID('all', {
-    each: true,
-  })
+  @IsUUID()
   @IsOptional()
   userId?: string
+
+  @ApiProperty()
+  @IsUUID()
+  @IsOptional()
+  transactionId?: string
 }
 export class CreatePaymentParamsDto {
   @ApiProperty()

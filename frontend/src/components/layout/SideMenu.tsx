@@ -17,12 +17,15 @@ import DashboardIcon from '@material-ui/icons/Dashboard'
 import ShoppingCartIcon from '@material-ui/icons/ShoppingCart'
 import PeopleIcon from '@material-ui/icons/People'
 import BarChartIcon from '@material-ui/icons/BarChart'
+import SettingsIcon from '@material-ui/icons/Settings'
 import LayersIcon from '@material-ui/icons/Layers'
 import AssignmentIcon from '@material-ui/icons/Assignment'
+import SecurityIcon from '@material-ui/icons/Security'
 
 interface MenuProps {
   path: string
   label: string
+  icon: ReturnType<typeof DashboardIcon>
 }
 const Menu = (props: MenuProps) => {
   const history = useHistory()
@@ -47,9 +50,7 @@ const Menu = (props: MenuProps) => {
         }}
       >
         <ListItem button>
-          <ListItemIcon>
-            <DashboardIcon />
-          </ListItemIcon>
+          <ListItemIcon>{props.icon}</ListItemIcon>
           <ListItemText
             primary={props.label}
             style={{
@@ -68,16 +69,44 @@ const SideMenu = () => {
   const { data: user } = useCurrUser()
   return (
     <div>
-      <Menu path={paths.dashboard()} label={t('page.dashboard')} />
-      <Menu path={paths.users()} label={t('page.users')} />
-      <Menu path={paths.resources()} label={t('page.resources')} />
-      <Menu path={paths.transactions()} label={t('page.transactions')} />
-      <Menu path={paths.payments()} label={t('page.payments')} />
+      <Menu
+        path={paths.dashboard()}
+        label={t('page.dashboard')}
+        icon={<BarChartIcon />}
+      />
+      <Menu
+        path={paths.users()}
+        label={t('page.users')}
+        icon={<PeopleIcon />}
+      />
+      <Menu
+        path={paths.resources()}
+        label={t('page.resources')}
+        icon={<AssignmentIcon />}
+      />
+      <Menu
+        path={paths.transactions()}
+        label={t('page.transactions')}
+        icon={<ShoppingCartIcon />}
+      />
+      <Menu
+        path={paths.payments()}
+        label={t('page.payments')}
+        icon={<LayersIcon />}
+      />
       <Authenlize roles={[Role.ADMIN, Role.MANAGER]} allowLocalAdmin>
-        <Menu path={paths.setting()} label={t('page.setting')} />
+        <Menu
+          path={paths.setting()}
+          label={t('page.setting')}
+          icon={<SettingsIcon />}
+        />
       </Authenlize>
       <Authenlize allowLocalAdmin>
-        <Menu path={paths.admin()} label={t('page.admin')} />
+        <Menu
+          path={paths.admin()}
+          label={t('page.admin')}
+          icon={<SecurityIcon />}
+        />
       </Authenlize>
     </div>
   )

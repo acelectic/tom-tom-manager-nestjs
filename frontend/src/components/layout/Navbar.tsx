@@ -1,12 +1,5 @@
 import styled from '@emotion/styled'
-import {
-  Box,
-  createStyles,
-  Theme,
-  Typography,
-  withStyles,
-} from '@material-ui/core'
-import React from 'react'
+import { Box, Typography } from '@material-ui/core'
 import { Link } from 'react-router-dom'
 import { useLayoutStyles } from '.'
 import paths from '../../constant/paths'

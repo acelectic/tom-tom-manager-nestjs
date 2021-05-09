@@ -1,4 +1,4 @@
-import { Body, Controller, Get, Post, Query } from '@nestjs/common'
+import { Body, Controller, Get, Param, ParseUUIDPipe, Post, Query } from '@nestjs/common'
 import { Auth } from '../auth/auth.decorator'
 import { ApiTags } from '@nestjs/swagger'
 import { EntityManager, Transaction, TransactionManager } from 'typeorm'
@@ -23,6 +23,11 @@ export class TransactionController {
   @Get('history')
   async getTransactionsHistory(@Query() queryParams: GetTransactionHistoryParamsDto) {
     return this.transactionService.getTransactionsHistory(queryParams)
+  }
+
+  @Get(':transactionId')
+  async getTransaction(@Param('transactionId', new ParseUUIDPipe()) transactionId: string) {
+    return this.transactionService.getTransaction(transactionId)
   }
 
   @Post()

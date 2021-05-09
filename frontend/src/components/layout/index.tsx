@@ -1,4 +1,3 @@
-import styled from '@emotion/styled'
 import {
   AppBar,
   Container,
@@ -107,42 +106,6 @@ export const useLayoutStyles = makeStyles(theme => ({
     height: 240,
   },
 }))
-
-const Wrapper = styled.section`
-  width: 100%;
-  /* height: 100vh; */
-  display: grid;
-  grid-template-rows: max-content auto;
-`
-// const Container = styled.div`
-//   display: grid;
-//   grid-template-columns: max-content auto;
-
-//   main,
-//   aside {
-//     height: 100%;
-//     width: 100%;
-//   }
-//   main {
-//     > div {
-//       padding: 20px;
-//       overflow-y: scroll;
-//       height: 100%;
-//       flex: 1;
-//     }
-//   }
-//   aside {
-//     width: 300px;
-//     background-color: rgb(211, 230, 224);
-//     > div {
-//       padding: 15px 0;
-//       > div,
-//       > a {
-//         padding: 10px 30px;
-//       }
-//     }
-//   }
-// `
 
 interface LayoutProps {}
 const Layout = (props: PropsWithChildren<LayoutProps>) => {

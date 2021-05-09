@@ -11,7 +11,6 @@ import {
   PaymentType,
 } from '../../services/payment/payment-types'
 import { useGetResources } from '../../services/resource/resource-query'
-import { useGetTransactions } from '../../services/transaction/transaction-query'
 import { useGetUsers } from '../../services/user/user-query'
 
 const FormLayout = styled.form`

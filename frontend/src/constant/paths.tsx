@@ -41,6 +41,9 @@ const users = generate('/users')
 const userDetail = generate<{ userId: string }>('/users/:userId')
 const resources = generate('/resources')
 const transactions = generate('/transactions')
+const transactionDetail = generate<{ transactionId: string }>(
+  '/transactions/:transactionId',
+)
 const payments = generate('/payments')
 
 const admin = generate('/admin')
@@ -55,6 +58,7 @@ export default {
   userDetail,
   resources,
   transactions,
+  transactionDetail,
   payments,
   admin,
   setting,

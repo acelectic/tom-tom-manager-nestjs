@@ -14,6 +14,7 @@ export enum PaymentStatus {
 
 export interface GetPaymentsParams extends PaginationParams {
   userId?: string
+  transactionId?: string
 }
 export interface PaymentEntity {
   id: string

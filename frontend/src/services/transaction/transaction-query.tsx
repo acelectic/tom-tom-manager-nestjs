@@ -1,5 +1,4 @@
 import dayjs from 'dayjs'
-import { groupBy } from 'lodash'
 import {
   useMutation,
   useQuery,
@@ -7,7 +6,6 @@ import {
   UseQueryOptions,
 } from 'react-query'
 import { api } from '../../utils/api'
-import { numberWithCommas } from '../../utils/helper'
 import {
   CreateTransactionParams,
   CreateTransactionResponse,
@@ -16,6 +14,8 @@ import {
   GetTransactionsParams,
   GetTransactionsResponse,
   TransactionEntity,
+  GetTransactionParams,
+  GetTransactionResponse,
 } from './transaction-types'
 
 export const TRANSACTION_URL = 'transactions'
@@ -26,11 +26,30 @@ export const useGetTransactions = (
   option?: UseQueryOptions<GetTransactionsResponse>,
 ) => {
   return useQuery(
-    [TRANSACTION_URL, params],
+    [TRANSACTION_URL, { params }],
     async () => {
       const { data } = await api.tomtom.get<GetTransactionsResponse>(
         TRANSACTION_URL,
         params,
+      )
+      return data
+    },
+    {
+      ...option,
+    },
+  )
+}
+
+export const useGetTransaction = (
+  params?: GetTransactionParams,
+  option?: UseQueryOptions<GetTransactionResponse>,
+) => {
+  const { transactionId } = params || {}
+  return useQuery(
+    [TRANSACTION_URL, params],
+    async () => {
+      const { data } = await api.tomtom.get<GetTransactionResponse>(
+        `${TRANSACTION_URL}/${transactionId}`,
       )
       return data
     },

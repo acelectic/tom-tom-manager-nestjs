@@ -18,7 +18,7 @@ import {
 export class PaymentService {
   constructor() {}
   async getPayments(params: GetPaymentsParamsDto) {
-    const { userId, page = 1, limit = 5 } = params
+    const { userId, transactionId, page = 1, limit = 5 } = params
     const queryBuilder = Payment.createQueryBuilder('payment')
       .leftJoinAndSelect('payment.user', 'user')
       .leftJoinAndSelect('payment.resource', 'resource')
@@ -28,7 +28,9 @@ export class PaymentService {
     if (userId) {
       queryBuilder.where('payment.user_id = :userId', { userId })
     }
-    debugLog({ query: queryBuilder.getSql() })
+    if (transactionId) {
+      queryBuilder.where('payment.transaction_id = :transactionId', { transactionId })
+    }
     const payments = await paginate(queryBuilder, { limit, page })
     return payments
   }

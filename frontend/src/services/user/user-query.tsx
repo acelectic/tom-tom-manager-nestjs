@@ -24,13 +24,19 @@ export const useGetUsers = () => {
   })
 }
 
-export const useGetUser = (userId: string) => {
-  return useQuery([USER_URL, { userId }], async () => {
-    const { data } = await api.tomtom.get<GetUserResponse>(
-      `${USER_URL}/${userId}`,
-    )
-    return data
-  })
+export const useGetUser = (userId?: string) => {
+  return useQuery(
+    [USER_URL, { userId }],
+    async () => {
+      const { data } = await api.tomtom.get<GetUserResponse>(
+        `${USER_URL}/${userId}`,
+      )
+      return data
+    },
+    {
+      enabled: !!userId,
+    },
+  )
 }
 
 export const useCreateUser = () => {

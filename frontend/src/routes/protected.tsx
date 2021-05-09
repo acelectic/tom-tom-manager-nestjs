@@ -8,21 +8,25 @@ import Payment from '../pages/Payment'
 import Resource from '../pages/Resource'
 import Setting from '../pages/Setting'
 import Transaction from '../pages/Transaction'
+import TransactionDetail from '../pages/Transaction/TransactionDetail'
 import Users from '../pages/User'
-import UserDetial from '../pages/User/UserDetial'
-import { useCurrUser } from '../services/auth/auth-query'
+import UserDetial from '../pages/User/UserDetail'
 
 export const ProtectedRoute = () => {
-  const { data: user } = useCurrUser()
   return (
     <Layout>
       <Switch>
         <Redirect exact from="/" to={paths.dashboard()} />
         <Route path={paths.dashboard()} component={Dashboard} />
+
         <Route path={paths.userDetail()} component={UserDetial} />
         <Route path={paths.users()} component={Users} />
+
         <Route path={paths.resources()} component={Resource} />
+
+        <Route path={paths.transactionDetail()} component={TransactionDetail} />
         <Route path={paths.transactions()} component={Transaction} />
+
         <Route path={paths.payments()} component={Payment} />
         <Route path={paths.setting()} component={Setting} />
         <Authenlize allowLocalAdmin>
