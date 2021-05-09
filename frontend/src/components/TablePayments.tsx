@@ -7,7 +7,8 @@ import {
   useGetPayments,
 } from '../services/payment/payment-query'
 import { PaymentStatus } from '../services/payment/payment-types'
-import { usePageRunner } from '../utils/custom-hook'
+import { usePageRunner, useSnackbar } from '../utils/custom-hook'
+import { numberWithCommas } from '../utils/helper'
 import BasicList from './BasicList'
 import Authenlize from './commons/Authenlize'
 import Page from './commons/Page'
@@ -25,6 +26,8 @@ const TablePayments = (props: TablePaymentsProps) => {
     },
   })
   const { mutate: confirmPayment } = useConfirmPayment()
+  const { snackbar } = useSnackbar()
+
   const { data: paymentsPaginate } = useGetPayments({
     userId,
     transactionId,
@@ -61,7 +64,7 @@ const TablePayments = (props: TablePaymentsProps) => {
 
   const renderActions = useCallback(
     (data: PaymentType[number]) => {
-      const { id: paymentId, status } = data
+      const { id: paymentId, status, userName, price } = data
       return (
         <Authenlize roles={[Role.ADMIN, Role.MANAGER]} allowLocalAdmin>
           <Button
@@ -70,9 +73,21 @@ const TablePayments = (props: TablePaymentsProps) => {
             style={{ fontWeight: 'bold' }}
             size="small"
             onClick={() => {
-              confirmPayment({
-                paymentId,
-              })
+              confirmPayment(
+                {
+                  paymentId,
+                },
+                {
+                  onSuccess: () => {
+                    snackbar({
+                      type: 'success',
+                      message: `Confirmr Payment: ${userName}, Price: ${numberWithCommas(
+                        price,
+                      )}`,
+                    })
+                  },
+                },
+              )
             }}
             disabled={status !== PaymentStatus.PENDING}
           >

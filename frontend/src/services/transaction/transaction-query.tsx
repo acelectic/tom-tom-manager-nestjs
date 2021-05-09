@@ -54,6 +54,7 @@ export const useGetTransaction = (
       return data
     },
     {
+      enabled: !!transactionId,
       ...option,
     },
   )

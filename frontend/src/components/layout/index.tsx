@@ -15,6 +15,7 @@ import SideMenu from './SideMenu'
 import clsx from 'clsx'
 import MenuIcon from '@material-ui/icons/Menu'
 import ChevronLeftIcon from '@material-ui/icons/ChevronLeft'
+import Breadcrumbs from './Breadcrumbs'
 
 const drawerWidth = 240
 export const useLayoutStyles = makeStyles(theme => ({
@@ -164,6 +165,7 @@ const Layout = (props: PropsWithChildren<LayoutProps>) => {
       <main className={classes.content}>
         <div className={classes.appBarSpacer} />
         <Container maxWidth="lg" className={classes.container}>
+          <Breadcrumbs />
           <>{children}</>
         </Container>
       </main>

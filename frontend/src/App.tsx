@@ -7,6 +7,9 @@ import { I18nextProvider } from 'react-i18next'
 import { Suspense } from 'react'
 import i18next from './constant/i18n'
 import './initialize'
+import { withCtx } from './utils/helper'
+import { AppCtx } from './constant/contexts'
+import { AppSnackbar } from './components/AppSnackbar'
 
 const queryClient = new QueryClient()
 
@@ -16,6 +19,7 @@ const App = () => {
       <QueryClientProvider client={queryClient}>
         <Router>
           <Suspense fallback={<div>...loading</div>}>
+            <AppSnackbar />
             <Routes />
           </Suspense>
         </Router>
@@ -25,4 +29,4 @@ const App = () => {
   )
 }
 
-export default App
+export default withCtx(AppCtx)(App)

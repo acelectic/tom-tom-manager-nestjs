@@ -2,7 +2,7 @@ import Page from '../../../components/commons/Page'
 import Space from '../../../components/commons/Space'
 import TablePayments from '../../../components/TablePayments'
 import TableTransactions from '../../../components/TableTransactions'
-import UserDetailCard from '../../../components/UserDetail'
+import UserDetailCard from '../../../components/UserDetailCard'
 import { useRouter } from '../../../utils/helper'
 
 const UserDetial = () => {
