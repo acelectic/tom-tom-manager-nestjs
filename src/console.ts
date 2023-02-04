@@ -1,6 +1,9 @@
+require('dotenv').config()
 import { BootstrapConsole } from 'nestjs-console'
 import { AppModule } from './app.module'
+import { appConfig } from './config/env-config'
 // import * as admin from 'firebase-admin'
+console.log({ appConfig })
 
 const bootstrap = new BootstrapConsole({
   module: AppModule,
@@ -13,7 +16,6 @@ bootstrap.init().then(async app => {
     // admin.initializeApp({
     //   credential: admin.credential.cert(serviceAccount),
     // })
-
     // init your app
     await app.init()
     // boot the cli

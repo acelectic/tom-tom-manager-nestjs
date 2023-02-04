@@ -1,10 +1,8 @@
-import axios, { AxiosResponse } from 'axios'
+import axios, { AxiosError, AxiosResponse } from 'axios'
 import dayjs from 'dayjs'
 import humps from 'humps'
 import { getToken } from '../../services/auth/auth-action'
 import { customRequestData, deepLoop } from './tools'
-
-require('dotenv').config()
 
 const createClient = () => {
   const ax = axios.create({
@@ -52,14 +50,11 @@ const modifyRequestData = (data: any) => {
 
 export const tomtomClient = createClient()
 
-export const tomtomApiWraper = async (method: Promise<AxiosResponse>) => {
-  try {
-    const res = await method
-    return Promise.resolve(res)
-  } catch (e) {
+export const tomtomApiWrapper = async (method: Promise<AxiosResponse>) => {
+  return method.catch((e: AxiosError) => {
     const { response, message } = e
     const { data } = response || {}
     const { message: errorMessage } = data || {}
     return Promise.reject(errorMessage || message || e)
-  }
+  })
 }

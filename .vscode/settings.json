@@ -1,4 +1,25 @@
 {
+    "editor.rulers": [
+        100
+      ],
+      "editor.wordWrapColumn": 100,
+      "editor.tabSize": 2,
+      "editor.insertSpaces": true,
+      "editor.formatOnSave": true,
+      "editor.codeActionsOnSave": {
+        "source.fixAll.eslint": true,
+        "source.fixAll": true
+      },
+      "editor.defaultFormatter": "esbenp.prettier-vscode",
+      "[javascript]": {
+        "editor.defaultFormatter": "esbenp.prettier-vscode"
+      },
+      "typescript.tsdk": "node_modules/typescript/lib",
+      "i18n-ally.localesPaths": "frontend/src/constant/i18n",
+      "i18n-ally.enabledFrameworks": ["react", "i18next"],
+      "i18n-ally.namespace": true,
+      "i18n-ally.pathMatcher": "{locale}.json",
+      "i18n-ally.keystyle": "nested",
     "marquee.widgets.npm-stats.packageNames": [
         "tom-tom-manager"
     ]

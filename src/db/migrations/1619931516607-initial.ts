@@ -5,6 +5,9 @@ export class initial1619931516607 implements MigrationInterface {
 
   public async up(queryRunner: QueryRunner): Promise<void> {
     await queryRunner.query(
+      `CREATE TYPE "users_role_enum" AS ENUM('admin', 'manager', 'user', 'viewer')`,
+    )
+    await queryRunner.query(
       `CREATE TABLE "users" ("id" uuid NOT NULL DEFAULT gen_random_uuid(), "created_at" TIMESTAMP NOT NULL DEFAULT now(), "updated_at" TIMESTAMP NOT NULL DEFAULT now(), "deleted_at" TIMESTAMP, "mobile_no" character varying, "firstname_th" character varying, "lastname_th" character varying, "birthdate" TIMESTAMP, "gender" character varying, "email" character varying, "last_sign_in_at" TIMESTAMP, "password" character varying, "role" "users_role_enum" NOT NULL DEFAULT 'user', CONSTRAINT "PK_a3ffb1c0c8416b9fc6f907b7433" PRIMARY KEY ("id"))`,
     )
     await queryRunner.query(

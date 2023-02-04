@@ -14,21 +14,18 @@ import { urlencoded, json, Request } from 'express'
 import { DbExeptionFilter } from './db-exeption.filter'
 import { router, setQueues } from 'bull-board'
 import basicAuth from 'express-basic-auth'
-// import { debugLog } from './utils/helper'
 import './initialize'
-import cors from 'cors'
-import { ResponseInterceptor } from './utils/interceptors/response.interceptor'
-import { debugLog } from './utils/helper'
 import { appConfig } from './config/env-config'
 // const sreviceAccount = require('../test-man-savvy-firebase-adminsdk-f2848-982951f18b.json')
-// const cors = require('cors')
-// import { createProxyMiddleware } from 'http-proxy-middleware'
+
 @Catch()
 export class ExceptionsLoggerFilter extends BaseExceptionFilter {
   catch(exception: any, host: ArgumentsHost) {
     super.catch(exception, host)
   }
 }
+
+console.log({ appConfig })
 
 const whitelistOrigin = [
   'https://tomtom-react.herokuapp.com',
