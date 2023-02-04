@@ -12,8 +12,6 @@ bootstrap.init().then(async app => {
     // const serviceAccount = require('../private/serviceAccountKey.json')
     // admin.initializeApp({
     //   credential: admin.credential.cert(serviceAccount),
-    //   storageBucket: process.env.FIREBASE_STORAGE_BUCKET,
-    //   projectId: process.env.FIREBASE_PROJECT_ID,
     // })
 
     // init your app

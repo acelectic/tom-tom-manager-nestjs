@@ -4,6 +4,7 @@ import { ExtractJwt, Strategy } from 'passport-jwt'
 import { httpError } from '../../utils/response-error'
 import { UserService } from '../user/user.service'
 import { TokenData } from './auth.interface'
+import { appConfig } from 'src/config/env-config'
 
 @Injectable()
 export class JwtStrategy extends PassportStrategy(Strategy) {
@@ -11,7 +12,7 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
     super({
       jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),
       ignoreExpiration: false,
-      secretOrKey: process.env.JWT_SECRET_KEY,
+      secretOrKey: appConfig.JWT_SECRET_KEY,
     })
   }
 

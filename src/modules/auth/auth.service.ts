@@ -50,13 +50,6 @@ export class AuthService {
     return await this.signIn(paramsSignInBase, etm)
   }
 
-  async generateClientSecret() {
-    const teamId = process.env.APPLE_TEAM_ID
-    const clientId = process.env.APPLE_CLIENT_ID
-    const keyId = process.env.APPLE_KEY_ID
-    const keyFile = `private/AuthKey_${keyId}.p8`
-  }
-
   private async generateAccountId() {
     return Math.random()
       .toString(36)

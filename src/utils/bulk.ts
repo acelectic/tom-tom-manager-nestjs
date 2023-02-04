@@ -1,13 +1,14 @@
 import { Connection, getConnection } from 'typeorm'
 import pgPromise from 'pg-promise'
+import { appConfig } from 'src/config/env-config'
 
 export const bulk = async (data: any, column: any, table: string) => {
   const connection: Connection = getConnection()
   const dbConfig = {
-    host: process.env.DB_HOST,
-    port: process.env.DB_PORT,
-    username: process.env.DB_USERNAME,
-    password: process.env.DB_PASSWORD,
+    host: appConfig.DB_HOST,
+    port: appConfig.DB_PORT,
+    username: appConfig.DB_USERNAME,
+    password: appConfig.DB_PASSWORD,
     database: connection.options.database,
   }
 

@@ -19,6 +19,7 @@ import './initialize'
 import cors from 'cors'
 import { ResponseInterceptor } from './utils/interceptors/response.interceptor'
 import { debugLog } from './utils/helper'
+import { appConfig } from './config/env-config'
 // const sreviceAccount = require('../test-man-savvy-firebase-adminsdk-f2848-982951f18b.json')
 // const cors = require('cors')
 // import { createProxyMiddleware } from 'http-proxy-middleware'
@@ -39,9 +40,9 @@ const whitelistOrigin = [
 setQueues([])
 const loggerProduction: LogLevel[] = ['warn']
 const logger: NestApplicationOptions =
-  process.env.LOG_LEVEL === 'debug'
+  appConfig.LOG_LEVEL === 'debug'
     ? { logger: ['debug'] }
-    : process.env.LOG_LEVEL === 'production'
+    : appConfig.LOG_LEVEL === 'production'
     ? { logger: loggerProduction }
     : {}
 async function bootstrap() {
@@ -91,21 +92,14 @@ async function bootstrap() {
     '/bull-board',
     basicAuth({
       users: {
-        admin: process.env.BULL_BOARD_PASSWORD,
+        admin: appConfig.BULL_BOARD_PASSWORD,
       },
       challenge: true,
     }),
     router,
   )
 
-  // Initialize the firebase admin app
-  // const serviceAccount = require('../private/serviceAccountKey.json')
-  // admin.initializeApp({
-  //   credential: admin.credential.cert(serviceAccount),
-  //   storageBucket: process.env.FIREBASE_STORAGE_BUCKET,
-  //   projectId: process.env.FIREBASE_PROJECT_ID,
-  // })
-  const port = parseInt(process.env.PORT)
+  const port = appConfig.PORT
   await app.listen(port, () => {
     console.log('Nest server listening on port ' + port + '.')
   })

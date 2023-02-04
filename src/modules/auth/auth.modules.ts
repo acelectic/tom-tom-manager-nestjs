@@ -6,13 +6,14 @@ import { UserModule } from '../user/user.module'
 import { AuthController } from './auth.controller'
 import { AuthService } from './auth.service'
 import { JwtStrategy } from './jwt.strategy'
+import { appConfig } from 'src/config/env-config'
 
 @Module({
   imports: [
     UserModule,
     PassportModule,
     JwtModule.register({
-      secret: process.env.JWT_SECRET_KEY,
+      secret: appConfig.JWT_SECRET_KEY,
       // signOptions: { expiresIn: 'none' },
     }),
   ],

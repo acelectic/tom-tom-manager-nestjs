@@ -8,6 +8,7 @@ import { AuthService } from '../modules/auth/auth.service'
 import { UserService } from '../modules/user/user.service'
 import { User, UserSignInType } from '../db/entities/User'
 import { Role } from '../modules/auth/auth.constant'
+import { appConfig } from 'src/config/env-config'
 
 export const truncates = (...tableNames: string[]) => {
   const query = tableNames.map(name => `TRUNCATE ${name} CASCADE;`).join('')
@@ -30,21 +31,21 @@ export const createTestingApp = (moduleRef: TestingModule): INestApplication => 
 
 export const createTestingModule = async (...modules) => {
   console.log(
-    process.env.DB_HOST,
-    Number(process.env.DB_PORT),
-    process.env.DB_USERNAME,
-    process.env.DB_PASSWORD,
-    process.env.DB_TEST_NAME,
+    appConfig.DB_HOST,
+    Number(appConfig.DB_PORT),
+    appConfig.DB_USERNAME,
+    appConfig.DB_PASSWORD,
+    appConfig.DB_TEST_NAME,
   )
   return await Test.createTestingModule({
     imports: [
       TypeOrmModule.forRoot({
         type: 'postgres',
-        host: process.env.DB_HOST,
-        port: Number(process.env.DB_PORT),
-        username: process.env.DB_USERNAME,
-        password: process.env.DB_PASSWORD,
-        database: process.env.DB_TEST_NAME,
+        host: appConfig.DB_HOST,
+        port: Number(appConfig.DB_PORT),
+        username: appConfig.DB_USERNAME,
+        password: appConfig.DB_PASSWORD,
+        database: appConfig.DB_TEST_NAME,
         synchronize: false,
         entities: ['src/db/entities/*{.js,.ts}'],
         autoLoadEntities: true,
