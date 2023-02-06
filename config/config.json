@@ -24,6 +24,6 @@
     "host": "ec2-52-202-66-191.compute-1.amazonaws.com",
     "operatorsAliases": false,
     "dialect": "postgres",
-    "use_env_variable": "DATABASE_URL"
+    "use_env_variable": "DB_HEROKU_URL"
   }
 }

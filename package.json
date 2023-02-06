@@ -11,9 +11,8 @@
   },
   "scripts": {
     "prebuild": "rimraf dist",
-    "build": "yarn prebuild && nest build",
-    "build:s": "yarn prebuild && nest build",
-    "build:c": "cd frontend && yarn install --dev && yarn build",
+    "build": "nest build",
+    "build:s": "nest build",
     "format": "prettier --write \"src/**/*.ts\" \"libs/**/*.ts\"",
     "start": "yarn prebuild && nest start --watch",
     "start:c": "cd frontend && yarn start",
