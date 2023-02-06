@@ -1,12 +1,8 @@
 import { Button } from '@material-ui/core'
-import { useCallback, useContext } from 'react'
-import { Form } from 'react-final-form'
-import { OnChange } from 'react-final-form-listeners'
+import { useCallback, useContext, useMemo } from 'react'
 import { useTranslation } from 'react-i18next'
-import BasicList from '../../components/BasicList'
 import Page from '../../components/commons/Page'
 import Space from '../../components/commons/Space'
-import { SwitchField } from '../../components/fields'
 import { TemplateFormCtx } from '../../constant/contexts'
 import {
   useCreateTemplate,
@@ -16,27 +12,36 @@ import {
 } from '../../services/template/template-query'
 import { TemplateEntity } from '../../services/template/template-types'
 import { withCtx } from '../../utils/helper'
-import TemplateForm, { TemplateFormValues } from './TemplateForm'
+import TemplateForm, { ITemplateFormValues } from './TemplateFormModal'
+import { Switch, Table } from 'antd'
+import { ColumnType } from 'antd/es/table'
 
 const Setting = () => {
   const { t } = useTranslation()
   const { data: templates } = useGetTemplates()
   const { mutate: createTemplate } = useCreateTemplate()
   const { mutate: updateTemplate } = useUpdateTemplate()
-  const { mutate: setActiveStatus } = useUpdateTemplateIsActive()
+  const {
+    mutate: setActiveStatus,
+    isLoading: isSetActiveStatusLoading,
+  } = useUpdateTemplateIsActive()
   const [, setState] = useContext(TemplateFormCtx)
 
   const onSubmitTemplateForm = useCallback(
-    (values: TemplateFormValues) => {
-      const { id, isActive, resourceIds } = values
+    (values: ITemplateFormValues) => {
+      const { id, name, description, isActive, resourceIds } = values
       if (id) {
         updateTemplate({
           templateId: id,
+          name,
+          description,
           isActive,
           resourceIds,
         })
       } else {
         createTemplate({
+          name,
+          description,
           isActive,
           resourceIds,
         })
@@ -45,62 +50,87 @@ const Setting = () => {
     [createTemplate, updateTemplate],
   )
 
-  const renderActions = useCallback(
-    (data: TemplateEntity) => {
-      const { id: templateId, isActive, ref, resources } = data
-      return (
-        <Space spacing={10}>
-          <Form
-            onSubmit={() => {}}
-            initialValues={{
-              isActive,
-            }}
-            subscription={{ values: true }}
-          >
-            {() => {
-              return (
-                <div>
-                  <SwitchField name="isActive" />
-                  <OnChange name="isActive">
-                    {value => {
-                      setActiveStatus({
-                        templateId,
-                        isActive: value,
-                      })
-                    }}
-                  </OnChange>
-                </div>
-              )
-            }}
-          </Form>
-          <Button
-            variant="outlined"
-            color={'primary'}
-            style={{ fontWeight: 'bold' }}
-            size="small"
-            onClick={() => {
-              setState({
-                visible: true,
-                id: templateId,
-                isActive,
-                ref,
-                resourceIds: resources ? resources.map(d => d.id) : [],
-              })
-            }}
-          >
-            Edit
-          </Button>
-        </Space>
-      )
-    },
-    [setActiveStatus, setState],
-  )
-
   const onButtonAddTemplateClick = useCallback(() => {
     setState({
       visible: true,
     })
   }, [setState])
+
+  const columns = useMemo(() => {
+    const tmpColumns: ColumnType<TemplateEntity>[] = [
+      {
+        title: 'Ref',
+        dataIndex: 'ref',
+      },
+      {
+        title: 'Name',
+        dataIndex: 'name',
+      },
+      {
+        title: 'Description',
+        dataIndex: 'description',
+        ellipsis: true,
+      },
+      {
+        title: 'Cost',
+        dataIndex: 'cost',
+      },
+      {
+        title: 'Status',
+        render: (value, record) => {
+          const { id: templateId, isActive } = record
+          return (
+            <Switch
+              checked={isActive}
+              checkedChildren="Active"
+              unCheckedChildren="Inactive"
+              loading={isSetActiveStatusLoading}
+              onChange={checked => {
+                setActiveStatus({
+                  templateId,
+                  isActive: checked,
+                })
+              }}
+            />
+          )
+        },
+      },
+      {
+        render: (value, record) => {
+          const {
+            id: templateId,
+            name,
+            description,
+            isActive,
+            ref,
+            resources,
+          } = record
+          return (
+            <Button
+              variant="outlined"
+              color={'primary'}
+              style={{ fontWeight: 'bold' }}
+              size="small"
+              onClick={() => {
+                setState({
+                  visible: true,
+                  id: templateId,
+                  name,
+                  description,
+                  isActive,
+                  ref,
+                  resourceIds: resources ? resources.map(d => d.id) : [],
+                })
+              }}
+            >
+              Edit
+            </Button>
+          )
+        },
+      },
+    ]
+    return tmpColumns
+  }, [isSetActiveStatusLoading, setActiveStatus, setState])
 
   return (
     <Page title={t('Setting')}>
@@ -112,10 +142,46 @@ const Setting = () => {
         >
           Add Template
         </Button>
-        <BasicList
-          data={templates}
-          columns={['ref', 'cost', 'isActiveLabel']}
-          renderActions={renderActions}
+        <Table
+          dataSource={templates}
+          columns={columns}
+          scroll={{
+            x: true,
+          }}
+          expandable={{
+            expandedRowRender: record => {
+              const { resources = [] } = record
+              return (
+                <Table
+                  columns={[
+                    {
+                      title: 'Ref',
+                      key: 'ref',
+                      dataIndex: 'ref',
+                    },
+
+                    {
+                      title: 'Name',
+                      key: 'name',
+                      dataIndex: 'name',
+                    },
+
+                    {
+                      title: 'Price',
+                      key: 'price',
+                      dataIndex: 'price',
+                    },
+                  ]}
+                  dataSource={resources}
+                  pagination={false}
+                />
+              )
+            },
+          }}
+          pagination={{
+            size: 'small',
+            pageSize: 5,
+          }}
         />
       </Space>
       <TemplateForm onSubmit={onSubmitTemplateForm} />

@@ -1,5 +1,5 @@
+import { Table } from 'antd'
 import AddButton from '../../components/AddButton'
-import BasicList from '../../components/BasicList'
 import Authorize from '../../components/commons/Authorize'
 import Page from '../../components/commons/Page'
 import { Role } from '../../services/auth/auth-types'
@@ -7,11 +7,35 @@ import {
   useCreateResource,
   useGetResources,
 } from '../../services/resource/resource-query'
-import { CreateResourceParams } from '../../services/resource/resource-types'
+import {
+  CreateResourceParams,
+  ResourceEntity,
+} from '../../services/resource/resource-types'
+import { ColumnType } from 'antd/es/table'
+import { useMemo } from 'react'
 
 const Resource = () => {
   const { data: resources } = useGetResources()
   const { mutate: createResource } = useCreateResource()
+
+  const columns = useMemo(() => {
+    const tmpColumns: ColumnType<ResourceEntity>[] = [
+      {
+        title: 'Ref',
+        dataIndex: 'ref',
+      },
+      {
+        title: 'Name',
+        dataIndex: 'name',
+      },
+      {
+        title: 'Price',
+        dataIndex: 'price',
+      },
+    ]
+    return tmpColumns
+  }, [])
+
   return (
     <Page title="Resource">
       <Authorize roles={[Role.ADMIN, Role.MANAGER]}>
@@ -27,7 +51,14 @@ const Resource = () => {
           }}
         />
       </Authorize>
-      <BasicList data={resources} columns={['ref', 'name', 'price']} />
+      <Table
+        dataSource={resources}
+        columns={columns}
+        pagination={{
+          size: 'small',
+          pageSize: 5,
+        }}
+      />
     </Page>
   )
 }

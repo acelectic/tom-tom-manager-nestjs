@@ -3,6 +3,8 @@ import { ResourceEntity } from '../resource/resource-types'
 export interface TemplateEntity {
   id: string
   ref: string
+  name: string
+  description: string
   isActive: boolean
   resources?: ResourceEntity[]
 }
@@ -15,6 +17,8 @@ export interface GetTemplateResponse {
 }
 
 export interface CreateTemplateParams {
+  name: string
+  description: string
   resourceIds: string[]
   isActive?: boolean
 }
@@ -22,6 +26,8 @@ export interface CreateTemplateResponse extends TemplateEntity {}
 
 export interface UpdateTemplateParams {
   templateId: string
+  name: string
+  description: string
   resourceIds?: string[]
   isActive?: boolean
 }

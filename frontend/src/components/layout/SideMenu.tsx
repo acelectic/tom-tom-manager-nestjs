@@ -1,27 +1,18 @@
-import {
-  Box,
-  ListItem,
-  ListItemIcon,
-  ListItemText,
-  Typography,
-} from '@material-ui/core'
+import { Box, ListItem, ListItemIcon, ListItemText } from '@material-ui/core'
 import paths from '../../constant/paths'
 import { Link, useHistory } from 'react-router-dom'
 import { useTranslation } from 'react-i18next'
 import { useCurrUser } from '../../services/auth/auth-query'
-import React, { useMemo } from 'react'
+import { useMemo } from 'react'
 import Authorize from '../commons/Authorize'
 import { Role } from '../../services/auth/auth-types'
-
 import DashboardIcon from '@material-ui/icons/Dashboard'
 import ShoppingCartIcon from '@material-ui/icons/ShoppingCart'
 import PeopleIcon from '@material-ui/icons/People'
 import BarChartIcon from '@material-ui/icons/BarChart'
 import SettingsIcon from '@material-ui/icons/Settings'
-import LayersIcon from '@material-ui/icons/Layers'
 import AssignmentIcon from '@material-ui/icons/Assignment'
 import SecurityIcon from '@material-ui/icons/Security'
-import MoneyOff from '@material-ui/icons/MoneyOff'
 import MoneyRounded from '@material-ui/icons/MoneyRounded'
 
 interface MenuProps {
@@ -68,7 +59,7 @@ const Menu = (props: MenuProps) => {
 
 const SideMenu = () => {
   const { t } = useTranslation()
-  const { data: user } = useCurrUser()
+  useCurrUser()
   return (
     <div>
       <Menu
@@ -82,11 +73,6 @@ const SideMenu = () => {
         icon={<PeopleIcon />}
       />
       <Menu
-        path={paths.resources()}
-        label={t('page.resources')}
-        icon={<AssignmentIcon />}
-      />
-      <Menu
         path={paths.transactions()}
         label={t('page.transactions')}
         icon={<ShoppingCartIcon />}
@@ -95,6 +81,11 @@ const SideMenu = () => {
         path={paths.payments()}
         label={t('page.payments')}
         icon={<MoneyRounded />}
+      />
+      <Menu
+        path={paths.resources()}
+        label={t('page.resources')}
+        icon={<AssignmentIcon />}
       />
       <Authorize roles={[Role.ADMIN, Role.MANAGER]} allowLocalAdmin>
         <Menu

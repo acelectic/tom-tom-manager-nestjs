@@ -33,10 +33,12 @@ export const useCreateTemplate = () => {
   const queryClient = useQueryClient()
   return useMutation(
     async (params: CreateTemplateParams) => {
-      const { resourceIds, isActive } = params
+      const { name, description, resourceIds, isActive } = params
       const { data } = await api.tomtom.post<CreateTemplateResponse>(
         TEMPLATE_URL,
         {
+          name,
+          description,
           resourceIds,
           isActive,
         },
@@ -54,10 +56,12 @@ export const useUpdateTemplate = () => {
   const queryClient = useQueryClient()
   return useMutation(
     async (params: UpdateTemplateParams) => {
-      const { templateId, resourceIds, isActive } = params
+      const { templateId, name, description, resourceIds, isActive } = params
       const { data } = await api.tomtom.patch<UpdateTemplateResponse>(
         `${TEMPLATE_URL}/${templateId}`,
         {
+          name,
+          description,
           resourceIds,
           isActive,
         },
