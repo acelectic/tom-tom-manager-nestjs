@@ -7,8 +7,10 @@ import {
   IsIn,
   IsNotEmpty,
   IsOptional,
+  IsString,
   IsUUID,
 } from 'class-validator'
+import { isString } from 'lodash'
 
 export class GetTemplatesParamsDto {
   @ApiProperty()
@@ -20,6 +22,16 @@ export class GetTemplatesParamsDto {
 }
 
 export class CreateTemplateParamsDto {
+  @ApiProperty()
+  @IsString()
+  @IsNotEmpty()
+  name: string
+
+  @ApiProperty()
+  @IsString()
+  @IsOptional()
+  description: string
+
   @ApiProperty()
   @IsUUID('all', {
     each: true,
@@ -36,6 +48,16 @@ export class CreateTemplateParamsDto {
 }
 
 export class UpdateTemplateParamsDto {
+  @ApiProperty()
+  @IsString()
+  @IsNotEmpty()
+  name: string
+
+  @ApiProperty()
+  @IsString()
+  @IsOptional()
+  description: string
+
   @ApiProperty()
   @IsUUID('all', {
     each: true,

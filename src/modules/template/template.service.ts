@@ -33,12 +33,12 @@ export class TemplateService {
   }
 
   async createTemplate(params: CreateTemplateParamsDto, etm: EntityManager) {
-    const { resourceIds, isActive = true } = params
+    const { name, description, isActive = true, resourceIds } = params
     const resources = await Resource.findByIds(resourceIds, {
       relations: ['templates'],
     })
 
-    const template = await etm.create(Template, { isActive })
+    const template = await etm.create(Template, { name, description, isActive })
     await etm.save(template)
 
     if (resourceIds?.length && resources.length) {
@@ -49,7 +49,7 @@ export class TemplateService {
   }
 
   async updateTemplate(templateId: string, params: UpdateTemplateParamsDto, etm: EntityManager) {
-    const { resourceIds, isActive } = params
+    const { name, description, resourceIds, isActive } = params
     const template = await Template.findOne(templateId)
     const resources = await Resource.findByIds(resourceIds)
 
@@ -57,6 +57,8 @@ export class TemplateService {
       template.resources = resources
     }
     template.isActive = isActive
+    template.name = name
+    template.description = description
     return await etm.save(template)
   }
 

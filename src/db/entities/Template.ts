@@ -1,31 +1,8 @@
 import { Transform } from 'class-transformer'
-import { transformerDecimalToNumber } from 'src/utils/entity-transform'
-import { debugLog, roundUpOnly } from 'src/utils/helper'
-import {
-  Column,
-  Entity,
-  DeleteDateColumn,
-  Index,
-  FindConditions,
-  ObjectType,
-  OneToMany,
-  JoinColumn,
-  ManyToMany,
-  JoinTable,
-  BeforeInsert,
-  AfterInsert,
-  getConnection,
-  Connection,
-  EntityManager,
-  AfterUpdate,
-  Generated,
-  RelationId,
-} from 'typeorm'
+import { Column, Entity, OneToMany, ManyToMany, JoinTable, Generated, RelationId } from 'typeorm'
 import { AppEntity } from './AppEntity'
-import { Payment } from './Payment'
 import { Resource } from './Resource'
 import { Transaction } from './Transaction'
-import { User } from './User'
 
 @Entity({ name: 'templates' })
 export class Template extends AppEntity {
@@ -36,6 +13,12 @@ export class Template extends AppEntity {
   })
   @Transform(({ value }) => `${value}`.padStart(6))
   ref: string
+
+  @Column({ name: 'name', type: 'text', nullable: false, default: '' })
+  name: string
+
+  @Column({ name: 'description', type: 'text', nullable: true, default: '' })
+  description: string
 
   @Column({ name: 'is_active', type: 'boolean', default: false, nullable: true })
   isActive: boolean
