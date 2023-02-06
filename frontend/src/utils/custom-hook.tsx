@@ -1,4 +1,4 @@
-import { useContext, useCallback } from 'react'
+import { useContext, useCallback, useMemo } from 'react'
 import { AppSnackbarProps } from '../components/AppSnackbar'
 import { AppCtx } from '../constant/contexts'
 import { useQueryParams } from './helper'
@@ -32,7 +32,7 @@ export const useSnackbar = () => {
 
   return { snackbar }
 }
-type UsePageRunngerParam = {
+type UsePageRunnerParams = {
   initialPage?: number
   initialPageSize?: number
   alias?: {
@@ -40,34 +40,46 @@ type UsePageRunngerParam = {
     perPage?: string
   }
 }
-export const usePageRunner = (params?: UsePageRunngerParam) => {
+export const usePageRunner = (params?: UsePageRunnerParams) => {
   const { initialPage = 1, initialPageSize = 5, alias } = params || {}
   const {
     page: pageParamName = 'page',
     perPage: perPageParamName = 'perPage',
   } = alias || {}
   const { query, setParam } = useQueryParams<any>()
-  const {
-    [pageParamName]: page = initialPage,
-    [perPageParamName]: perPage = initialPageSize,
-  } = query
+  const { page, perPage } = useMemo(() => {
+    const {
+      [pageParamName]: page = initialPage,
+      [perPageParamName]: perPage = initialPageSize,
+    } = query
+
+    return {
+      page: +page,
+      perPage: +perPage,
+    }
+  }, [initialPage, initialPageSize, pageParamName, perPageParamName, query])
+
   const setPage = useCallback(
-    page => {
-      setParam({
-        [perPageParamName]: perPage,
-        [pageParamName]: page,
-      })
+    newPage => {
+      if (newPage !== page) {
+        setParam({
+          [perPageParamName]: perPage,
+          [pageParamName]: newPage,
+        })
+      }
     },
-    [pageParamName, perPage, perPageParamName, setParam],
+    [page, pageParamName, perPage, perPageParamName, setParam],
   )
   const setPerPage = useCallback(
-    perPage => {
-      setParam({
-        [perPageParamName]: perPage,
-        [pageParamName]: 1,
-      })
+    newPerPage => {
+      if (newPerPage !== perPage) {
+        setParam({
+          [perPageParamName]: newPerPage,
+          [pageParamName]: 1,
+        })
+      }
     },
-    [pageParamName, perPageParamName, setParam],
+    [pageParamName, perPage, perPageParamName, setParam],
   )
 
   const setNewPage = useCallback(

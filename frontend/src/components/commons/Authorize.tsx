@@ -1,6 +1,7 @@
 import { PropsWithChildren, useMemo } from 'react'
 import { useCurrUser } from '../../services/auth/auth-query'
 import { Role } from '../../services/auth/auth-types'
+import { appConfig } from '../../config'
 
 interface IAuthorizeProps {
   roles?: Role[]
@@ -14,11 +15,7 @@ const Authorize = (props: PropsWithChildren<IAuthorizeProps>) => {
     if (role && roles.includes(role)) {
       return true
     }
-    if (
-      allowLocalAdmin &&
-      process.env.REACT_APP_ADMIN_EMAIL &&
-      email === process.env.REACT_APP_ADMIN_EMAIL
-    ) {
+    if (allowLocalAdmin && email && email === appConfig.REACT_APP_ADMIN_EMAIL) {
       return true
     }
     return false

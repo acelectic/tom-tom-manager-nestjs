@@ -25,7 +25,7 @@ const TableTransactions = (props: TableTransactionsProps) => {
     },
   })
 
-  const { data: transactionsPaginate } = useGetTransactions({
+  const { data: transactionsPaginate, isLoading } = useGetTransactions({
     userId,
     page,
     limit: pageSize,
@@ -103,8 +103,10 @@ const TableTransactions = (props: TableTransactionsProps) => {
   return (
     <Page title={'Transaction'}>
       <Table
+        rowKey="id"
         dataSource={dataSource}
         columns={columns}
+        loading={isLoading}
         pagination={{
           size: 'small',
           current: page,

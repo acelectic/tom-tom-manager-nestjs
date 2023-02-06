@@ -39,7 +39,7 @@ export const useGetPayments = (
       )
       return data
     },
-    { ...option },
+    { keepPreviousData: true, ...option },
   )
 }
 

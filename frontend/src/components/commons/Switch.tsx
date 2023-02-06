@@ -1,41 +1,29 @@
-import React, { useCallback } from 'react'
-import { Grid, Switch as SwitchMui, Typography } from '@material-ui/core'
+import { Switch as AntdSwitch } from 'antd'
 
 export interface SwitchProps {
   labelActive?: string
   labelInActive?: string
   value?: boolean
   onChange?: (value: boolean) => void
+  isLoading?: boolean
 }
 const Switch = (props: SwitchProps) => {
   const {
     value = false,
-    labelActive = 'On',
-    labelInActive = 'Off',
+    labelActive = 'Active',
+    labelInActive = 'Inactive',
     onChange,
+    isLoading,
   } = props
-  const handleChange = useCallback(
-    (event: React.ChangeEvent<HTMLInputElement>) => {
-      onChange?.(event.target.checked)
-    },
-    [onChange],
-  )
 
   return (
-    <Typography component="div" style={{ paddingTop: 6, paddingBottom: 6 }}>
-      <Grid component="label" container alignItems="center" spacing={1}>
-        <Grid item>{labelInActive}</Grid>
-        <Grid item>
-          <SwitchMui
-            checked={value}
-            onChange={handleChange}
-            name="checkedA"
-            inputProps={{ 'aria-label': 'secondary checkbox' }}
-          />
-        </Grid>
-        <Grid item>{labelActive}</Grid>
-      </Grid>
-    </Typography>
+    <AntdSwitch
+      checked={value}
+      checkedChildren={labelActive}
+      unCheckedChildren={labelInActive}
+      loading={isLoading}
+      onChange={onChange}
+    />
   )
 }
 

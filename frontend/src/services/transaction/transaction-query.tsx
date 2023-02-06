@@ -35,6 +35,7 @@ export const useGetTransactions = (
       return data
     },
     {
+      keepPreviousData: true,
       ...option,
     },
   )

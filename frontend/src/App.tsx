@@ -1,3 +1,4 @@
+/* eslint-disable no-template-curly-in-string */
 import './App.css'
 import { QueryClient, QueryClientProvider } from 'react-query'
 import { Routes } from './routes'
@@ -10,6 +11,7 @@ import './initialize'
 import { withCtx } from './utils/helper'
 import { AppCtx } from './constant/contexts'
 import { AppSnackbar } from './components/AppSnackbar'
+import { ConfigProvider } from 'antd'
 const queryClient = new QueryClient()
 
 const App = () => {
@@ -19,7 +21,15 @@ const App = () => {
         <Router>
           <Suspense fallback={<div>...loading</div>}>
             <AppSnackbar />
-            <Routes />
+            <ConfigProvider
+              form={{
+                validateMessages: {
+                  required: '${label} is Required!',
+                },
+              }}
+            >
+              <Routes />
+            </ConfigProvider>
           </Suspense>
         </Router>
         <ReactQueryDevtools initialIsOpen={false} />

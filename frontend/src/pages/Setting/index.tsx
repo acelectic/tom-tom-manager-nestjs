@@ -2,7 +2,6 @@ import { Button } from '@material-ui/core'
 import { useCallback, useContext, useMemo } from 'react'
 import { useTranslation } from 'react-i18next'
 import Page from '../../components/commons/Page'
-import Space from '../../components/commons/Space'
 import { TemplateFormCtx } from '../../constant/contexts'
 import {
   useCreateTemplate,
@@ -13,7 +12,7 @@ import {
 import { TemplateEntity } from '../../services/template/template-types'
 import { withCtx } from '../../utils/helper'
 import TemplateForm, { ITemplateFormValues } from './TemplateFormModal'
-import { Switch, Table } from 'antd'
+import { Col, Row, Switch, Table } from 'antd'
 import { ColumnType } from 'antd/es/table'
 
 const Setting = () => {
@@ -72,7 +71,7 @@ const Setting = () => {
         ellipsis: true,
       },
       {
-        title: 'Cost',
+        title: 'Price',
         dataIndex: 'cost',
       },
       {
@@ -134,56 +133,57 @@ const Setting = () => {
 
   return (
     <Page title={t('Setting')}>
-      <Space direction="column" spacing={30}>
-        <Button
-          variant="outlined"
-          color="primary"
-          onClick={onButtonAddTemplateClick}
-        >
-          Add Template
-        </Button>
-        <Table
-          dataSource={templates}
-          columns={columns}
-          scroll={{
-            x: true,
-          }}
-          expandable={{
-            expandedRowRender: record => {
-              const { resources = [] } = record
-              return (
-                <Table
-                  columns={[
-                    {
-                      title: 'Ref',
-                      key: 'ref',
-                      dataIndex: 'ref',
-                    },
+      <Row gutter={[30, 30]}>
+        <Col span={24}>
+          <Button
+            variant="outlined"
+            color="primary"
+            onClick={onButtonAddTemplateClick}
+          >
+            Add Template
+          </Button>
+        </Col>
+        <Col span={24}>
+          <Table
+            dataSource={templates}
+            columns={columns}
+            expandable={{
+              expandedRowRender: record => {
+                const { resources = [] } = record
+                return (
+                  <Table
+                    columns={[
+                      {
+                        title: 'Ref',
+                        key: 'ref',
+                        dataIndex: 'ref',
+                      },
 
-                    {
-                      title: 'Name',
-                      key: 'name',
-                      dataIndex: 'name',
-                    },
+                      {
+                        title: 'Name',
+                        key: 'name',
+                        dataIndex: 'name',
+                      },
 
-                    {
-                      title: 'Price',
-                      key: 'price',
-                      dataIndex: 'price',
-                    },
-                  ]}
-                  dataSource={resources}
-                  pagination={false}
-                />
-              )
-            },
-          }}
-          pagination={{
-            size: 'small',
-            pageSize: 5,
-          }}
-        />
-      </Space>
+                      {
+                        title: 'Price',
+                        key: 'price',
+                        dataIndex: 'price',
+                      },
+                    ]}
+                    dataSource={resources}
+                    pagination={false}
+                  />
+                )
+              },
+            }}
+            pagination={{
+              size: 'small',
+              pageSize: 5,
+            }}
+          />
+        </Col>
+      </Row>
       <TemplateForm onSubmit={onSubmitTemplateForm} />
     </Page>
   )

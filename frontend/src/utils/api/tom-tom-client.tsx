@@ -3,14 +3,15 @@ import dayjs from 'dayjs'
 import humps from 'humps'
 import { getToken } from '../../services/auth/auth-action'
 import { customRequestData, deepLoop } from './tools'
+import { sleep } from '../helper'
+import { appConfig } from '../../config'
 
 const createClient = () => {
   const ax = axios.create({
     withCredentials: true,
   })
   ax.interceptors.request.use((request: any) => {
-    const host =
-      process.env.REACT_APP_API_HOST || 'http://127.0.0.1:8626/api/v1'
+    const host = appConfig.REACT_APP_API_HOST
 
     request.url = `${host}/${request.url}`
     const token = getToken()
@@ -51,10 +52,12 @@ const modifyRequestData = (data: any) => {
 export const tomtomClient = createClient()
 
 export const tomtomApiWrapper = async (method: Promise<AxiosResponse>) => {
-  return method.catch((e: AxiosError) => {
-    const { response, message } = e
-    const { data } = response || {}
-    const { message: errorMessage } = data || {}
-    return Promise.reject(errorMessage || message || e)
-  })
+  return Promise.all([method, sleep(100)])
+    .then(([res]) => res)
+    .catch((e: AxiosError) => {
+      const { response, message } = e
+      const { data } = response || {}
+      const { message: errorMessage } = data || {}
+      return Promise.reject(errorMessage || message || e)
+    })
 }

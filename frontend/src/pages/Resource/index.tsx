@@ -1,4 +1,4 @@
-import { Table } from 'antd'
+import { Col, Row, Switch, Table } from 'antd'
 import AddButton from '../../components/AddButton'
 import Authorize from '../../components/commons/Authorize'
 import Page from '../../components/commons/Page'
@@ -6,6 +6,7 @@ import { Role } from '../../services/auth/auth-types'
 import {
   useCreateResource,
   useGetResources,
+  useUpdateResourceIsActive,
 } from '../../services/resource/resource-query'
 import {
   CreateResourceParams,
@@ -17,7 +18,10 @@ import { useMemo } from 'react'
 const Resource = () => {
   const { data: resources } = useGetResources()
   const { mutate: createResource } = useCreateResource()
-
+  const {
+    mutate: setActiveStatus,
+    isLoading: isSetActiveStatusLoading,
+  } = useUpdateResourceIsActive()
   const columns = useMemo(() => {
     const tmpColumns: ColumnType<ResourceEntity>[] = [
       {
@@ -32,33 +36,59 @@ const Resource = () => {
         title: 'Price',
         dataIndex: 'price',
       },
+      {
+        title: 'Status',
+        render: (value, record) => {
+          const { id: resourceId, isActive } = record
+          return (
+            <Switch
+              checked={isActive}
+              checkedChildren="Active"
+              unCheckedChildren="Inactive"
+              loading={isSetActiveStatusLoading}
+              onChange={checked => {
+                setActiveStatus({
+                  resourceId,
+                  isActive: checked,
+                })
+              }}
+            />
+          )
+        },
+      },
     ]
     return tmpColumns
-  }, [])
+  }, [isSetActiveStatusLoading, setActiveStatus])
 
   return (
     <Page title="Resource">
-      <Authorize roles={[Role.ADMIN, Role.MANAGER]}>
-        <AddButton
-          fieldNames={['name', 'price']}
-          name={'Add Resource'}
-          onSubmit={v => {
-            const { name, price } = v as CreateResourceParams
-            createResource({
-              name,
-              price,
-            })
-          }}
-        />
-      </Authorize>
-      <Table
-        dataSource={resources}
-        columns={columns}
-        pagination={{
-          size: 'small',
-          pageSize: 5,
-        }}
-      />
+      <Row gutter={[30, 30]}>
+        <Authorize roles={[Role.ADMIN, Role.MANAGER]}>
+          <Col span={24}>
+            <AddButton
+              fieldNames={['name', 'price']}
+              name={'Add Resource'}
+              onSubmit={v => {
+                const { name, price } = v as CreateResourceParams
+                createResource({
+                  name,
+                  price,
+                })
+              }}
+            />
+          </Col>
+        </Authorize>
+        <Col span={24}>
+          <Table
+            dataSource={resources}
+            columns={columns}
+            pagination={{
+              size: 'small',
+              pageSize: 5,
+            }}
+          />
+        </Col>
+      </Row>
     </Page>
   )
 }

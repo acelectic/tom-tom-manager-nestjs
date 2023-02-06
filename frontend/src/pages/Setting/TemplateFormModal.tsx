@@ -1,4 +1,4 @@
-import { sumBy } from 'lodash'
+import { chain, sumBy } from 'lodash'
 import {
   Ref,
   useCallback,
@@ -7,18 +7,12 @@ import {
   useMemo,
   useRef,
 } from 'react'
-import { Form, FormSpy } from 'react-final-form'
 import Text from '../../components/commons/Text'
-import {
-  InputField,
-  MultiSelectField,
-  SwitchField,
-} from '../../components/fields'
 import { TemplateFormCtx } from '../../constant/contexts'
 import { useGetResources } from '../../services/resource/resource-query'
 import { TemplateEntity } from '../../services/template/template-types'
-import { Col, Modal } from 'antd'
-import { FormApi } from 'final-form'
+import { Col, Form, Input, Modal, Select } from 'antd'
+import Switch from '../../components/commons/Switch'
 
 export interface ITemplateFormValues
   extends Omit<TemplateEntity, 'resources' | 'id'> {
@@ -37,88 +31,129 @@ interface TemplateFormProps {
 const TemplateForm = (props: TemplateFormProps) => {
   const { onSubmit, elmRef } = props
 
-  const formRef = useRef<FormApi<ITemplateFormValues>>()
+  const [form] = Form.useForm<ITemplateFormValues>()
 
-  const [state, setState, { reset }] = useContext(TemplateFormCtx)
-  const { id, isActive = true, resourceIds } = state
-  const { data: resources } = useGetResources()
+  const [state, , { reset }] = useContext(TemplateFormCtx)
+  const { id, name, description, isActive = true, resourceIds = [] } = state
+  const { data: resources = [] } = useGetResources()
 
   const handleClose = useCallback(() => {
     reset()
   }, [reset])
 
   const resourcesOption = useMemo(() => {
-    return (
-      resources?.map(
-        ({ id, name, price }) =>
-          ({ value: id, label: `${name}: ${price}` } as BaseOptions),
-      ) || []
-    )
-  }, [resources])
+    return chain(resources)
+      .filter(({ id, isActive }) => isActive || resourceIds?.includes(id))
+      .map(
+        ({ id, name, price }): BaseOptions => ({
+          value: id,
+          label: `${name}: ${price}`,
+        }),
+      )
+      .value()
+  }, [resourceIds, resources])
 
   useImperativeHandle(
     elmRef,
     () => {
       return {
         submit: () => {
-          formRef.current?.submit()
+          form.submit()
         },
       }
     },
-    [],
+    [form],
   )
 
   return (
     <Form<ITemplateFormValues>
-      onSubmit={(values, form) => {
-        onSubmit(values)
-        form.reset()
+      form={form}
+      onFinish={values => {
+        onSubmit({ ...values, id })
         handleClose()
       }}
       initialValues={{
         id,
+        name,
+        description,
         isActive,
         resourceIds,
       }}
     >
-      {({ form }) => {
-        formRef.current = form
-        return (
-          <Col>
-            <Col>
-              <InputField name="name" label="Name" />
-            </Col>
-            <Col>
-              <InputField name="description" label="Description" />
-            </Col>
-            <Col>
-              <FormSpy<ITemplateFormValues>>
-                {({ values }) => {
-                  const { resourceIds } = values
-                  const selectedResources = resources?.filter(({ id }) =>
-                    resourceIds.includes(id),
-                  )
-                  const cost = sumBy(selectedResources, ({ price }) =>
-                    Number(price),
-                  )
-                  return <Text>{`Total cost: ${cost}`}</Text>
-                }}
-              </FormSpy>
-            </Col>
-            <Col>
-              <SwitchField name="isActive" />
-            </Col>
-            <Col>
-              <MultiSelectField
-                name="resourceIds"
-                label="Resource"
-                options={resourcesOption}
-                required
-              />
-            </Col>
-          </Col>
-        )
-      }}
+      <Col>
+        <Col>
+          <Form.Item
+            name="name"
+            label="Name"
+            rules={[
+              {
+                type: 'string',
+                required: true,
+              },
+            ]}
+          >
+            <Input />
+          </Form.Item>
+        </Col>
+        <Col>
+          <Form.Item
+            name="description"
+            label="Description"
+            rules={[
+              {
+                type: 'string',
+                required: false,
+              },
+            ]}
+          >
+            <Input.TextArea
+              className="no-resize"
+              rows={5}
+              maxLength={1500}
+              showCount
+            />
+          </Form.Item>
+        </Col>
+        <Col>
+          <Form.Item name="isActive">
+            <Switch />
+          </Form.Item>
+        </Col>
+        <Col>
+          <Form.Item
+            name="resourceIds"
+            label="Resource"
+            rules={[
+              {
+                validator: (rule, value) => {
+                  if (!value.length) {
+                    return Promise.reject('Select at least one option')
+                  }
+                  return Promise.resolve()
+                },
+              },
+            ]}
+          >
+            <Select options={resourcesOption} mode="tags" />
+          </Form.Item>
+        </Col>
+
+        <Col>
+          <Form.Item shouldUpdate>
+            {() => {
+              const values = form.getFieldsValue()
+              const { resourceIds = [] } = values || {}
+              const selectedResources = resources?.filter(({ id }) =>
+                resourceIds.includes(id),
+              )
+              const cost = sumBy(selectedResources, ({ price }) =>
+                Number(price),
+              )
+              return <Text>{`Total price: ${cost}`}</Text>
+            }}
+          </Form.Item>
+        </Col>
+      </Col>
     </Form>
   )
 }

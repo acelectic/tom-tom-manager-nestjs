@@ -4,14 +4,20 @@ import { numberWithCommas } from '../../utils/helper'
 import {
   CreateResourceParams,
   CreateResourceResponse,
+  GetResourcesParams,
   GetResourcesResponse,
+  UpdateResourceIsActiveParams,
+  UpdateResourceIsActiveResponse,
 } from './resource-types'
 
 export const RESOURCE_URL = 'resources'
 
-export const useGetResources = () => {
-  return useQuery([RESOURCE_URL], async () => {
-    const { data } = await api.tomtom.get<GetResourcesResponse>(RESOURCE_URL)
+export const useGetResources = (params?: GetResourcesParams) => {
+  return useQuery([RESOURCE_URL, params], async () => {
+    const { data } = await api.tomtom.get<GetResourcesResponse>(
+      RESOURCE_URL,
+      params,
+    )
     return (data.resources.map(({ ref, price, ...rest }) => ({
       ...rest,
       price: numberWithCommas(price),
@@ -30,6 +36,27 @@ export const useCreateResource = () => {
         {
           name: name,
           price: Number(price),
+        },
+      )
+      return data
+    },
+    {
+      onSuccess: () => {
+        queryClient.invalidateQueries([RESOURCE_URL])
+      },
+    },
+  )
+}
+
+export const useUpdateResourceIsActive = () => {
+  const queryClient = useQueryClient()
+  return useMutation(
+    async (params: UpdateResourceIsActiveParams) => {
+      const { resourceId, isActive } = params
+      const { data } = await api.tomtom.patch<UpdateResourceIsActiveResponse>(
+        `${RESOURCE_URL}/${resourceId}/set-active`,
+        {
+          isActive,
         },
       )
       return data

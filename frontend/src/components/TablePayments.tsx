@@ -9,7 +9,7 @@ import {
 import { PaymentStatus } from '../services/payment/payment-types'
 import { usePageRunner, useSnackbar } from '../utils/custom-hook'
 import { numberWithCommas } from '../utils/helper'
-import { Table, Tag } from 'antd'
+import { Col, Modal, Table, Tag, Typography } from 'antd'
 import Authorize from './commons/Authorize'
 import Page from './commons/Page'
 import { ColumnType } from 'antd/es/table'
@@ -31,7 +31,7 @@ const TablePayments = (props: TablePaymentsProps) => {
   const { mutate: confirmPayment } = useConfirmPayment()
   const { snackbar } = useSnackbar()
 
-  const { data: paymentsPaginate } = useGetPayments({
+  const { data: paymentsPaginate, isLoading } = useGetPayments({
     userId,
     transactionId,
     page,
@@ -68,21 +68,44 @@ const TablePayments = (props: TablePaymentsProps) => {
             style={{ fontWeight: 'bold' }}
             size="small"
             onClick={() => {
-              confirmPayment(
-                {
-                  paymentId,
+              Modal.confirm({
+                title: 'Confirm Payment',
+                centered: true,
+                content: (
+                  <Col>
+                    <Col>
+                      <Typography.Text>
+                        {`Confirm payment for : `}
+                        <Typography.Text mark strong>
+                          {`${user.name}`}
+                        </Typography.Text>
+                      </Typography.Text>
+                    </Col>
+                    <Col>
+                      <Typography.Text strong>
+                        {`Amount: ${numberWithCommas(price)}`}
+                      </Typography.Text>
+                    </Col>
+                  </Col>
+                ),
+                onOk: () => {
+                  confirmPayment(
+                    {
+                      paymentId,
+                    },
+                    {
+                      onSuccess: () => {
+                        snackbar({
+                          type: 'success',
+                          message: `Confirm Payment: ${
+                            user.name
+                          }, Price: ${numberWithCommas(price)}`,
+                        })
+                      },
+                    },
+                  )
                 },
-                {
-                  onSuccess: () => {
-                    snackbar({
-                      type: 'success',
-                      message: `Confirm Payment: ${
-                        user.name
-                      }, Price: ${numberWithCommas(price)}`,
-                    })
-                  },
-                },
-              )
+              })
             }}
             disabled={status !== PaymentStatus.PENDING}
           >
@@ -176,8 +199,10 @@ const TablePayments = (props: TablePaymentsProps) => {
   return (
     <Page title={'Payment'}>
       <Table
+        rowKey="id"
         dataSource={dataSource}
         columns={columns}
+        loading={isLoading}
         pagination={{
           size: 'small',
           current: page,

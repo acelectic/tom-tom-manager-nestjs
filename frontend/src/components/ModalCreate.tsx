@@ -1,10 +1,9 @@
-import { makeStyles, Modal } from '@material-ui/core'
+import { makeStyles } from '@material-ui/core'
 import { capitalize } from 'lodash'
-import { useCallback } from 'react'
-import { Form } from 'react-final-form'
-import BaseModal from './commons/BaseModal'
-import { InputField } from './fields'
-export const useAppModalStyles = makeStyles({
+import { Ref, useCallback, useImperativeHandle, useRef } from 'react'
+import { Input, Modal, Form } from 'antd'
+
+const useAppModalStyles = makeStyles({
   appModal: {
     display: 'flex',
     alignItems: 'center',
@@ -44,6 +43,68 @@ export const useAppModalStyles = makeStyles({
   },
 })
 
+interface IModalCreateFormRef {
+  submit: () => void
+}
+
+export interface ModalCreateFormProps<T extends AnyObject, K extends keyof T> {
+  fieldNames: K[]
+  onSubmit: (values: T) => void
+  elmRef: Ref<IModalCreateFormRef>
+}
+const ModalCreateFrom = <T extends AnyObject, K extends keyof T = keyof T>(
+  props: ModalCreateFormProps<T, K>,
+) => {
+  const { fieldNames, onSubmit, elmRef } = props
+  const [form] = Form.useForm()
+
+  const renderField = useCallback((fieldName: K) => {
+    const temp = fieldName as string
+    return (
+      <Form.Item
+        label={capitalize(temp)}
+        name={temp}
+        rules={[
+          {
+            type: 'string',
+            required: true,
+          },
+        ]}
+        required={true}
+      >
+        <Input placeholder={capitalize(temp)} />
+      </Form.Item>
+    )
+  }, [])
+
+  const classes = useAppModalStyles()
+
+  useImperativeHandle(
+    elmRef,
+    () => {
+      return {
+        submit: () => {
+          form.submit()
+        },
+      }
+    },
+    [form],
+  )
+
+  return (
+    <div className={`content ${classes.layout}`}>
+      <Form<T>
+        form={form}
+        initialValues={{}}
+        onFinish={onSubmit}
+        layout="vertical"
+      >
+        <div>{fieldNames.map(renderField)}</div>
+      </Form>
+    </div>
+  )
+}
+
 export interface ModalCreateProps<T extends AnyObject, K extends keyof T> {
   visible: boolean
   fieldNames: K[]
@@ -55,50 +116,24 @@ const ModalCreate = <T extends AnyObject, K extends keyof T = keyof T>(
   props: ModalCreateProps<T, K>,
 ) => {
   const { visible, className, fieldNames, onSubmit, closeModal } = props
+  const formElmRef = useRef<IModalCreateFormRef>(null)
 
-  const renderField = useCallback((fieldName: K) => {
-    const temp = fieldName as string
-    return (
-      <InputField
-        key={temp}
-        name={temp}
-        label={capitalize(temp)}
-        placeholder={capitalize(temp)}
-        required={true}
-      />
-    )
+  const onOk = useCallback(() => {
+    formElmRef.current?.submit?.()
   }, [])
 
-  const classes = useAppModalStyles()
+  const onCancel = useCallback(() => {
+    closeModal()
+  }, [closeModal])
 
   return (
-    <BaseModal visible={visible} closeModal={closeModal} className={className}>
-      <div className={`content ${classes.layout}`}>
-        <Form<T>
-          initialValues={{}}
-          onSubmit={async v => {
-            try {
-              await onSubmit(v)
-              closeModal()
-            } catch (error) {
-              return error
-            }
-          }}
-        >
-          {({ handleSubmit, submitError }) => {
-            return (
-              <form>
-                <h3 style={{ color: 'red' }}>{submitError}</h3>
-                {fieldNames.map(renderField)}
-                <button type="button" name="submit" onClick={handleSubmit}>
-                  Submit
-                </button>
-              </form>
-            )
-          }}
-        </Form>
-      </div>
-    </BaseModal>
+    <Modal open={visible} className={className} onOk={onOk} onCancel={onCancel}>
+      <ModalCreateFrom
+        fieldNames={fieldNames}
+        onSubmit={onSubmit}
+        elmRef={formElmRef}
+      />
+    </Modal>
   )
 }
 

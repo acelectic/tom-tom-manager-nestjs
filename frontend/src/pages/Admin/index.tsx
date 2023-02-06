@@ -5,15 +5,30 @@ import BasicList from '../../components/BasicList'
 import Page from '../../components/commons/Page'
 import Space from '../../components/commons/Space'
 import { UpdateUserCtx } from '../../constant/contexts'
-import { Role, UserEntity } from '../../services/auth/auth-types'
+import { Role } from '../../services/auth/auth-types'
 import { useChangeRole, useGetUsers } from '../../services/user/user-query'
 import { numberWithCommas, withCtx } from '../../utils/helper'
-import UpdateUser from './UpdateUser'
+import UpdateUserModal from './UpdateUserModal'
+import { Table } from 'antd'
+import { usePageRunner } from '../../utils/custom-hook'
+import { ColumnType } from 'antd/es/table'
+import { Link } from 'react-router-dom'
+import paths from '../../constant/paths'
 
 const Admin = () => {
-  const { data: usersPagination } = useGetUsers()
   const { mutate: changeRole } = useChangeRole()
   const [, setState] = useContext(UpdateUserCtx)
+
+  const { page, pageSize, setNewPage, changePageSize } = usePageRunner({
+    alias: {
+      page: 'admin-users-page',
+      perPage: 'admin-users-per-page',
+    },
+  })
+  const { data: usersPagination, isLoading } = useGetUsers({
+    page,
+    limit: pageSize,
+  })
 
   const renderButtonAction = useCallback(
     (userId: string, userRole: Role, role: Role) => {
@@ -71,8 +86,8 @@ const Admin = () => {
     [renderButtonAction, setState],
   )
 
-  type UsersType = typeof users
-  const users = useMemo(
+  type UsersType = typeof dataSource
+  const dataSource = useMemo(
     () =>
       usersPagination
         ? usersPagination?.items.map(d => ({
@@ -83,14 +98,62 @@ const Admin = () => {
     [usersPagination],
   )
 
+  const columns = useMemo(() => {
+    const tmpColumns: ColumnType<typeof dataSource[number]>[] = [
+      {
+        title: 'Name',
+        dataIndex: 'name',
+        render: (value, user) => {
+          const { id: userId, name } = user
+          return (
+            <Link
+              to={paths.userDetail({
+                routeParam: {
+                  userId,
+                },
+              })}
+            >
+              {name}
+            </Link>
+          )
+        },
+      },
+      {
+        title: 'Email',
+        dataIndex: 'email',
+      },
+      {
+        title: 'Balance',
+        dataIndex: 'balance',
+      },
+      {
+        render: (value, user) => {
+          return renderActions(user)
+        },
+      },
+    ]
+    return tmpColumns
+  }, [renderActions])
+
   return (
     <Page title="Admin">
-      <BasicList
-        data={users}
-        columns={['name', 'email', 'balance']}
-        renderActions={renderActions}
+      <Table
+        rowKey="id"
+        dataSource={dataSource}
+        columns={columns}
+        loading={isLoading}
+        pagination={{
+          size: 'small',
+          current: page,
+          pageSize,
+          total: usersPagination?.meta.totalItems || 0,
+          onChange: (page, pageSize) => {
+            setNewPage(page)
+            changePageSize(pageSize)
+          },
+        }}
       />
-      <UpdateUser />
+      <UpdateUserModal />
     </Page>
   )
 }

@@ -4,12 +4,7 @@ import { useMemo } from 'react'
 import { Form, FormSpy } from 'react-final-form'
 import Space from '../../components/commons/Space'
 import Text from '../../components/commons/Text'
-import {
-  InputField,
-  MultiSelectField,
-  SelectField,
-} from '../../components/fields'
-import { useGetResources } from '../../services/resource/resource-query'
+import { MultiSelectField, SelectField } from '../../components/fields'
 import { useGetTemplates } from '../../services/template/template-query'
 import { useCreateTransaction } from '../../services/transaction/transaction-query'
 import { CreateTransactionParams } from '../../services/transaction/transaction-types'
@@ -32,7 +27,7 @@ const TransactionForm = () => {
   const { data: templates } = useGetTemplates({
     isActive: true,
   })
-  type UsersType = typeof users
+
   const users = useMemo(
     () =>
       usersPagination
@@ -54,13 +49,10 @@ const TransactionForm = () => {
   const templatesOption = useMemo(() => {
     return (
       templates?.map(
-        ({ id, ref, resources }) =>
-          ({
-            value: id,
-            label: `ref:${ref} | cost = ${numberWithCommas(
-              sumBy(resources, 'price'),
-            )}`,
-          } as BaseOptions),
+        ({ id, ref, name, cost }): BaseOptions => ({
+          value: id,
+          label: `${ref}: ${name} | cost = ${numberWithCommas(cost)}`,
+        }),
       ) || []
     )
   }, [templates])

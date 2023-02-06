@@ -1,4 +1,4 @@
-import { useCallback, useMemo } from 'react'
+import { useMemo } from 'react'
 import { Button } from '@material-ui/core'
 import { Link } from 'react-router-dom'
 import paths from '../constant/paths'
@@ -10,15 +10,14 @@ import { useConfirmUserAllPayments } from '../services/payment/payment-query'
 import Authorize from './commons/Authorize'
 import { sumBy } from 'lodash'
 import { Role } from '../services/auth/auth-types'
-import Space from './commons/Space'
-import { Table } from 'antd'
+import { Col, Modal, Table, Typography } from 'antd'
 import { ColumnType } from 'antd/es/table'
+import { PaymentStatus } from '../services/payment/payment-types'
 
 interface TableUsersProps {
   transactionId?: string
 }
 const TableUsers = (props: TableUsersProps) => {
-  type UsersType = typeof dataSource
   const { transactionId } = props
   const { snackbar } = useSnackbar()
   const { mutate: confirmUserAllPayments } = useConfirmUserAllPayments()
@@ -28,7 +27,7 @@ const TableUsers = (props: TableUsersProps) => {
       perPage: 'users-per-page',
     },
   })
-  const { data: usersPagination } = useGetUsers({
+  const { data: usersPagination, isLoading } = useGetUsers({
     transactionId,
     page,
     limit: pageSize,
@@ -43,69 +42,26 @@ const TableUsers = (props: TableUsersProps) => {
         : [],
     [usersPagination],
   )
-  const renderActions = useCallback(
-    (data: UsersType[number]) => {
-      const sumPrice = sumBy(data.payments, ({ status, price }) =>
-        status === 'pending' ? price : 0,
-      )
-
-      return (
-        <Space spacing={10}>
-          <Authorize roles={[Role.ADMIN]} allowLocalAdmin>
-            <Button
-              variant="outlined"
-              color={'secondary'}
-              style={{ fontWeight: 'bold' }}
-              size="small"
-              disabled={!sumPrice}
-              onClick={() => {
-                confirmUserAllPayments(
-                  {
-                    userId: data.id,
-                  },
-                  {
-                    onSuccess: () => {
-                      snackbar({
-                        type: 'success',
-                        message: `Confirmr Payment: ${
-                          data.name
-                        }, Price: ${numberWithCommas(sumPrice)}`,
-                      })
-                    },
-                  },
-                )
-              }}
-            >
-              Confirm All Payments
-            </Button>
-          </Authorize>
-          <Link
-            to={paths.userDetail({
-              routeParam: {
-                userId: data.id,
-              },
-            })}
-          >
-            <Button
-              variant="outlined"
-              color={'primary'}
-              style={{ fontWeight: 'bold' }}
-              size="small"
-            >
-              See Detail
-            </Button>
-          </Link>
-        </Space>
-      )
-    },
-    [confirmUserAllPayments, snackbar],
-  )
 
   const columns = useMemo(() => {
     const tmpColumns: ColumnType<typeof dataSource[number]>[] = [
       {
         title: 'Name',
         dataIndex: 'name',
+        render: (value, user) => {
+          const { id: userId, name } = user
+          return (
+            <Link
+              to={paths.userDetail({
+                routeParam: {
+                  userId,
+                },
+              })}
+            >
+              {name}
+            </Link>
+          )
+        },
       },
       {
         title: 'Email',
@@ -116,19 +72,76 @@ const TableUsers = (props: TableUsersProps) => {
         dataIndex: 'balance',
       },
       {
-        render: (value, record) => {
-          return renderActions(record)
+        render: (value, user) => {
+          const sumPrice = sumBy(user.payments, ({ status, price }) =>
+            status === PaymentStatus.PENDING ? price : 0,
+          )
+          return (
+            <Authorize roles={[Role.ADMIN]} allowLocalAdmin>
+              <Button
+                variant="outlined"
+                color={'secondary'}
+                style={{ fontWeight: 'bold' }}
+                size="small"
+                disabled={!sumPrice}
+                onClick={() => {
+                  Modal.confirm({
+                    title: 'Confirm All Payment',
+                    centered: true,
+                    content: (
+                      <Col>
+                        <Col>
+                          <Typography.Text>
+                            {`Confirm All Payment for : `}
+                            <Typography.Text mark strong>
+                              {`${user.name}`}
+                            </Typography.Text>
+                          </Typography.Text>
+                        </Col>
+                        <Col>
+                          <Typography.Text strong>
+                            {`Amount: ${numberWithCommas(sumPrice)}`}
+                          </Typography.Text>
+                        </Col>
+                      </Col>
+                    ),
+                    onOk: () => {
+                      confirmUserAllPayments(
+                        {
+                          userId: user.id,
+                        },
+                        {
+                          onSuccess: () => {
+                            snackbar({
+                              type: 'success',
+                              message: `Confirm All Payment: ${
+                                user.name
+                              }, Amount: ${numberWithCommas(sumPrice)}`,
+                            })
+                          },
+                        },
+                      )
+                    },
+                  })
+                }}
+              >
+                Confirm All Payments
+              </Button>
+            </Authorize>
+          )
         },
       },
     ]
     return tmpColumns
-  }, [renderActions])
+  }, [confirmUserAllPayments, snackbar])
 
   return (
     <Page title={'Users'}>
       <Table
+        rowKey="id"
         dataSource={dataSource}
         columns={columns}
+        loading={isLoading}
         pagination={{
           size: 'small',
           current: page,
