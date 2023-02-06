@@ -1,11 +1,7 @@
 import { useMemo, useState } from 'react'
-import {
-  useGetTransactions,
-  useGetTransactionsHistory,
-} from '../../services/transaction/transaction-query'
-import { Bar, Line } from 'react-chartjs-2'
+import { useGetTransactionsHistory } from '../../services/transaction/transaction-query'
 import dayjs from 'dayjs'
-import { groupBy, now, range, sortBy, sumBy } from 'lodash'
+import { groupBy, range, sortBy, sumBy } from 'lodash'
 import { DatePickerField, SelectField } from '../../components/fields'
 import { Form } from 'react-final-form'
 import { OnChange } from 'react-final-form-listeners'
@@ -287,14 +283,14 @@ const TransactionSummary = () => {
           },
         ]}
         chartOption={{
-          sumPrice: {
-            min: 0,
-            max: 3000,
-          },
-          sumRemainPrice: {
-            min: 0,
-            max: 3000,
-          },
+          // sumPrice: {
+          //   min: 0,
+          //   max: 3000,
+          // },
+          // sumRemainPrice: {
+          //   min: 0,
+          //   max: 3000,
+          // },
           sumUsers: {
             position: 'right',
             type: 'linear',

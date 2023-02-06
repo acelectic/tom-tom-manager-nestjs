@@ -110,7 +110,15 @@ export class TransactionService {
       validateError('Resources must least one')
     }
     const price = sumBy(resources, ({ price }) => Number(price))
-    const transaction = await Transaction.create({ price, remain: price, users, template })
+    const transaction = await Transaction.create({
+      price,
+      remain: price,
+      users,
+      template,
+      meta: {
+        resources,
+      },
+    })
     await etm.save(transaction)
 
     const paymentPrice = ceil(price / users.length, 0)

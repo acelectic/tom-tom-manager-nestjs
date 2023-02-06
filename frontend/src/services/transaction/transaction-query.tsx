@@ -105,10 +105,10 @@ export const modifyTransaction = (transaction: TransactionEntity) => {
     resources,
     createdAt,
     completed,
-    ...restTransactoion
+    ...restTransaction
   } = transaction
   return {
-    ...restTransactoion,
+    ...restTransaction,
     ref: ref.toString().padStart(6, '0'),
     totalUser: users?.length || 0,
     completed: completed ? 'Completed' : 'Pending',

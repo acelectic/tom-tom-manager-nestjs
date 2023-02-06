@@ -3,6 +3,7 @@ import { capitalize } from 'lodash'
 import { PropsWithChildren, useCallback } from 'react'
 import { Form } from 'react-final-form'
 import { InputField } from '../fields'
+
 export const useAppModalStyles = makeStyles({
   appModal: {
     display: 'flex',

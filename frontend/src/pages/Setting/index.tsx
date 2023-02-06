@@ -1,14 +1,11 @@
 import { Button } from '@material-ui/core'
-import { template } from 'lodash'
-import React, { useCallback, useContext } from 'react'
+import { useCallback, useContext } from 'react'
 import { Form } from 'react-final-form'
 import { OnChange } from 'react-final-form-listeners'
 import { useTranslation } from 'react-i18next'
-import AddButton from '../../components/AddButton'
 import BasicList from '../../components/BasicList'
 import Page from '../../components/commons/Page'
 import Space from '../../components/commons/Space'
-import Switch from '../../components/commons/Switch'
 import { SwitchField } from '../../components/fields'
 import { TemplateFormCtx } from '../../constant/contexts'
 import {
@@ -76,7 +73,7 @@ const Setting = () => {
               )
             }}
           </Form>
-          {/* <Button
+          <Button
             variant="outlined"
             color={'primary'}
             style={{ fontWeight: 'bold' }}
@@ -92,11 +89,11 @@ const Setting = () => {
             }}
           >
             Edit
-          </Button> */}
+          </Button>
         </Space>
       )
     },
-    [setActiveStatus],
+    [setActiveStatus, setState],
   )
 
   const onButtonAddTemplateClick = useCallback(() => {

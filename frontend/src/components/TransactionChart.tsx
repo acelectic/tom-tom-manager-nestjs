@@ -14,11 +14,11 @@ import deepmerge from 'deepmerge'
 //     >
 //   }
 // >
-type ScalesOptionTyeeInf = ScaleChartOptions['scales'][string]
+type ScalesOptionTypeInf = ScaleChartOptions['scales'][string]
 
 type LineScalesOption<T, K extends keyof T> = DeepPartial<
   {
-    [P in K]: DeepPartial<ScalesOptionTyeeInf>
+    [P in K]: DeepPartial<ScalesOptionTypeInf>
   }
 >
 interface TransactionChartProps<T, K extends keyof T> {
@@ -59,7 +59,7 @@ const TransactionChart = <T, K extends keyof T>(
   }, [data, datasets, xAixKey])
 
   const scalesOptions = useMemo(() => {
-    const baseScales: Record<string, DeepPartial<ScalesOptionTyeeInf>> = {}
+    const baseScales: Record<string, DeepPartial<ScalesOptionTypeInf>> = {}
     renderOptions.forEach(({ key, color, label }) => {
       const keyTemp = key as string
       baseScales[keyTemp] = {

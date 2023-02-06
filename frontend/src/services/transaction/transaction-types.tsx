@@ -1,6 +1,10 @@
 import { UserEntity } from '../auth/auth-types'
 import { ResourceEntity } from '../resource/resource-types'
 
+interface ITransactionMeta {
+  resources: ResourceEntity[]
+}
+
 export interface TransactionEntity {
   id: string
   ref: number
@@ -11,6 +15,7 @@ export interface TransactionEntity {
   resources?: ResourceEntity[]
   createdAt: string
   completed: boolean
+  meta: ITransactionMeta
 }
 export interface GetTransactionsParams extends PaginationParams {
   userId?: string

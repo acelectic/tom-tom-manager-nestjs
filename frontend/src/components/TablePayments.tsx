@@ -9,9 +9,12 @@ import {
 import { PaymentStatus } from '../services/payment/payment-types'
 import { usePageRunner, useSnackbar } from '../utils/custom-hook'
 import { numberWithCommas } from '../utils/helper'
-import BasicList from './BasicList'
+import { Table, Tag } from 'antd'
 import Authorize from './commons/Authorize'
 import Page from './commons/Page'
+import { ColumnType } from 'antd/es/table'
+import { Link } from 'react-router-dom'
+import paths from '../constant/paths'
 
 interface TablePaymentsProps {
   transactionId?: string
@@ -35,22 +38,14 @@ const TablePayments = (props: TablePaymentsProps) => {
     limit: pageSize,
   })
 
-  const payments = useMemo(() => {
+  const dataSource = useMemo(() => {
     return paymentsPaginate
       ? paymentsPaginate?.items.map(payment => {
-          const {
-            user,
-            resource,
-            transaction,
-            createdAt,
-            ...restPayment
-          } = payment
+          const { resource, createdAt, ...restPayment } = payment
           return {
-            userName: user.name,
             resource: resource
               ? [resource.name, resource.price].join(', ')
               : '-',
-            transaction: transaction?.ref.toString().padStart(6, '0'),
             ...restPayment,
             date: dayjs(createdAt)
               .tz('Asia/Bangkok')
@@ -60,11 +55,11 @@ const TablePayments = (props: TablePaymentsProps) => {
       : []
   }, [paymentsPaginate])
 
-  type PaymentType = Exclude<typeof payments, undefined>
+  type PaymentType = Exclude<typeof dataSource, undefined>
 
   const renderActions = useCallback(
     (data: PaymentType[number]) => {
-      const { id: paymentId, status, userName, price } = data
+      const { id: paymentId, status, user, price } = data
       return (
         <Authorize roles={[Role.ADMIN, Role.MANAGER]} allowLocalAdmin>
           <Button
@@ -81,9 +76,9 @@ const TablePayments = (props: TablePaymentsProps) => {
                   onSuccess: () => {
                     snackbar({
                       type: 'success',
-                      message: `Confirmr Payment: ${userName}, Price: ${numberWithCommas(
-                        price,
-                      )}`,
+                      message: `Confirm Payment: ${
+                        user.name
+                      }, Price: ${numberWithCommas(price)}`,
                     })
                   },
                 },
@@ -96,21 +91,103 @@ const TablePayments = (props: TablePaymentsProps) => {
         </Authorize>
       )
     },
-    [confirmPayment],
+    [confirmPayment, snackbar],
   )
+
+  const columns = useMemo(() => {
+    const tmpColumns: ColumnType<typeof dataSource[number]>[] = [
+      {
+        title: 'Ref',
+        dataIndex: 'ref',
+      },
+      {
+        title: 'User Name',
+        dataIndex: 'user',
+        render: (value, record) => {
+          const { user } = record
+          const { id: userId, name } = user
+          return (
+            <Link
+              to={paths.userDetail({
+                routeParam: {
+                  userId,
+                },
+              })}
+            >
+              {name}
+            </Link>
+          )
+        },
+      },
+      {
+        title: 'Price',
+        dataIndex: 'price',
+      },
+      {
+        title: 'Transaction',
+        dataIndex: 'transaction',
+        render: (value, record) => {
+          const { transaction } = record
+          const { id: transactionId, ref } = transaction
+          return (
+            <Link
+              to={paths.transactionDetail({
+                routeParam: {
+                  transactionId,
+                },
+              })}
+            >
+              {ref.toString().padStart(6, '0')}
+            </Link>
+          )
+        },
+      },
+      {
+        title: 'Date',
+        dataIndex: 'date',
+      },
+      {
+        dataIndex: 'status',
+        render: value => {
+          return (
+            <Tag
+              color={
+                value === PaymentStatus.FAILED
+                  ? 'error'
+                  : value === PaymentStatus.SETTLED
+                  ? 'success'
+                  : 'processing'
+              }
+            >
+              {value}
+            </Tag>
+          )
+        },
+      },
+      {
+        render: (value, record) => {
+          return renderActions(record)
+        },
+      },
+    ]
+    return tmpColumns
+  }, [renderActions])
 
   return (
     <Page title={'Payment'}>
-      <BasicList
-        data={payments}
-        columns={['ref', 'userName', 'price', 'transaction', 'date', 'status']}
-        renderActions={renderActions}
-        paginate
-        page={page}
-        limit={pageSize}
-        onChangePage={setNewPage}
-        onChangeRowsPerPage={changePageSize}
-        total={paymentsPaginate?.meta.totalItems || 0}
+      <Table
+        dataSource={dataSource}
+        columns={columns}
+        pagination={{
+          size: 'small',
+          current: page,
+          pageSize,
+          total: paymentsPaginate?.meta.totalItems || 0,
+          onChange: (page, pageSize) => {
+            setNewPage(page)
+            changePageSize(pageSize)
+          },
+        }}
       />
     </Page>
   )

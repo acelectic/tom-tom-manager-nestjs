@@ -30,6 +30,10 @@ import { Resource } from './Resource'
 import { Template } from './Template'
 import { User } from './User'
 
+interface ITransactionMeta {
+  resources: Resource[]
+}
+
 @Entity({ name: 'transactions' })
 export class Transaction extends AppEntity {
   @Column({
@@ -79,8 +83,6 @@ export class Transaction extends AppEntity {
     },
   })
   users: User[]
-  // @RelationId((transaction: Transaction) => transaction.users)
-  // userIds: string[]
 
   @OneToMany(
     () => Payment,
@@ -102,6 +104,14 @@ export class Transaction extends AppEntity {
   template: Template
   @RelationId((transaction: Transaction) => transaction.template)
   templateId: string
+
+  @Column({
+    name: 'meta',
+    nullable: true,
+    type: 'jsonb',
+    default: {},
+  })
+  meta: ITransactionMeta
 
   async updateRemain(etm: EntityManager) {
     const transactionId = this.id

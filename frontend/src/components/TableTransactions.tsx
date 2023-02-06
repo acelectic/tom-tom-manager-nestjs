@@ -8,9 +8,10 @@ import {
   modifyTransaction,
 } from '../services/transaction/transaction-query'
 import { usePageRunner } from '../utils/custom-hook'
-import BasicList from './BasicList'
 import Authorize from './commons/Authorize'
 import Page from './commons/Page'
+import { Table, Tag } from 'antd'
+import { ColumnType } from 'antd/es/table'
 
 interface TableTransactionsProps {
   userId?: string
@@ -29,13 +30,13 @@ const TableTransactions = (props: TableTransactionsProps) => {
     page,
     limit: pageSize,
   })
-  const transactions = useMemo(() => {
+  const dataSource = useMemo(() => {
     return transactionsPaginate
       ? transactionsPaginate?.items.map(modifyTransaction)
       : []
   }, [transactionsPaginate])
 
-  const renderActions = useCallback((data: typeof transactions[number]) => {
+  const renderActions = useCallback((data: typeof dataSource[number]) => {
     return (
       <Authorize roles={[Role.ADMIN, Role.MANAGER]} allowLocalAdmin>
         <Link
@@ -57,18 +58,63 @@ const TableTransactions = (props: TableTransactionsProps) => {
       </Authorize>
     )
   }, [])
+
+  const columns = useMemo(() => {
+    const tmpColumns: ColumnType<typeof dataSource[number]>[] = [
+      {
+        title: 'Ref',
+        dataIndex: 'ref',
+      },
+      {
+        title: 'Total User',
+        dataIndex: 'totalUser',
+      },
+      {
+        title: 'Remain',
+        dataIndex: 'remain',
+      },
+      {
+        title: 'Price',
+        dataIndex: 'price',
+      },
+      {
+        title: 'Date',
+        dataIndex: 'date',
+      },
+      {
+        dataIndex: 'completed',
+        render: value => {
+          return (
+            <Tag color={value === 'Completed' ? 'success' : 'processing'}>
+              {value}
+            </Tag>
+          )
+        },
+      },
+      {
+        render: (value, record) => {
+          return renderActions(record)
+        },
+      },
+    ]
+    return tmpColumns
+  }, [renderActions])
+
   return (
     <Page title={'Transaction'}>
-      <BasicList
-        data={transactions}
-        columns={['ref', 'totalUser', 'remain', 'price', 'date', 'completed']}
-        renderActions={renderActions}
-        paginate
-        page={page}
-        limit={pageSize}
-        onChangePage={setNewPage}
-        onChangeRowsPerPage={changePageSize}
-        total={transactionsPaginate?.meta.totalItems || 0}
+      <Table
+        dataSource={dataSource}
+        columns={columns}
+        pagination={{
+          size: 'small',
+          current: page,
+          pageSize,
+          total: transactionsPaginate?.meta.totalItems || 0,
+          onChange: (page, pageSize) => {
+            setNewPage(page)
+            changePageSize(pageSize)
+          },
+        }}
       />
     </Page>
   )
