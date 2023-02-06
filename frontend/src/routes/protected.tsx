@@ -1,5 +1,5 @@
 import { Switch, Route, Redirect } from 'react-router-dom'
-import Authenlize from '../components/commons/Authenlize'
+import Authorize from '../components/commons/Authorize'
 import Layout from '../components/layout'
 import paths from '../constant/paths'
 import Admin from '../pages/Admin'
@@ -29,9 +29,9 @@ export const ProtectedRoute = () => {
 
         <Route path={paths.payments()} component={Payment} />
         <Route path={paths.setting()} component={Setting} />
-        <Authenlize allowLocalAdmin>
+        <Authorize allowLocalAdmin>
           <Route path={paths.admin()} component={Admin} />
-        </Authenlize>
+        </Authorize>
         <Redirect to={paths.notFound()} />
       </Switch>
     </Layout>

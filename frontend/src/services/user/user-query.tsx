@@ -2,7 +2,7 @@ import { useMutation, useQuery, useQueryClient } from 'react-query'
 import { api } from '../../utils/api'
 import { numberWithCommas } from '../../utils/helper'
 import { SIGN_IN } from '../auth/auth-query'
-import { SigninParams, SigninResponse } from '../auth/auth-types'
+import { SignInParams, SignInResponse } from '../auth/auth-types'
 import {
   ChangeRoleParams,
   GetUserResponse,
@@ -40,8 +40,8 @@ export const useGetUser = (userId?: string) => {
 export const useCreateUser = () => {
   const queryClient = useQueryClient()
   return useMutation(
-    async (params: SigninParams) => {
-      const { data } = await api.tomtom.post<SigninResponse>(SIGN_IN, params)
+    async (params: SignInParams) => {
+      const { data } = await api.tomtom.post<SignInResponse>(SIGN_IN, params)
       return data
     },
     {

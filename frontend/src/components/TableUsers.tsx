@@ -8,7 +8,7 @@ import Page from './commons/Page'
 import BasicList from './BasicList'
 import { usePageRunner, useSnackbar } from '../utils/custom-hook'
 import { useConfirmUserAllPayments } from '../services/payment/payment-query'
-import Authenlize from './commons/Authenlize'
+import Authorize from './commons/Authorize'
 import { sumBy } from 'lodash'
 import { Role } from '../services/auth/auth-types'
 import Space from './commons/Space'
@@ -49,7 +49,7 @@ const TableUsers = (props: TableUsersProps) => {
 
     return (
       <Space spacing={10}>
-        <Authenlize roles={[Role.ADMIN]} allowLocalAdmin>
+        <Authorize roles={[Role.ADMIN]} allowLocalAdmin>
           <Button
             variant="outlined"
             color={'secondary'}
@@ -76,7 +76,7 @@ const TableUsers = (props: TableUsersProps) => {
           >
             Confirm All Payments
           </Button>
-        </Authenlize>
+        </Authorize>
         <Link
           to={paths.userDetail({
             routeParam: {

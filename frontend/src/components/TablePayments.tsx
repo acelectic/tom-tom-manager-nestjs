@@ -10,7 +10,7 @@ import { PaymentStatus } from '../services/payment/payment-types'
 import { usePageRunner, useSnackbar } from '../utils/custom-hook'
 import { numberWithCommas } from '../utils/helper'
 import BasicList from './BasicList'
-import Authenlize from './commons/Authenlize'
+import Authorize from './commons/Authorize'
 import Page from './commons/Page'
 
 interface TablePaymentsProps {
@@ -66,7 +66,7 @@ const TablePayments = (props: TablePaymentsProps) => {
     (data: PaymentType[number]) => {
       const { id: paymentId, status, userName, price } = data
       return (
-        <Authenlize roles={[Role.ADMIN, Role.MANAGER]} allowLocalAdmin>
+        <Authorize roles={[Role.ADMIN, Role.MANAGER]} allowLocalAdmin>
           <Button
             variant="outlined"
             color={'primary'}
@@ -93,7 +93,7 @@ const TablePayments = (props: TablePaymentsProps) => {
           >
             Confirm
           </Button>
-        </Authenlize>
+        </Authorize>
       )
     },
     [confirmPayment],

@@ -10,7 +10,7 @@ import { Link, useHistory } from 'react-router-dom'
 import { useTranslation } from 'react-i18next'
 import { useCurrUser } from '../../services/auth/auth-query'
 import React, { useMemo } from 'react'
-import Authenlize from '../commons/Authenlize'
+import Authorize from '../commons/Authorize'
 import { Role } from '../../services/auth/auth-types'
 
 import DashboardIcon from '@material-ui/icons/Dashboard'
@@ -96,20 +96,20 @@ const SideMenu = () => {
         label={t('page.payments')}
         icon={<MoneyRounded />}
       />
-      <Authenlize roles={[Role.ADMIN, Role.MANAGER]} allowLocalAdmin>
+      <Authorize roles={[Role.ADMIN, Role.MANAGER]} allowLocalAdmin>
         <Menu
           path={paths.setting()}
           label={t('page.setting')}
           icon={<SettingsIcon />}
         />
-      </Authenlize>
-      <Authenlize allowLocalAdmin>
+      </Authorize>
+      <Authorize allowLocalAdmin>
         <Menu
           path={paths.admin()}
           label={t('page.admin')}
           icon={<SecurityIcon />}
         />
-      </Authenlize>
+      </Authorize>
     </div>
   )
 }

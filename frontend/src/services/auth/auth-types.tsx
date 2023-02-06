@@ -16,7 +16,7 @@ export enum Role {
   ADMIN = 'admin',
   MANAGER = 'manager',
   USER = 'user',
-  VIEVWER = 'viewer',
+  VIEWER = 'viewer',
 }
 
 export interface UserEntity {
@@ -31,13 +31,13 @@ export interface UserEntity {
   balance: number
   payments?: PaymentEntity[]
 }
-export type SigninParams = {
+export type SignInParams = {
   email: string
   password: string
   name?: string
 }
 
-export type SigninResponse = {
+export type SignInResponse = {
   accessToken: string
   user: UserEntity
 }

@@ -9,7 +9,7 @@ import {
 } from '../services/transaction/transaction-query'
 import { usePageRunner } from '../utils/custom-hook'
 import BasicList from './BasicList'
-import Authenlize from './commons/Authenlize'
+import Authorize from './commons/Authorize'
 import Page from './commons/Page'
 
 interface TableTransactionsProps {
@@ -37,7 +37,7 @@ const TableTransactions = (props: TableTransactionsProps) => {
 
   const renderActions = useCallback((data: typeof transactions[number]) => {
     return (
-      <Authenlize roles={[Role.ADMIN, Role.MANAGER]} allowLocalAdmin>
+      <Authorize roles={[Role.ADMIN, Role.MANAGER]} allowLocalAdmin>
         <Link
           to={paths.transactionDetail({
             routeParam: {
@@ -54,7 +54,7 @@ const TableTransactions = (props: TableTransactionsProps) => {
             See Detail
           </Button>
         </Link>
-      </Authenlize>
+      </Authorize>
     )
   }, [])
   return (

@@ -1,5 +1,5 @@
 import { useSignIn } from '../../services/auth/auth-query'
-import { SigninParams } from '../../services/auth/auth-types'
+import { SignInParams } from '../../services/auth/auth-types'
 import { Form } from 'react-final-form'
 import { InputField } from '../../components/fields'
 import styled from '@emotion/styled'
@@ -17,7 +17,7 @@ const SignIn = () => {
   const { mutateAsync: signIn } = useSignIn()
   return (
     <Layout>
-      <Form<SigninParams>
+      <Form<SignInParams>
         initialValues={{
           email: 'test@gmail.com',
           password: '123456',

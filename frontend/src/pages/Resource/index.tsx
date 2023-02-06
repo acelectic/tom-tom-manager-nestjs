@@ -1,6 +1,6 @@
 import AddButton from '../../components/AddButton'
 import BasicList from '../../components/BasicList'
-import Authenlize from '../../components/commons/Authenlize'
+import Authorize from '../../components/commons/Authorize'
 import Page from '../../components/commons/Page'
 import { Role } from '../../services/auth/auth-types'
 import {
@@ -14,7 +14,7 @@ const Resource = () => {
   const { mutate: createResource } = useCreateResource()
   return (
     <Page title="Resource">
-      <Authenlize roles={[Role.ADMIN, Role.MANAGER]}>
+      <Authorize roles={[Role.ADMIN, Role.MANAGER]}>
         <AddButton
           fieldNames={['name', 'price']}
           name={'Add Resource'}
@@ -26,7 +26,7 @@ const Resource = () => {
             })
           }}
         />
-      </Authenlize>
+      </Authorize>
       <BasicList data={resources} columns={['ref', 'name', 'price']} />
     </Page>
   )

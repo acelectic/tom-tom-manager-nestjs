@@ -3,7 +3,7 @@ import { api } from '../../utils/api'
 import { useSnackbar } from '../../utils/custom-hook'
 import { USER_URL } from '../user/user-query'
 import { getToken, removeToken, setToken } from './auth-action'
-import { SigninParams, SigninResponse, UserEntity } from './auth-types'
+import { SignInParams, SignInResponse, UserEntity } from './auth-types'
 
 export const HEALTH_URL = 'health'
 export const AUTH = 'auth'
@@ -67,8 +67,8 @@ export const useCurrUser = () => {
 export const useSignIn = () => {
   const queryClient = useQueryClient()
   return useMutation(
-    async (params: SigninParams) => {
-      const { data } = await api.tomtom.post<SigninResponse>(SIGN_IN, params)
+    async (params: SignInParams) => {
+      const { data } = await api.tomtom.post<SignInResponse>(SIGN_IN, params)
       return data
     },
     {
