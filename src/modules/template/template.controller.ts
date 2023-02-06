@@ -9,7 +9,7 @@ import {
   UpdateTemplateParamsDto,
 } from './dto/template-params.dto'
 import { TransactionManager, EntityManager, Transaction } from 'typeorm'
-import { CreateReourceParamsDto } from '../resource/dto/resource-params.dto'
+import { CreateResourceParamsDto } from '../resource/dto/resource-params.dto'
 
 @ApiTags('templates')
 @Controller('v1/templates')
