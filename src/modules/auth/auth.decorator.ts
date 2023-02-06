@@ -25,7 +25,7 @@ export const Manager = () => {
 }
 
 export const Viewver = () => {
-  return Auth(Role.ADMIN, Role.MANAGER, Role.VIEVWER)
+  return Auth(Role.ADMIN, Role.MANAGER, Role.VIEWER)
 }
 
 export const ReqUser = createParamDecorator((data, ctx: ExecutionContext) => {

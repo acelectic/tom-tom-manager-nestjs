@@ -3,15 +3,7 @@ import {
   Entity,
   DeleteDateColumn,
   Index,
-  FindConditions,
-  ObjectType,
-  ManyToOne,
   OneToMany,
-  JoinTable,
-  JoinColumn,
-  ViewColumn,
-  ViewEntity,
-  Connection,
   ManyToMany,
   RelationId,
   EntityManager,
@@ -21,7 +13,6 @@ import { Role } from '../../modules/auth/auth.constant'
 import { Transaction } from './Transaction'
 import { Payment, PaymentStatus } from './Payment'
 import { transformerDecimalToNumber } from 'src/utils/entity-transform'
-import { Exclude, Expose } from 'class-transformer'
 import { sumBy } from 'lodash'
 
 export enum UserSignInType {
