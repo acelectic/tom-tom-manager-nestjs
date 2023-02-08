@@ -46,10 +46,16 @@ async function bootstrap() {
   const app = await NestFactory.create(AppModule, {
     logger: ['error', 'log', 'debug'],
   })
+
+  // app.enableVersioning({
+  //   type: VersioningType.HEADER,
+  //   header: 'app-version',
+  // })
+
   app.enableCors({
     origin: true,
     methods: ['GET', 'PUT', 'PATCH', 'POST', 'DELETE'],
-    allowedHeaders: ['Content-Type', 'Authorization', 'authorization'],
+    allowedHeaders: ['Content-Type', 'Authorization', 'authorization', 'app-version'],
     preflightContinue: false,
     optionsSuccessStatus: 204,
     credentials: true,
