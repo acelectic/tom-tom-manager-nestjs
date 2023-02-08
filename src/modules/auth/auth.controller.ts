@@ -8,6 +8,8 @@ import {
   Header,
   UseInterceptors,
   SerializeOptions,
+  Req,
+  Res,
 } from '@nestjs/common'
 import { ApiBody, ApiTags } from '@nestjs/swagger'
 import { AuthService } from './auth.service'
@@ -22,9 +24,11 @@ import { SignOutDto } from './dto/sing-out.dto'
 import { getOtpDto } from './dto/get-otp.dto'
 import { VerifyEmailDto, VerifyMobilelDto, ParamsRegisterEmailDto } from './dto/register.dto'
 import { EntityManager, DataSource } from 'typeorm'
-import { Role } from './auth.constant'
+import { Role, cookieKeys, cookieOptions } from './auth.constant'
 import { debugLog } from 'src/utils/helper'
 import { ResponseInterceptor } from 'src/utils/interceptors/response.interceptor'
+import { CookieOptions, Request, Response } from 'express'
+import { pick, pickBy } from 'lodash'
 
 @ApiTags('auth')
 @Controller('auth')
@@ -56,14 +60,34 @@ export class AuthController {
 
   @ApiBody({ type: SignInEmailDto })
   @Post('sign-in')
-  async signInEmail(@Body() body: SignInEmailDto, etm = this.dataSource.createEntityManager()) {
-    return await this.authService.signWithEmail(body, etm)
+  async signInEmail(
+    @Res() res: Response,
+    @Body() body: SignInEmailDto,
+    etm = this.dataSource.createEntityManager(),
+  ) {
+    const response = await this.authService.signWithEmail(body, etm)
+
+    const { accessToken, user } = response
+
+    res.cookie(cookieKeys.accessToken, accessToken, cookieOptions)
+    res.cookie(cookieKeys.user, user, cookieOptions)
+    res.send(response)
+    res.end()
   }
 
   @ApiBody({ type: SignOutDto })
   @Post('sign-out')
-  async signOut(@Body() body: SignOutDto, etm = this.dataSource.createEntityManager()) {
-    return await this.authService.signOut(body, etm)
+  async signOut(
+    @Body() body: SignOutDto,
+    @Res() res: Response,
+    etm = this.dataSource.createEntityManager(),
+  ) {
+    const response = await this.authService.signOut(body, etm)
+
+    res.clearCookie(cookieKeys.accessToken, cookieOptions)
+    res.clearCookie(cookieKeys.user, cookieOptions)
+    res.send(response)
+    res.end()
   }
 
   @ApiBody({ type: ParamsRegisterEmailDto })
@@ -73,10 +97,21 @@ export class AuthController {
   })
   async registerEmail(
     @Body() body: ParamsRegisterEmailDto,
+    @Res() res: Response,
     etm = this.dataSource.createEntityManager(),
   ) {
     debugLog({ ...body })
-    return await this.authService.registerWithEmail(body, Role.USER, etm)
+    const response = await this.authService.registerWithEmail(body, Role.USER, etm)
+    const { accessToken, user } = response
+
+    res.cookie(cookieKeys.accessToken, accessToken, cookieOptions)
+    res.cookie(
+      cookieKeys.user,
+      pick(user, ['name', 'email', 'lastSignInAt', 'password', 'balance']),
+      cookieOptions,
+    )
+    res.send(response)
+    res.end()
   }
 
   @ApiBody({ type: UpdateForgotPasswordDto })

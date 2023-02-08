@@ -8,6 +8,7 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
 var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
+var JwtStrategy_1;
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.JwtStrategy = void 0;
 const common_1 = require("@nestjs/common");
@@ -16,10 +17,14 @@ const passport_jwt_1 = require("passport-jwt");
 const response_error_1 = require("../../utils/response-error");
 const user_service_1 = require("../user/user.service");
 const app_config_1 = require("../../config/app-config");
-let JwtStrategy = class JwtStrategy extends (0, passport_1.PassportStrategy)(passport_jwt_1.Strategy) {
+const auth_constant_1 = require("./auth.constant");
+let JwtStrategy = JwtStrategy_1 = class JwtStrategy extends (0, passport_1.PassportStrategy)(passport_jwt_1.Strategy) {
     constructor(userService) {
         super({
-            jwtFromRequest: passport_jwt_1.ExtractJwt.fromAuthHeaderAsBearerToken(),
+            jwtFromRequest: passport_jwt_1.ExtractJwt.fromExtractors([
+                JwtStrategy_1.extractJWT,
+                passport_jwt_1.ExtractJwt.fromAuthHeaderAsBearerToken(),
+            ]),
             ignoreExpiration: false,
             secretOrKey: app_config_1.appConfig.JWT_SECRET_KEY,
         });
@@ -32,8 +37,15 @@ let JwtStrategy = class JwtStrategy extends (0, passport_1.PassportStrategy)(pas
         }
         return user;
     }
+    static extractJWT(req) {
+        var _a, _b;
+        if ((_b = (_a = req.cookies) === null || _a === void 0 ? void 0 : _a[auth_constant_1.cookieKeys.accessToken]) === null || _b === void 0 ? void 0 : _b.length) {
+            return req.cookies[auth_constant_1.cookieKeys.accessToken];
+        }
+        return null;
+    }
 };
-JwtStrategy = __decorate([
+JwtStrategy = JwtStrategy_1 = __decorate([
     (0, common_1.Injectable)(),
     __metadata("design:paramtypes", [user_service_1.UserService])
 ], JwtStrategy);

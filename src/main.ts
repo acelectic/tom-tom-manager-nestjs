@@ -18,6 +18,8 @@ import './initialize'
 import { appConfig } from './config/app-config'
 import { bullServerAdapter } from './task/bull-board.provider'
 import { appVersion } from './utils/helper'
+import cookieParser from 'cookie-parser'
+
 // const sreviceAccount = require('../test-man-savvy-firebase-adminsdk-f2848-982951f18b.json')
 
 @Catch()
@@ -47,6 +49,9 @@ async function bootstrap() {
   const app = await NestFactory.create(AppModule, {
     logger: ['error', 'log', 'debug'],
   })
+
+  // somewhere in your initialization file
+  app.use(cookieParser())
 
   app.enableVersioning({
     type: VersioningType.URI,

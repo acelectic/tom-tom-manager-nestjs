@@ -22,6 +22,7 @@ require("./initialize");
 const app_config_1 = require("./config/app-config");
 const bull_board_provider_1 = require("./task/bull-board.provider");
 const helper_1 = require("./utils/helper");
+const cookie_parser_1 = __importDefault(require("cookie-parser"));
 let ExceptionsLoggerFilter = class ExceptionsLoggerFilter extends core_1.BaseExceptionFilter {
     catch(exception, host) {
         super.catch(exception, host);
@@ -48,6 +49,7 @@ async function bootstrap() {
     const app = await core_1.NestFactory.create(app_module_1.AppModule, {
         logger: ['error', 'log', 'debug'],
     });
+    app.use((0, cookie_parser_1.default)());
     app.enableVersioning({
         type: common_1.VersioningType.URI,
         prefix: 'v',

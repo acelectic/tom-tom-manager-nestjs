@@ -1,6 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.ReqUser = exports.Viewver = exports.Manager = exports.Admin = exports.Auth = exports.Roles = void 0;
+exports.ReqUser = exports.Viewer = exports.Manager = exports.Admin = exports.Auth = exports.Roles = void 0;
 const common_1 = require("@nestjs/common");
 const swagger_1 = require("@nestjs/swagger");
 const jwt_auth_guard_1 = require("./jwt-auth.guard");
@@ -20,10 +20,10 @@ const Manager = () => {
     return (0, exports.Auth)(auth_constant_1.Role.ADMIN, auth_constant_1.Role.MANAGER);
 };
 exports.Manager = Manager;
-const Viewver = () => {
+const Viewer = () => {
     return (0, exports.Auth)(auth_constant_1.Role.ADMIN, auth_constant_1.Role.MANAGER, auth_constant_1.Role.VIEWER);
 };
-exports.Viewver = Viewver;
+exports.Viewer = Viewer;
 exports.ReqUser = (0, common_1.createParamDecorator)((data, ctx) => {
     const request = ctx.switchToHttp().getRequest();
     return request.user;

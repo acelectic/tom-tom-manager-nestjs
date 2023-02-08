@@ -24,7 +24,7 @@ export const Manager = () => {
   return Auth(Role.ADMIN, Role.MANAGER)
 }
 
-export const Viewver = () => {
+export const Viewer = () => {
   return Auth(Role.ADMIN, Role.MANAGER, Role.VIEWER)
 }
 

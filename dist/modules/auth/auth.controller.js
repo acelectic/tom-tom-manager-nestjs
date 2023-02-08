@@ -22,20 +22,35 @@ const register_dto_1 = require("./dto/register.dto");
 const typeorm_1 = require("typeorm");
 const auth_constant_1 = require("./auth.constant");
 const helper_1 = require("../../utils/helper");
+const lodash_1 = require("lodash");
 let AuthController = class AuthController {
     constructor(authService, dataSource) {
         this.authService = authService;
         this.dataSource = dataSource;
     }
-    async signInEmail(body, etm = this.dataSource.createEntityManager()) {
-        return await this.authService.signWithEmail(body, etm);
+    async signInEmail(res, body, etm = this.dataSource.createEntityManager()) {
+        const response = await this.authService.signWithEmail(body, etm);
+        const { accessToken, user } = response;
+        res.cookie(auth_constant_1.cookieKeys.accessToken, accessToken, auth_constant_1.cookieOptions);
+        res.cookie(auth_constant_1.cookieKeys.user, user, auth_constant_1.cookieOptions);
+        res.send(response);
+        res.end();
     }
-    async signOut(body, etm = this.dataSource.createEntityManager()) {
-        return await this.authService.signOut(body, etm);
+    async signOut(body, res, etm = this.dataSource.createEntityManager()) {
+        const response = await this.authService.signOut(body, etm);
+        res.clearCookie(auth_constant_1.cookieKeys.accessToken, auth_constant_1.cookieOptions);
+        res.clearCookie(auth_constant_1.cookieKeys.user, auth_constant_1.cookieOptions);
+        res.send(response);
+        res.end();
     }
-    async registerEmail(body, etm = this.dataSource.createEntityManager()) {
+    async registerEmail(body, res, etm = this.dataSource.createEntityManager()) {
         (0, helper_1.debugLog)(Object.assign({}, body));
-        return await this.authService.registerWithEmail(body, auth_constant_1.Role.USER, etm);
+        const response = await this.authService.registerWithEmail(body, auth_constant_1.Role.USER, etm);
+        const { accessToken, user } = response;
+        res.cookie(auth_constant_1.cookieKeys.accessToken, accessToken, auth_constant_1.cookieOptions);
+        res.cookie(auth_constant_1.cookieKeys.user, (0, lodash_1.pick)(user, ['name', 'email', 'lastSignInAt', 'password', 'balance']), auth_constant_1.cookieOptions);
+        res.send(response);
+        res.end();
     }
     async updateForgotPassword(body, etm = this.dataSource.createEntityManager()) {
         return await this.authService.updateForgotPassword(body, etm);
@@ -44,17 +59,19 @@ let AuthController = class AuthController {
 __decorate([
     (0, swagger_1.ApiBody)({ type: sign_in_dto_1.SignInEmailDto }),
     (0, common_1.Post)('sign-in'),
-    __param(0, (0, common_1.Body)()),
+    __param(0, (0, common_1.Res)()),
+    __param(1, (0, common_1.Body)()),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [sign_in_dto_1.SignInEmailDto, Object]),
+    __metadata("design:paramtypes", [Object, sign_in_dto_1.SignInEmailDto, Object]),
     __metadata("design:returntype", Promise)
 ], AuthController.prototype, "signInEmail", null);
 __decorate([
     (0, swagger_1.ApiBody)({ type: sing_out_dto_1.SignOutDto }),
     (0, common_1.Post)('sign-out'),
     __param(0, (0, common_1.Body)()),
+    __param(1, (0, common_1.Res)()),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [sing_out_dto_1.SignOutDto, Object]),
+    __metadata("design:paramtypes", [sing_out_dto_1.SignOutDto, Object, Object]),
     __metadata("design:returntype", Promise)
 ], AuthController.prototype, "signOut", null);
 __decorate([
@@ -64,8 +81,9 @@ __decorate([
         strategy: 'exposeAll',
     }),
     __param(0, (0, common_1.Body)()),
+    __param(1, (0, common_1.Res)()),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [register_dto_1.ParamsRegisterEmailDto, Object]),
+    __metadata("design:paramtypes", [register_dto_1.ParamsRegisterEmailDto, Object, Object]),
     __metadata("design:returntype", Promise)
 ], AuthController.prototype, "registerEmail", null);
 __decorate([
