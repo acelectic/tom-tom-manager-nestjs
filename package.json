@@ -181,7 +181,7 @@
       [
         "@semantic-release/exec",
         {
-          "prepareCmd": "echo ${nextRelease.version} > VERSION"
+          "prepare": "echo ${nextRelease.version} > VERSION"
         }
       ],
       [
