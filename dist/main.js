@@ -23,6 +23,7 @@ const app_config_1 = require("./config/app-config");
 const bull_board_provider_1 = require("./task/bull-board.provider");
 const helper_1 = require("./utils/helper");
 const cookie_parser_1 = __importDefault(require("cookie-parser"));
+const response_interceptor_1 = require("./utils/interceptors/response.interceptor");
 let ExceptionsLoggerFilter = class ExceptionsLoggerFilter extends core_1.BaseExceptionFilter {
     catch(exception, host) {
         super.catch(exception, host);
@@ -69,7 +70,7 @@ async function bootstrap() {
         whitelist: true,
     }));
     app.useGlobalFilters();
-    app.useGlobalInterceptors(new common_1.ClassSerializerInterceptor(app.get(core_1.Reflector)));
+    app.useGlobalInterceptors(new response_interceptor_1.ResponseInterceptor(), new common_1.ClassSerializerInterceptor(app.get(core_1.Reflector)));
     const { httpAdapter } = app.get(core_1.HttpAdapterHost);
     app.useGlobalFilters(new db_exeption_filter_1.DbExeptionFilter(), new ExceptionsLoggerFilter(httpAdapter));
     app.use((0, express_1.json)({ limit: '50mb' }));

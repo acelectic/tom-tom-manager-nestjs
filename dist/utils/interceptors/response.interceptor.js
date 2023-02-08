@@ -8,12 +8,12 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.ResponseInterceptor = void 0;
 const common_1 = require("@nestjs/common");
-const operators_1 = require("rxjs/operators");
+const helper_1 = require("../helper");
 let ResponseInterceptor = class ResponseInterceptor {
     intercept(context, next) {
-        return next.handle().pipe((0, operators_1.map)(data => {
-            return { data };
-        }));
+        const res = context.switchToHttp().getResponse();
+        res.setHeader('Backend-Version', helper_1.appVersion);
+        return next.handle();
     }
 };
 ResponseInterceptor = __decorate([

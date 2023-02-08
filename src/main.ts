@@ -19,6 +19,7 @@ import { appConfig } from './config/app-config'
 import { bullServerAdapter } from './task/bull-board.provider'
 import { appVersion } from './utils/helper'
 import cookieParser from 'cookie-parser'
+import { ResponseInterceptor } from './utils/interceptors/response.interceptor'
 
 // const sreviceAccount = require('../test-man-savvy-firebase-adminsdk-f2848-982951f18b.json')
 
@@ -82,7 +83,7 @@ async function bootstrap() {
 
   app.useGlobalFilters()
   app.useGlobalInterceptors(
-    // new ResponseInterceptor(),
+    new ResponseInterceptor(),
     new ClassSerializerInterceptor(app.get(Reflector)),
   )
   const { httpAdapter } = app.get(HttpAdapterHost)
