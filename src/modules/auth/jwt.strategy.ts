@@ -4,7 +4,7 @@ import { ExtractJwt, Strategy } from 'passport-jwt'
 import { httpError } from '../../utils/response-error'
 import { UserService } from '../user/user.service'
 import { TokenData } from './auth.interface'
-import { appConfig } from 'src/config/env-config'
+import { appConfig } from 'src/config/app-config'
 
 @Injectable()
 export class JwtStrategy extends PassportStrategy(Strategy) {

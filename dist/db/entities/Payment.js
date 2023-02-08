@@ -12,7 +12,6 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.Payment = exports.PaymentType = exports.PaymentStatus = void 0;
 const class_transformer_1 = require("class-transformer");
 const entity_transform_1 = require("../../utils/entity-transform");
-const helper_1 = require("../../utils/helper");
 const typeorm_1 = require("typeorm");
 const AppEntity_1 = require("./AppEntity");
 const Resource_1 = require("./Resource");
@@ -32,7 +31,7 @@ var PaymentType;
 let Payment = class Payment extends AppEntity_1.AppEntity {
 };
 __decorate([
-    typeorm_1.Column({
+    (0, typeorm_1.Column)({
         name: 'price',
         type: 'numeric',
         nullable: false,
@@ -41,7 +40,7 @@ __decorate([
     __metadata("design:type", Number)
 ], Payment.prototype, "price", void 0);
 __decorate([
-    typeorm_1.Column({
+    (0, typeorm_1.Column)({
         name: 'type',
         type: 'enum',
         enum: PaymentType,
@@ -50,7 +49,7 @@ __decorate([
     __metadata("design:type", String)
 ], Payment.prototype, "type", void 0);
 __decorate([
-    typeorm_1.Column({
+    (0, typeorm_1.Column)({
         name: 'user_id',
         type: 'uuid',
         nullable: false,
@@ -58,7 +57,7 @@ __decorate([
     __metadata("design:type", String)
 ], Payment.prototype, "userId", void 0);
 __decorate([
-    typeorm_1.Column({
+    (0, typeorm_1.Column)({
         name: 'status',
         type: 'enum',
         enum: PaymentStatus,
@@ -68,7 +67,7 @@ __decorate([
     __metadata("design:type", String)
 ], Payment.prototype, "status", void 0);
 __decorate([
-    typeorm_1.Column({
+    (0, typeorm_1.Column)({
         name: 'resource_id',
         type: 'uuid',
         nullable: true,
@@ -76,7 +75,7 @@ __decorate([
     __metadata("design:type", String)
 ], Payment.prototype, "resourceId", void 0);
 __decorate([
-    typeorm_1.Column({
+    (0, typeorm_1.Column)({
         name: 'transaction_id',
         type: 'uuid',
         nullable: true,
@@ -84,31 +83,31 @@ __decorate([
     __metadata("design:type", String)
 ], Payment.prototype, "transactionId", void 0);
 __decorate([
-    typeorm_1.Generated('rowid'),
-    typeorm_1.Column({
+    (0, typeorm_1.Generated)('rowid'),
+    (0, typeorm_1.Column)({
         name: 'ref',
         nullable: true,
     }),
-    class_transformer_1.Transform(({ value }) => `${value}`.padStart(6, '0')),
+    (0, class_transformer_1.Transform)(({ value }) => `${value}`.padStart(6, '0')),
     __metadata("design:type", String)
 ], Payment.prototype, "ref", void 0);
 __decorate([
-    typeorm_1.ManyToOne(() => User_1.User, user => user.payments),
-    typeorm_1.JoinColumn({ name: 'user_id', referencedColumnName: 'id' }),
+    (0, typeorm_1.ManyToOne)(() => User_1.User, user => user.payments),
+    (0, typeorm_1.JoinColumn)({ name: 'user_id', referencedColumnName: 'id' }),
     __metadata("design:type", User_1.User)
 ], Payment.prototype, "user", void 0);
 __decorate([
-    typeorm_1.ManyToOne(() => Transaction_1.Transaction, transaction => transaction.payments, { nullable: true }),
-    typeorm_1.JoinColumn({ name: 'transaction_id', referencedColumnName: 'id' }),
+    (0, typeorm_1.ManyToOne)(() => Transaction_1.Transaction, transaction => transaction.payments, { nullable: true }),
+    (0, typeorm_1.JoinColumn)({ name: 'transaction_id', referencedColumnName: 'id' }),
     __metadata("design:type", Transaction_1.Transaction)
 ], Payment.prototype, "transaction", void 0);
 __decorate([
-    typeorm_1.ManyToOne(() => Resource_1.Resource, resource => resource.payments, { nullable: true }),
-    typeorm_1.JoinColumn({ name: 'resource_id', referencedColumnName: 'id' }),
+    (0, typeorm_1.ManyToOne)(() => Resource_1.Resource, resource => resource.payments, { nullable: true }),
+    (0, typeorm_1.JoinColumn)({ name: 'resource_id', referencedColumnName: 'id' }),
     __metadata("design:type", Resource_1.Resource)
 ], Payment.prototype, "resource", void 0);
 Payment = __decorate([
-    typeorm_1.Entity({ name: 'payments' })
+    (0, typeorm_1.Entity)({ name: 'payments' })
 ], Payment);
 exports.Payment = Payment;
 //# sourceMappingURL=Payment.js.map

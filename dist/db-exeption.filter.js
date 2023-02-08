@@ -25,7 +25,7 @@ let DbExeptionFilter = class DbExeptionFilter {
     }
 };
 DbExeptionFilter = __decorate([
-    common_1.Catch(typeorm_1.QueryFailedError)
+    (0, common_1.Catch)(typeorm_1.QueryFailedError)
 ], DbExeptionFilter);
 exports.DbExeptionFilter = DbExeptionFilter;
 //# sourceMappingURL=db-exeption.filter.js.map

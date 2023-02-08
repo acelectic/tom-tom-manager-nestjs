@@ -25,7 +25,10 @@ export class TransactionService {
     const { userId, page = 1, limit = 5 } = params
 
     if (userId) {
-      const { transactions: userTransactions } = await User.findOne(userId, {
+      const { transactions: userTransactions } = await User.findOne({
+        where: {
+          id: userId,
+        },
         relations: ['transactions'],
       })
       const transactionIds = userTransactions.map(({ id }) => id)
@@ -96,10 +99,12 @@ export class TransactionService {
 
   async createTransaction(params: CreateTransactionParamsDto, etm: EntityManager) {
     const { userIds, templateId } = params
-    const users = await User.find({
+    const users = await User.findBy({
       id: In(userIds),
     })
-    const template = await Template.findOne(templateId)
+    const template = await Template.findOneBy({
+      id: templateId,
+    })
 
     const resources = await template.resources
 

@@ -7,13 +7,16 @@ import {
   GetResourcesParamsDto,
   UpdateResourceIsActiveParamsDto,
 } from './dto/resource-params.dto'
-import { EntityManager, Transaction, TransactionManager } from 'typeorm'
+import { DataSource, EntityManager } from 'typeorm'
 
 @ApiTags('resources')
-@Controller('v1/resources')
+@Controller('resources')
 @Auth()
 export class ResourceController {
-  constructor(private readonly resourceService: ResourceService) {}
+  constructor(
+    private readonly resourceService: ResourceService,
+    private readonly dataSource: DataSource,
+  ) {}
 
   @Get()
   async getResources(@Query() params: GetResourcesParamsDto) {
@@ -21,20 +24,18 @@ export class ResourceController {
   }
 
   @Post()
-  @Transaction()
   async createResources(
     @Body() body: CreateResourceParamsDto,
-    @TransactionManager() etm: EntityManager,
+    etm = this.dataSource.createEntityManager(),
   ) {
     return this.resourceService.createResource(body, etm)
   }
 
   @Patch(':resourceId/set-active')
-  @Transaction()
   async updateTemplateActiveStatus(
     @Param('resourceId', new ParseUUIDPipe()) resourceId: string,
     @Body() bodyParams: UpdateResourceIsActiveParamsDto,
-    @TransactionManager() etm: EntityManager,
+    etm = this.dataSource.createEntityManager(),
   ) {
     return this.resourceService.updateTemplateActiveStatus(resourceId, bodyParams, etm)
   }

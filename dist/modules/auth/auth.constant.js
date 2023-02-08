@@ -6,6 +6,6 @@ var Role;
     Role["ADMIN"] = "admin";
     Role["MANAGER"] = "manager";
     Role["USER"] = "user";
-    Role["VIEVWER"] = "viewer";
+    Role["VIEWER"] = "viewer";
 })(Role = exports.Role || (exports.Role = {}));
 //# sourceMappingURL=auth.constant.js.map

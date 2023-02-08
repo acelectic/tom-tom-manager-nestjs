@@ -12,21 +12,25 @@ var __param = (this && this.__param) || function (paramIndex, decorator) {
     return function (target, key) { decorator(target, key, paramIndex); }
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.BullBoardProvider = void 0;
+exports.BullBoardProvider = exports.bullServerAdapter = void 0;
 const bull_1 = require("@nestjs/bull");
 const common_1 = require("@nestjs/common");
-const bull_board_1 = require("bull-board");
+const bullAdapter_1 = require("@bull-board/api/bullAdapter");
+const api_1 = require("@bull-board/api");
+const express_1 = require("@bull-board/express");
+exports.bullServerAdapter = new express_1.ExpressAdapter();
 let BullBoardProvider = class BullBoardProvider {
     constructor(firstQueue) {
         this.firstQueue = firstQueue;
-        bull_board_1.setQueues([
-            new bull_board_1.BullAdapter(firstQueue),
-        ]);
+        (0, api_1.createBullBoard)({
+            queues: [new bullAdapter_1.BullAdapter(firstQueue)],
+            serverAdapter: exports.bullServerAdapter,
+        });
     }
 };
 BullBoardProvider = __decorate([
-    common_1.Injectable(),
-    __param(0, bull_1.InjectQueue('first')),
+    (0, common_1.Injectable)(),
+    __param(0, (0, bull_1.InjectQueue)('first')),
     __metadata("design:paramtypes", [Object])
 ], BullBoardProvider);
 exports.BullBoardProvider = BullBoardProvider;

@@ -11,13 +11,13 @@ const common_1 = require("@nestjs/common");
 const operators_1 = require("rxjs/operators");
 let ResponseInterceptor = class ResponseInterceptor {
     intercept(context, next) {
-        return next.handle().pipe(operators_1.map(data => {
+        return next.handle().pipe((0, operators_1.map)(data => {
             return { data };
         }));
     }
 };
 ResponseInterceptor = __decorate([
-    common_1.Injectable()
+    (0, common_1.Injectable)()
 ], ResponseInterceptor);
 exports.ResponseInterceptor = ResponseInterceptor;
 //# sourceMappingURL=response.interceptor.js.map

@@ -13,7 +13,7 @@ const template_service_1 = require("./template.service");
 let TemplateModule = class TemplateModule {
 };
 TemplateModule = __decorate([
-    common_1.Module({
+    (0, common_1.Module)({
         imports: [],
         controllers: [template_controller_1.TemplateController],
         providers: [template_service_1.TemplateService],

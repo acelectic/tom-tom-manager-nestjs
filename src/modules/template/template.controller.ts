@@ -8,14 +8,17 @@ import {
   UpdateTemplateIsActiveParamsDto,
   UpdateTemplateParamsDto,
 } from './dto/template-params.dto'
-import { TransactionManager, EntityManager, Transaction } from 'typeorm'
+import { DataSource, EntityManager } from 'typeorm'
 import { CreateResourceParamsDto } from '../resource/dto/resource-params.dto'
 
 @ApiTags('templates')
-@Controller('v1/templates')
+@Controller('templates')
 @Auth()
 export class TemplateController {
-  constructor(private readonly templateService: TemplateService) {}
+  constructor(
+    private readonly templateService: TemplateService,
+    private readonly dataSource: DataSource,
+  ) {}
 
   @Get()
   async getTemplates(@Query() queryParams: GetTemplatesParamsDto) {
@@ -23,30 +26,27 @@ export class TemplateController {
   }
 
   @Post()
-  @Transaction()
   async createTemplate(
     @Body() bodyParams: CreateTemplateParamsDto,
-    @TransactionManager() etm: EntityManager,
+    etm = this.dataSource.createEntityManager(),
   ) {
     return this.templateService.createTemplate(bodyParams, etm)
   }
 
   @Patch(':templateId')
-  @Transaction()
   async updateTemplate(
     @Param('templateId', new ParseUUIDPipe()) templateId: string,
     @Body() bodyParams: UpdateTemplateParamsDto,
-    @TransactionManager() etm: EntityManager,
+    etm = this.dataSource.createEntityManager(),
   ) {
     return this.templateService.updateTemplate(templateId, bodyParams, etm)
   }
 
   @Patch(':templateId/set-active')
-  @Transaction()
   async updateTemplateActiveStatus(
     @Param('templateId', new ParseUUIDPipe()) templateId: string,
     @Body() bodyParams: UpdateTemplateIsActiveParamsDto,
-    @TransactionManager() etm: EntityManager,
+    etm = this.dataSource.createEntityManager(),
   ) {
     return this.templateService.updateTemplateActiveStatus(templateId, bodyParams, etm)
   }

@@ -8,4 +8,4 @@ import { ResourceService } from './resource.service'
   providers: [ResourceService],
   exports: [ResourceService],
 })
-export class ResouceModule {}
+export class ResourceModule {}

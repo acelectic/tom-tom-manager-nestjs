@@ -30,11 +30,15 @@ export class UserService {
     return users
   }
   async getUser(userId: string) {
-    return await User.findOne(userId)
+    return await User.findOneBy({
+      id: userId,
+    })
   }
 
   async getUserWithId(userId: string) {
-    return await User.findOne(userId)
+    return await User.findOneBy({
+      id: userId,
+    })
   }
 
   async createUserSignIn(params: ParamsCreateUserSignIn, etm: EntityManager) {
@@ -44,7 +48,9 @@ export class UserService {
   }
 
   async changeRole(userId: string, role: Role, etm: EntityManager) {
-    const user = await User.findOne(userId)
+    const user = await User.findOneBy({
+      id: userId,
+    })
     if (!user) return
     user.role = role
     return await etm.save(user)
@@ -52,7 +58,9 @@ export class UserService {
 
   async updateUser(userId: string, params: UpdateUserDto, etm: EntityManager) {
     const { name, password, role } = params
-    const user = await User.findOne(userId)
+    const user = await User.findOneBy({
+      id: userId,
+    })
 
     if (name) {
       user.name = name
@@ -69,7 +77,9 @@ export class UserService {
 
   private async validateUpdateUser(userId: string, params: UpdateUserDto) {
     const { name, password, role } = params
-    const user = await User.findOne(userId)
+    const user = await User.findOneBy({
+      id: userId,
+    })
 
     if (!user) {
       validateError('User not found')

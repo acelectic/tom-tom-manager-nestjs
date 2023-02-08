@@ -2,6 +2,8 @@ import { isNumber } from 'class-validator'
 import fs from 'fs'
 import { floor, ceil } from 'lodash'
 import { regressiveFee } from '../constants/gold-fee'
+var pjJson = require('../../package.json')
+export const appVersion = pjJson.version
 
 export const GOLD_WEIGHT_PER_GOLD_BAHT = 15.244 as const
 

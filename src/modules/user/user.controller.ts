@@ -3,14 +3,14 @@ import { UserService } from './user.service'
 import { ReqUser, Auth } from '../auth/auth.decorator'
 import { ApiTags } from '@nestjs/swagger'
 import { User } from '../../db/entities/User'
-import { EntityManager, Transaction, TransactionManager } from 'typeorm'
+import { DataSource, EntityManager } from 'typeorm'
 import { ChangeRoleDto, GetUsersParamsDto, UpdateUserDto } from './dto/user-params.dto'
 
 @ApiTags('users')
-@Controller('v1/users')
+@Controller('users')
 @Auth()
 export class UserController {
-  constructor(private readonly userService: UserService) {}
+  constructor(private readonly userService: UserService, private readonly dataSource: DataSource) {}
 
   @Get()
   async getUsers(@Query() queryParams: GetUsersParamsDto) {
@@ -28,21 +28,19 @@ export class UserController {
   }
 
   @Patch('/:userId/change-role')
-  @Transaction()
   async changeRole(
     @Param('userId', new ParseUUIDPipe()) userId: string,
     @Body() param: ChangeRoleDto,
-    @TransactionManager() etm: EntityManager,
+    etm: EntityManager,
   ) {
     return await this.userService.changeRole(userId, param.role, etm)
   }
 
   @Patch('/:userId/update')
-  @Transaction()
   async updateUser(
     @Param('userId', new ParseUUIDPipe()) userId: string,
     @Body() param: UpdateUserDto,
-    @TransactionManager() etm: EntityManager,
+    etm = this.dataSource.createEntityManager(),
   ) {
     return await this.userService.updateUser(userId, param, etm)
   }

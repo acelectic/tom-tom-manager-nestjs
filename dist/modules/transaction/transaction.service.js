@@ -18,11 +18,9 @@ const dayjs_1 = __importDefault(require("dayjs"));
 const lodash_1 = require("lodash");
 const nestjs_typeorm_paginate_1 = require("nestjs-typeorm-paginate");
 const Payment_1 = require("../../db/entities/Payment");
-const Resource_1 = require("../../db/entities/Resource");
 const Template_1 = require("../../db/entities/Template");
 const Transaction_1 = require("../../db/entities/Transaction");
 const User_1 = require("../../db/entities/User");
-const helper_1 = require("../../utils/helper");
 const response_error_1 = require("../../utils/response-error");
 const typeorm_1 = require("typeorm");
 const payment_service_1 = require("../payment/payment.service");
@@ -33,7 +31,10 @@ let TransactionService = class TransactionService {
     async getTransactions(params) {
         const { userId, page = 1, limit = 5 } = params;
         if (userId) {
-            const { transactions: userTransactions } = await User_1.User.findOne(userId, {
+            const { transactions: userTransactions } = await User_1.User.findOne({
+                where: {
+                    id: userId,
+                },
                 relations: ['transactions'],
             });
             const transactionIds = userTransactions.map(({ id }) => id);
@@ -42,32 +43,32 @@ let TransactionService = class TransactionService {
                 .orderBy('transaction.completed', 'ASC')
                 .addOrderBy('transaction.createdAt', 'ASC')
                 .where('transaction.id in (:...transactionIds)', { transactionIds });
-            const transactions = await nestjs_typeorm_paginate_1.paginate(queryBuilder, { page, limit });
+            const transactions = await (0, nestjs_typeorm_paginate_1.paginate)(queryBuilder, { page, limit });
             return transactions;
         }
         const queryBuilder = Transaction_1.Transaction.createQueryBuilder('transaction')
             .leftJoinAndSelect('transaction.users', 'users')
             .orderBy('transaction.completed', 'ASC')
             .addOrderBy('transaction.createdAt', 'ASC');
-        const transactions = await nestjs_typeorm_paginate_1.paginate(queryBuilder, { page, limit });
+        const transactions = await (0, nestjs_typeorm_paginate_1.paginate)(queryBuilder, { page, limit });
         return transactions;
     }
     async getTransactionsHistory(parmas) {
-        const { userId, status, endDate, startDate = dayjs_1.default().subtract(30, 'day') } = parmas;
+        const { userId, status, endDate, startDate = (0, dayjs_1.default)().subtract(30, 'day') } = parmas;
         const queryBuilder = Transaction_1.Transaction.createQueryBuilder('transaction')
             .leftJoinAndSelect('transaction.users', 'users')
             .orderBy('transaction.completed', 'ASC')
             .addOrderBy('transaction.createdAt', 'DESC');
         if (startDate) {
             queryBuilder.andWhere('transaction.created_at > :startDate', {
-                startDate: dayjs_1.default(startDate)
+                startDate: (0, dayjs_1.default)(startDate)
                     .tz()
                     .toISOString(),
             });
         }
         if (endDate) {
             queryBuilder.andWhere('transaction.created_at < :endDate', {
-                endDate: dayjs_1.default(endDate)
+                endDate: (0, dayjs_1.default)(endDate)
                     .tz()
                     .toISOString(),
             });
@@ -77,7 +78,7 @@ let TransactionService = class TransactionService {
                 userId,
             });
         }
-        if (lodash_1.isBoolean(status)) {
+        if ((0, lodash_1.isBoolean)(status)) {
             queryBuilder.andWhere('transaction.completed = :status', {
                 status,
             });
@@ -96,18 +97,20 @@ let TransactionService = class TransactionService {
     }
     async createTransaction(params, etm) {
         const { userIds, templateId } = params;
-        const users = await User_1.User.find({
-            id: typeorm_1.In(userIds),
+        const users = await User_1.User.findBy({
+            id: (0, typeorm_1.In)(userIds),
         });
-        const template = await Template_1.Template.findOne(templateId);
+        const template = await Template_1.Template.findOneBy({
+            id: templateId,
+        });
         const resources = await template.resources;
         if (!users.length) {
-            response_error_1.validateError('Users must least one');
+            (0, response_error_1.validateError)('Users must least one');
         }
         if (!resources.length) {
-            response_error_1.validateError('Resources must least one');
+            (0, response_error_1.validateError)('Resources must least one');
         }
-        const price = lodash_1.sumBy(resources, ({ price }) => Number(price));
+        const price = (0, lodash_1.sumBy)(resources, ({ price }) => Number(price));
         const transaction = await Transaction_1.Transaction.create({
             price,
             remain: price,
@@ -118,7 +121,7 @@ let TransactionService = class TransactionService {
             },
         });
         await etm.save(transaction);
-        const paymentPrice = lodash_1.ceil(price / users.length, 0);
+        const paymentPrice = (0, lodash_1.ceil)(price / users.length, 0);
         const payments = await users.map(async (user) => {
             const { id: userId } = user;
             const params = {
@@ -136,7 +139,7 @@ let TransactionService = class TransactionService {
     }
 };
 TransactionService = __decorate([
-    common_1.Injectable(),
+    (0, common_1.Injectable)(),
     __metadata("design:paramtypes", [payment_service_1.PaymentService])
 ], TransactionService);
 exports.TransactionService = TransactionService;

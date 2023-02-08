@@ -19,11 +19,11 @@ const Template_1 = require("./Template");
 let Resource = class Resource extends AppEntity_1.AppEntity {
 };
 __decorate([
-    typeorm_1.Column({ name: 'name', nullable: false }),
+    (0, typeorm_1.Column)({ name: 'name', nullable: false }),
     __metadata("design:type", String)
 ], Resource.prototype, "name", void 0);
 __decorate([
-    typeorm_1.Column({
+    (0, typeorm_1.Column)({
         name: 'price',
         type: 'numeric',
         default: 0,
@@ -33,34 +33,34 @@ __decorate([
     __metadata("design:type", Number)
 ], Resource.prototype, "price", void 0);
 __decorate([
-    typeorm_1.Column({ name: 'is_active', type: 'boolean', default: true, nullable: true }),
+    (0, typeorm_1.Column)({ name: 'is_active', type: 'boolean', default: true, nullable: true }),
     __metadata("design:type", Boolean)
 ], Resource.prototype, "isActive", void 0);
 __decorate([
-    typeorm_1.Generated('rowid'),
-    typeorm_1.Column({
+    (0, typeorm_1.Generated)('rowid'),
+    (0, typeorm_1.Column)({
         name: 'ref',
         nullable: true,
     }),
-    class_transformer_1.Transform(({ value }) => `${value}`.padStart(6, '0')),
+    (0, class_transformer_1.Transform)(({ value }) => `${value}`.padStart(6, '0')),
     __metadata("design:type", String)
 ], Resource.prototype, "ref", void 0);
 __decorate([
-    typeorm_1.OneToMany(() => Payment_1.Payment, payments => payments.transaction),
+    (0, typeorm_1.OneToMany)(() => Payment_1.Payment, payments => payments.transaction),
     __metadata("design:type", Array)
 ], Resource.prototype, "payments", void 0);
 __decorate([
-    typeorm_1.ManyToMany(() => Template_1.Template, templates => templates.resources, {
+    (0, typeorm_1.ManyToMany)(() => Template_1.Template, templates => templates.resources, {
         lazy: true,
     }),
     __metadata("design:type", Array)
 ], Resource.prototype, "templates", void 0);
 __decorate([
-    typeorm_1.RelationId((resource) => resource.templates),
+    (0, typeorm_1.RelationId)((resource) => resource.templates),
     __metadata("design:type", Array)
 ], Resource.prototype, "resourceIds", void 0);
 Resource = __decorate([
-    typeorm_1.Entity({ name: 'resources' })
+    (0, typeorm_1.Entity)({ name: 'resources' })
 ], Resource);
 exports.Resource = Resource;
 //# sourceMappingURL=Resource.js.map

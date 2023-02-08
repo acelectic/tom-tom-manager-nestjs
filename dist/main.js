@@ -17,41 +17,46 @@ const app_module_1 = require("./app.module");
 const swagger_1 = require("@nestjs/swagger");
 const express_1 = require("express");
 const db_exeption_filter_1 = require("./db-exeption.filter");
-const bull_board_1 = require("bull-board");
 const express_basic_auth_1 = __importDefault(require("express-basic-auth"));
 require("./initialize");
-const env_config_1 = require("./config/env-config");
+const app_config_1 = require("./config/app-config");
+const bull_board_provider_1 = require("./task/bull-board.provider");
+const helper_1 = require("./utils/helper");
 let ExceptionsLoggerFilter = class ExceptionsLoggerFilter extends core_1.BaseExceptionFilter {
     catch(exception, host) {
         super.catch(exception, host);
     }
 };
 ExceptionsLoggerFilter = __decorate([
-    common_1.Catch()
+    (0, common_1.Catch)()
 ], ExceptionsLoggerFilter);
 exports.ExceptionsLoggerFilter = ExceptionsLoggerFilter;
-console.log({ appConfig: env_config_1.appConfig });
+console.log({ appConfig: app_config_1.appConfig });
 const whitelistOrigin = [
     'https://tomtom-react.herokuapp.com',
     /\*.herokuapp.com$/,
     'http://localhost:3000',
     /\*.com$/,
 ];
-bull_board_1.setQueues([]);
 const loggerProduction = ['warn'];
-const logger = env_config_1.appConfig.LOG_LEVEL === 'debug'
+const logger = app_config_1.appConfig.LOG_LEVEL === 'debug'
     ? { logger: ['debug'] }
-    : env_config_1.appConfig.LOG_LEVEL === 'production'
+    : app_config_1.appConfig.LOG_LEVEL === 'production'
         ? { logger: loggerProduction }
         : {};
 async function bootstrap() {
     const app = await core_1.NestFactory.create(app_module_1.AppModule, {
         logger: ['error', 'log', 'debug'],
     });
+    app.enableVersioning({
+        type: common_1.VersioningType.URI,
+        prefix: 'v',
+        defaultVersion: '1',
+    });
     app.enableCors({
         origin: true,
         methods: ['GET', 'PUT', 'PATCH', 'POST', 'DELETE'],
-        allowedHeaders: ['Content-Type', 'Authorization', 'authorization'],
+        allowedHeaders: ['Content-Type', 'Authorization', 'App-Version'],
         preflightContinue: false,
         optionsSuccessStatus: 204,
         credentials: true,
@@ -65,25 +70,26 @@ async function bootstrap() {
     app.useGlobalInterceptors(new common_1.ClassSerializerInterceptor(app.get(core_1.Reflector)));
     const { httpAdapter } = app.get(core_1.HttpAdapterHost);
     app.useGlobalFilters(new db_exeption_filter_1.DbExeptionFilter(), new ExceptionsLoggerFilter(httpAdapter));
-    app.use(express_1.json({ limit: '50mb' }));
-    app.use(express_1.urlencoded({ limit: '50mb', extended: true }));
+    app.use((0, express_1.json)({ limit: '50mb' }));
+    app.use((0, express_1.urlencoded)({ limit: '50mb', extended: true }));
     const options = new swagger_1.DocumentBuilder()
         .setTitle('TOMTOM API')
         .setDescription('The TOMTOM API description')
-        .setVersion('1.0')
+        .setVersion(helper_1.appVersion)
         .addBearerAuth()
         .build();
     const document = swagger_1.SwaggerModule.createDocument(app, options);
-    swagger_1.SwaggerModule.setup('api', app, document);
-    app.use('/bull-board', express_basic_auth_1.default({
+    swagger_1.SwaggerModule.setup('swagger', app, document);
+    bull_board_provider_1.bullServerAdapter.setBasePath('/bull-board');
+    app.use('/bull-board', (0, express_basic_auth_1.default)({
         users: {
-            admin: env_config_1.appConfig.BULL_BOARD_PASSWORD,
+            admin: app_config_1.appConfig.BULL_BOARD_PASSWORD,
         },
         challenge: true,
-    }), bull_board_1.router);
-    const port = env_config_1.appConfig.PORT;
+    }), bull_board_provider_1.bullServerAdapter.getRouter());
+    const port = app_config_1.appConfig.PORT;
     await app.listen(port, () => {
-        console.log('Nest server listening on port ' + port + '.');
+        console.log(`Nest server (v${helper_1.appVersion}) listening on port ` + port + '.');
     });
 }
 bootstrap();

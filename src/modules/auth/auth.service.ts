@@ -41,7 +41,7 @@ export class AuthService {
   async signWithEmail(data: SignInEmailDto, etm: EntityManager) {
     const { email, password } = data
     await this.validateSignInWithEmail(data)
-    const user = await User.findOne({ email })
+    const user = await User.findOneBy({ email })
     const paramsSignInBase: ParamSignInBase = {
       email,
       password,
@@ -58,7 +58,7 @@ export class AuthService {
 
   private async signIn(data: ParamSignInBase, etm: EntityManager) {
     const { email, password, name, role } = data
-    let user = await User.findOne({ email })
+    let user = await User.findOneBy({ email })
 
     if (!user) {
       const params: ParamsCreateUserSignIn = {
@@ -72,7 +72,9 @@ export class AuthService {
     user.lastSignInAt = new Date()
     if (!user?.password) user.password = password
     await etm.save(user)
-    const newUser = await etm.findOne(User, user.id)
+    const newUser = await etm.findOneBy(User, {
+      id: user.id,
+    })
     return {
       accessToken: this.getToken(newUser),
       user: newUser,
@@ -93,7 +95,7 @@ export class AuthService {
 
   async verifyEmail(params: VerifyEmailDto) {
     const { email } = params
-    const user = await User.findOne({ email })
+    const user = await User.findOneBy({ email })
 
     return { isEmailExist: user ? true : false }
   }
@@ -103,7 +105,7 @@ export class AuthService {
     await this.validateUserWithEmail(email)
 
     const encryptPassword = await bcrypt.hash(password, 10)
-    const user = await User.findOne({ email })
+    const user = await User.findOneBy({ email })
     user.password = encryptPassword
 
     await etm.save(user)
@@ -111,7 +113,7 @@ export class AuthService {
   }
 
   private async validateUserWithEmail(email) {
-    const user = await User.findOne({ email })
+    const user = await User.findOneBy({ email })
     if (!user) {
       validateError('User not found')
     }

@@ -1,7 +1,7 @@
 import { Body, Controller, Get, Param, ParseUUIDPipe, Post, Query } from '@nestjs/common'
 import { Auth } from '../auth/auth.decorator'
 import { ApiTags } from '@nestjs/swagger'
-import { EntityManager, Transaction, TransactionManager } from 'typeorm'
+import { DataSource, EntityManager } from 'typeorm'
 import { TransactionService } from './transaction.service'
 import {
   CreateTransactionParamsDto,
@@ -10,10 +10,13 @@ import {
 } from './dto/transaction-params.dto'
 
 @ApiTags('transactions')
-@Controller('v1/transactions')
+@Controller('transactions')
 @Auth()
 export class TransactionController {
-  constructor(private readonly transactionService: TransactionService) {}
+  constructor(
+    private readonly transactionService: TransactionService,
+    private readonly dataSource: DataSource,
+  ) {}
 
   @Get()
   async getTransactions(@Query() params: GetTransactionParamsDto) {
@@ -31,10 +34,9 @@ export class TransactionController {
   }
 
   @Post()
-  @Transaction()
   async createTransactions(
     @Body() body: CreateTransactionParamsDto,
-    @TransactionManager() etm: EntityManager,
+    etm = this.dataSource.createEntityManager(),
   ) {
     return this.transactionService.createTransaction(body, etm)
   }

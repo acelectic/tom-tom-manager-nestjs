@@ -1,7 +1,7 @@
 require('dotenv').config()
 import { BootstrapConsole } from 'nestjs-console'
 import { AppModule } from './app.module'
-import { appConfig } from './config/env-config'
+import { appConfig } from './config/app-config'
 // import * as admin from 'firebase-admin'
 console.log({ appConfig })
 

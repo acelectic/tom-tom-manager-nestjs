@@ -20,64 +20,57 @@ const payment_service_1 = require("./payment.service");
 const payment_params_dto_1 = require("./dto/payment-params.dto");
 const typeorm_1 = require("typeorm");
 let PaymentController = class PaymentController {
-    constructor(paymentService) {
+    constructor(paymentService, dataSource) {
         this.paymentService = paymentService;
+        this.dataSource = dataSource;
     }
     async getPayments(query) {
         return this.paymentService.getPayments(query);
     }
-    async createTransactions(body, etm) {
+    async createTransactions(body, etm = this.dataSource.createEntityManager()) {
         return this.paymentService.createPayment(body, etm);
     }
-    async confirmPayment(params, etm) {
+    async confirmPayment(params, etm = this.dataSource.createEntityManager()) {
         return this.paymentService.confirmPayment(params, etm);
     }
-    async confirmUserAllPayments(bodyParams, etm) {
+    async confirmUserAllPayments(bodyParams, etm = this.dataSource.createEntityManager()) {
         return this.paymentService.confirmUserAllPayments(bodyParams, etm);
     }
 };
 __decorate([
-    common_1.Get(),
-    __param(0, common_1.Query()),
+    (0, common_1.Get)(),
+    __param(0, (0, common_1.Query)()),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", [payment_params_dto_1.GetPaymentsParamsDto]),
     __metadata("design:returntype", Promise)
 ], PaymentController.prototype, "getPayments", null);
 __decorate([
-    common_1.Post(),
-    typeorm_1.Transaction(),
-    __param(0, common_1.Body()),
-    __param(1, typeorm_1.TransactionManager()),
+    (0, common_1.Post)(),
+    __param(0, (0, common_1.Body)()),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [payment_params_dto_1.CreatePaymentParamsDto,
-        typeorm_1.EntityManager]),
+    __metadata("design:paramtypes", [payment_params_dto_1.CreatePaymentParamsDto, Object]),
     __metadata("design:returntype", Promise)
 ], PaymentController.prototype, "createTransactions", null);
 __decorate([
-    common_1.Post(':paymentId/confirm'),
-    typeorm_1.Transaction(),
-    __param(0, common_1.Param()),
-    __param(1, typeorm_1.TransactionManager()),
+    (0, common_1.Post)(':paymentId/confirm'),
+    __param(0, (0, common_1.Param)()),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [payment_params_dto_1.ConfirmPaymentParamsDto,
-        typeorm_1.EntityManager]),
+    __metadata("design:paramtypes", [payment_params_dto_1.ConfirmPaymentParamsDto, Object]),
     __metadata("design:returntype", Promise)
 ], PaymentController.prototype, "confirmPayment", null);
 __decorate([
-    common_1.Post('/confirm-all'),
-    typeorm_1.Transaction(),
-    __param(0, common_1.Body()),
-    __param(1, typeorm_1.TransactionManager()),
+    (0, common_1.Post)('/confirm-all'),
+    __param(0, (0, common_1.Body)()),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [payment_params_dto_1.ConfirmUserAllPaymentParamsDto,
-        typeorm_1.EntityManager]),
+    __metadata("design:paramtypes", [payment_params_dto_1.ConfirmUserAllPaymentParamsDto, Object]),
     __metadata("design:returntype", Promise)
 ], PaymentController.prototype, "confirmUserAllPayments", null);
 PaymentController = __decorate([
-    swagger_1.ApiTags('payments'),
-    common_1.Controller('v1/payments'),
-    auth_decorator_1.Auth(),
-    __metadata("design:paramtypes", [payment_service_1.PaymentService])
+    (0, swagger_1.ApiTags)('payments'),
+    (0, common_1.Controller)('payments'),
+    (0, auth_decorator_1.Auth)(),
+    __metadata("design:paramtypes", [payment_service_1.PaymentService,
+        typeorm_1.DataSource])
 ], PaymentController);
 exports.PaymentController = PaymentController;
 //# sourceMappingURL=payment.controller.js.map

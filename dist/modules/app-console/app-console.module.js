@@ -16,7 +16,7 @@ const payment_modules_1 = require("../payment/payment.modules");
 let AppConsoleModule = class AppConsoleModule {
 };
 AppConsoleModule = __decorate([
-    common_1.Module({
+    (0, common_1.Module)({
         imports: [auth_modules_1.AuthModule, user_module_1.UserModule, transaction_modules_1.TransactionModule, payment_modules_1.PaymentModule],
         providers: [app_console_service_1.AppConsoleService],
     })

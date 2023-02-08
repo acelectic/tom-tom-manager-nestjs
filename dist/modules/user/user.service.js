@@ -33,14 +33,18 @@ let UserService = class UserService {
             queryBuilder.where('user.id in (:...userIds)', { userIds });
         }
         queryBuilder.orderBy('user.name', 'ASC').leftJoinAndSelect('user.payments', 'payments');
-        const users = await nestjs_typeorm_paginate_1.paginate(queryBuilder, { page, limit });
+        const users = await (0, nestjs_typeorm_paginate_1.paginate)(queryBuilder, { page, limit });
         return users;
     }
     async getUser(userId) {
-        return await User_1.User.findOne(userId);
+        return await User_1.User.findOneBy({
+            id: userId,
+        });
     }
     async getUserWithId(userId) {
-        return await User_1.User.findOne(userId);
+        return await User_1.User.findOneBy({
+            id: userId,
+        });
     }
     async createUserSignIn(params, etm) {
         const { email, role, password, name } = params;
@@ -48,7 +52,9 @@ let UserService = class UserService {
         return await etm.save(user);
     }
     async changeRole(userId, role, etm) {
-        const user = await User_1.User.findOne(userId);
+        const user = await User_1.User.findOneBy({
+            id: userId,
+        });
         if (!user)
             return;
         user.role = role;
@@ -56,7 +62,9 @@ let UserService = class UserService {
     }
     async updateUser(userId, params, etm) {
         const { name, password, role } = params;
-        const user = await User_1.User.findOne(userId);
+        const user = await User_1.User.findOneBy({
+            id: userId,
+        });
         if (name) {
             user.name = name;
         }
@@ -71,17 +79,19 @@ let UserService = class UserService {
     }
     async validateUpdateUser(userId, params) {
         const { name, password, role } = params;
-        const user = await User_1.User.findOne(userId);
+        const user = await User_1.User.findOneBy({
+            id: userId,
+        });
         if (!user) {
-            response_error_1.validateError('User not found');
+            (0, response_error_1.validateError)('User not found');
         }
         if (!name || !password) {
-            response_error_1.validateError('Invalid information');
+            (0, response_error_1.validateError)('Invalid information');
         }
     }
 };
 UserService = __decorate([
-    common_1.Injectable(),
+    (0, common_1.Injectable)(),
     __metadata("design:paramtypes", [])
 ], UserService);
 exports.UserService = UserService;

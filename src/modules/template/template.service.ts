@@ -3,7 +3,7 @@ import { concat, unionBy } from 'lodash'
 import { Resource } from 'src/db/entities/Resource'
 import { Template } from 'src/db/entities/Template'
 import { debugLog } from 'src/utils/helper'
-import { EntityManager } from 'typeorm'
+import { EntityManager, In } from 'typeorm'
 import {
   CreateTemplateParamsDto,
   GetTemplatesParamsDto,
@@ -34,7 +34,10 @@ export class TemplateService {
 
   async createTemplate(params: CreateTemplateParamsDto, etm: EntityManager) {
     const { name, description, isActive = true, resourceIds } = params
-    const resources = await Resource.findByIds(resourceIds, {
+    const resources = await Resource.find({
+      where: {
+        id: In(resourceIds),
+      },
       relations: ['templates'],
     })
 
@@ -50,8 +53,12 @@ export class TemplateService {
 
   async updateTemplate(templateId: string, params: UpdateTemplateParamsDto, etm: EntityManager) {
     const { name, description, resourceIds, isActive } = params
-    const template = await Template.findOne(templateId)
-    const resources = await Resource.findByIds(resourceIds)
+    const template = await Template.findOneBy({
+      id: templateId,
+    })
+    const resources = await Resource.findBy({
+      id: In(resourceIds),
+    })
 
     if (resourceIds?.length && resourceIds.length) {
       template.resources = resources
@@ -68,7 +75,9 @@ export class TemplateService {
     etm: EntityManager,
   ) {
     const { isActive } = params
-    const template = await Template.findOne(templateId)
+    const template = await Template.findOneBy({
+      id: templateId,
+    })
 
     template.isActive = isActive
     debugLog({ isActive, template })

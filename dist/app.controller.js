@@ -21,13 +21,13 @@ let AppController = class AppController {
     }
 };
 __decorate([
-    common_1.Get('/health'),
+    (0, common_1.Get)('/health'),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", []),
     __metadata("design:returntype", Promise)
 ], AppController.prototype, "health", null);
 AppController = __decorate([
-    common_1.Controller('v1'),
+    (0, common_1.Controller)(),
     __metadata("design:paramtypes", [app_service_1.AppService])
 ], AppController);
 exports.AppController = AppController;

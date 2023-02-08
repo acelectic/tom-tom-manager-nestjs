@@ -22,72 +22,64 @@ const register_dto_1 = require("./dto/register.dto");
 const typeorm_1 = require("typeorm");
 const auth_constant_1 = require("./auth.constant");
 const helper_1 = require("../../utils/helper");
-const response_interceptor_1 = require("../../utils/interceptors/response.interceptor");
 let AuthController = class AuthController {
-    constructor(authService) {
+    constructor(authService, dataSource) {
         this.authService = authService;
+        this.dataSource = dataSource;
     }
-    async signInEmail(body, etm) {
+    async signInEmail(body, etm = this.dataSource.createEntityManager()) {
         return await this.authService.signWithEmail(body, etm);
     }
-    async signOut(body, etm) {
+    async signOut(body, etm = this.dataSource.createEntityManager()) {
         return await this.authService.signOut(body, etm);
     }
-    async registerEmail(body, etm) {
-        helper_1.debugLog(Object.assign({}, body));
+    async registerEmail(body, etm = this.dataSource.createEntityManager()) {
+        (0, helper_1.debugLog)(Object.assign({}, body));
         return await this.authService.registerWithEmail(body, auth_constant_1.Role.USER, etm);
     }
-    async updateForgotPassword(body, etm) {
+    async updateForgotPassword(body, etm = this.dataSource.createEntityManager()) {
         return await this.authService.updateForgotPassword(body, etm);
     }
 };
 __decorate([
-    swagger_1.ApiBody({ type: sign_in_dto_1.SignInEmailDto }),
-    common_1.Post('sign-in'),
-    typeorm_1.Transaction(),
-    __param(0, common_1.Body()), __param(1, typeorm_1.TransactionManager()),
+    (0, swagger_1.ApiBody)({ type: sign_in_dto_1.SignInEmailDto }),
+    (0, common_1.Post)('sign-in'),
+    __param(0, (0, common_1.Body)()),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [sign_in_dto_1.SignInEmailDto, typeorm_1.EntityManager]),
+    __metadata("design:paramtypes", [sign_in_dto_1.SignInEmailDto, Object]),
     __metadata("design:returntype", Promise)
 ], AuthController.prototype, "signInEmail", null);
 __decorate([
-    swagger_1.ApiBody({ type: sing_out_dto_1.SignOutDto }),
-    common_1.Post('sign-out'),
-    typeorm_1.Transaction(),
-    __param(0, common_1.Body()), __param(1, typeorm_1.TransactionManager()),
+    (0, swagger_1.ApiBody)({ type: sing_out_dto_1.SignOutDto }),
+    (0, common_1.Post)('sign-out'),
+    __param(0, (0, common_1.Body)()),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [sing_out_dto_1.SignOutDto, typeorm_1.EntityManager]),
+    __metadata("design:paramtypes", [sing_out_dto_1.SignOutDto, Object]),
     __metadata("design:returntype", Promise)
 ], AuthController.prototype, "signOut", null);
 __decorate([
-    swagger_1.ApiBody({ type: register_dto_1.ParamsRegisterEmailDto }),
-    common_1.Post('register'),
-    typeorm_1.Transaction(),
-    common_1.SerializeOptions({
+    (0, swagger_1.ApiBody)({ type: register_dto_1.ParamsRegisterEmailDto }),
+    (0, common_1.Post)('register'),
+    (0, common_1.SerializeOptions)({
         strategy: 'exposeAll',
     }),
-    __param(0, common_1.Body()),
-    __param(1, typeorm_1.TransactionManager()),
+    __param(0, (0, common_1.Body)()),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [register_dto_1.ParamsRegisterEmailDto,
-        typeorm_1.EntityManager]),
+    __metadata("design:paramtypes", [register_dto_1.ParamsRegisterEmailDto, Object]),
     __metadata("design:returntype", Promise)
 ], AuthController.prototype, "registerEmail", null);
 __decorate([
-    swagger_1.ApiBody({ type: sign_in_dto_1.UpdateForgotPasswordDto }),
-    common_1.Patch('/update-password'),
-    typeorm_1.Transaction(),
-    __param(0, common_1.Body()),
-    __param(1, typeorm_1.TransactionManager()),
+    (0, swagger_1.ApiBody)({ type: sign_in_dto_1.UpdateForgotPasswordDto }),
+    (0, common_1.Patch)('/update-password'),
+    __param(0, (0, common_1.Body)()),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [sign_in_dto_1.UpdateForgotPasswordDto,
-        typeorm_1.EntityManager]),
+    __metadata("design:paramtypes", [sign_in_dto_1.UpdateForgotPasswordDto, Object]),
     __metadata("design:returntype", Promise)
 ], AuthController.prototype, "updateForgotPassword", null);
 AuthController = __decorate([
-    swagger_1.ApiTags('auth'),
-    common_1.Controller('v1/auth'),
-    __metadata("design:paramtypes", [auth_service_1.AuthService])
+    (0, swagger_1.ApiTags)('auth'),
+    (0, common_1.Controller)('auth'),
+    __metadata("design:paramtypes", [auth_service_1.AuthService, typeorm_1.DataSource])
 ], AuthController);
 exports.AuthController = AuthController;
 //# sourceMappingURL=auth.controller.js.map

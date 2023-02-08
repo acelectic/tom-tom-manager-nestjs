@@ -1,4 +1,4 @@
-FROM node:18.8.0-alpine as builder
+FROM node:18.10.0-alpine as builder
 
 # curl needed to display Heroku release logs
 RUN apk --no-cache add curl
@@ -20,7 +20,7 @@ RUN wget https://gobinaries.com/tj/node-prune --output-document - | /bin/sh && n
 # Use the node user from the image (instead of the root user)
 USER node
 
-FROM node:18.8.0-alpine as production
+FROM node:18.10.0-alpine as production
 
 ENV NODE_ENV=production
 

@@ -21,15 +21,15 @@ import {
 import { SignOutDto } from './dto/sing-out.dto'
 import { getOtpDto } from './dto/get-otp.dto'
 import { VerifyEmailDto, VerifyMobilelDto, ParamsRegisterEmailDto } from './dto/register.dto'
-import { EntityManager, Transaction, TransactionManager } from 'typeorm'
+import { EntityManager, DataSource } from 'typeorm'
 import { Role } from './auth.constant'
 import { debugLog } from 'src/utils/helper'
 import { ResponseInterceptor } from 'src/utils/interceptors/response.interceptor'
 
 @ApiTags('auth')
-@Controller('v1/auth')
+@Controller('auth')
 export class AuthController {
-  constructor(private readonly authService: AuthService) {}
+  constructor(private readonly authService: AuthService, private readonly dataSource: DataSource) {}
 
   // @Get('request-otp')
   // async getOtp(@Query() body: getOtpDto) {
@@ -38,47 +38,42 @@ export class AuthController {
 
   // @ApiBody({ type: SignInGoogleDto })
   // @Post("google")
-  // @Transaction()
   // async signInGoogle(
   //   @Body() body: SignInGoogleDto,
-  //   @TransactionManager() etm: EntityManager
+  //   etm = this.dataSource.createEntityManager()
   // ) {
   //   return await this.authService.singWithGoogle(body, etm);
   // }
 
   // @ApiBody({ type: SignInFacebookDto })
   // @Post("facebook")
-  // @Transaction()
   // async signInFacebook(
   //   @Body() body: SignInFacebookDto,
-  //   @TransactionManager() etm: EntityManager
+  //   etm = this.dataSource.createEntityManager()
   // ) {
   //   return await this.authService.signWithFacebook(body, etm);
   // }
 
   @ApiBody({ type: SignInEmailDto })
   @Post('sign-in')
-  @Transaction()
-  async signInEmail(@Body() body: SignInEmailDto, @TransactionManager() etm: EntityManager) {
+  async signInEmail(@Body() body: SignInEmailDto, etm = this.dataSource.createEntityManager()) {
     return await this.authService.signWithEmail(body, etm)
   }
 
   @ApiBody({ type: SignOutDto })
   @Post('sign-out')
-  @Transaction()
-  async signOut(@Body() body: SignOutDto, @TransactionManager() etm: EntityManager) {
+  async signOut(@Body() body: SignOutDto, etm = this.dataSource.createEntityManager()) {
     return await this.authService.signOut(body, etm)
   }
 
   @ApiBody({ type: ParamsRegisterEmailDto })
   @Post('register')
-  @Transaction()
   @SerializeOptions({
     strategy: 'exposeAll',
   })
   async registerEmail(
     @Body() body: ParamsRegisterEmailDto,
-    @TransactionManager() etm: EntityManager,
+    etm = this.dataSource.createEntityManager(),
   ) {
     debugLog({ ...body })
     return await this.authService.registerWithEmail(body, Role.USER, etm)
@@ -86,10 +81,9 @@ export class AuthController {
 
   @ApiBody({ type: UpdateForgotPasswordDto })
   @Patch('/update-password')
-  @Transaction()
   async updateForgotPassword(
     @Body() body: UpdateForgotPasswordDto,
-    @TransactionManager() etm: EntityManager,
+    etm = this.dataSource.createEntityManager(),
   ) {
     return await this.authService.updateForgotPassword(body, etm)
   }

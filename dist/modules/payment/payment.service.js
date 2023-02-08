@@ -16,7 +16,6 @@ const Payment_1 = require("../../db/entities/Payment");
 const Resource_1 = require("../../db/entities/Resource");
 const Transaction_1 = require("../../db/entities/Transaction");
 const User_1 = require("../../db/entities/User");
-const helper_1 = require("../../utils/helper");
 const response_error_1 = require("../../utils/response-error");
 let PaymentService = class PaymentService {
     constructor() { }
@@ -34,15 +33,25 @@ let PaymentService = class PaymentService {
         if (transactionId) {
             queryBuilder.where('payment.transaction_id = :transactionId', { transactionId });
         }
-        const payments = await nestjs_typeorm_paginate_1.paginate(queryBuilder, { limit, page });
+        const payments = await (0, nestjs_typeorm_paginate_1.paginate)(queryBuilder, { limit, page });
         return payments;
     }
     async createPayment(params, etm) {
         await this.validateCreatePayment(params, etm);
         const { price, type, resourceId, transactionId, userId } = params;
-        const user = await etm.findOne(User_1.User, userId);
-        const transaction = await etm.findOne(Transaction_1.Transaction, transactionId);
-        const resource = await etm.findOne(Resource_1.Resource, resourceId);
+        const user = await etm.findOne(User_1.User, {
+            where: { id: userId },
+        });
+        const transaction = await etm.findOne(Transaction_1.Transaction, {
+            where: {
+                id: transactionId,
+            },
+        });
+        const resource = await etm.findOne(Resource_1.Resource, {
+            where: {
+                id: resourceId,
+            },
+        });
         const payment = await Payment_1.Payment.findOrInit({ price, type, userId, transactionId });
         payment.user = user;
         if (type === Payment_1.PaymentType.PAID && transaction) {
@@ -55,9 +64,14 @@ let PaymentService = class PaymentService {
     }
     async confirmPayment(params, etm) {
         const { paymentId } = params;
-        const payment = await Payment_1.Payment.findOne(paymentId, { relations: ['user', 'transaction'] });
+        const payment = await Payment_1.Payment.findOne({
+            where: {
+                id: paymentId,
+            },
+            relations: ['user', 'transaction'],
+        });
         if (!payment)
-            response_error_1.validateError('Payment not found');
+            (0, response_error_1.validateError)('Payment not found');
         payment.status = Payment_1.PaymentStatus.SETTLED;
         await etm.save(payment);
         const { user, transaction } = payment;
@@ -67,7 +81,9 @@ let PaymentService = class PaymentService {
     }
     async confirmUserAllPayments(params, etm) {
         const { userId } = params;
-        const user = await User_1.User.findOne(userId);
+        const user = await User_1.User.findOneBy({
+            id: userId,
+        });
         const payments = await Payment_1.Payment.find({
             where: {
                 userId,
@@ -90,12 +106,21 @@ let PaymentService = class PaymentService {
     }
     async validateCreatePayment(params, etm) {
         const { price, type, resourceId, transactionId, userId } = params;
-        const user = await etm.findOne(User_1.User, userId, { relations: ['transactions'] });
+        const user = await etm.findOne(User_1.User, {
+            where: {
+                id: userId,
+            },
+            relations: ['transactions'],
+        });
         const resource = await etm.findOne(Resource_1.Resource, {
-            id: resourceId,
+            where: {
+                id: resourceId,
+            },
         });
         const transaction = await etm.findOne(Transaction_1.Transaction, {
-            id: transactionId,
+            where: {
+                id: transactionId,
+            },
         });
         const payment = await etm.findOne(Payment_1.Payment, {
             where: [
@@ -109,20 +134,20 @@ let PaymentService = class PaymentService {
         });
         const isValidTransaction = user.transactions.find(({ id }) => id === transactionId);
         if (payment)
-            response_error_1.validateError('Payment is exists on Transaction Id');
+            (0, response_error_1.validateError)('Payment is exists on Transaction Id');
         if (!user)
-            response_error_1.validateError('User not found');
+            (0, response_error_1.validateError)('User not found');
         if (resourceId && !transactionId && !resource)
-            response_error_1.validateError('Resource not found');
+            (0, response_error_1.validateError)('Resource not found');
         if ((!resourceId && transactionId && !transaction) ||
             (transactionId && transaction && !isValidTransaction))
-            response_error_1.validateError('Transaction not found');
+            (0, response_error_1.validateError)('Transaction not found');
         if (resourceId && transactionId)
-            response_error_1.validateError('Can not Payment both Resource and Transaction in same time');
+            (0, response_error_1.validateError)('Can not Payment both Resource and Transaction in same time');
     }
 };
 PaymentService = __decorate([
-    common_1.Injectable(),
+    (0, common_1.Injectable)(),
     __metadata("design:paramtypes", [])
 ], PaymentService);
 exports.PaymentService = PaymentService;

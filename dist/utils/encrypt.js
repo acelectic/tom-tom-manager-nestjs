@@ -5,18 +5,20 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.decrypt = exports.encrypt = void 0;
 const crypto_js_1 = __importDefault(require("crypto-js"));
-exports.encrypt = (token, data) => {
+const encrypt = (token, data) => {
     const key = toMD5(token);
     const painText = JSON.stringify(data);
     const iv = getRandomIV();
     const encryptedData = encryptAES(painText, key, iv);
     return encryptBase64(iv + encryptedData);
 };
-exports.decrypt = (token, cipherText) => {
+exports.encrypt = encrypt;
+const decrypt = (token, cipherText) => {
     const key = toMD5(token);
     const { iv, data } = decryptBase64(cipherText);
     return decryptAES(data, key, iv);
 };
+exports.decrypt = decrypt;
 const toMD5 = (data) => {
     return crypto_js_1.default.MD5(data).toString();
 };

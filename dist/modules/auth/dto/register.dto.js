@@ -16,43 +16,43 @@ const class_validator_1 = require("class-validator");
 class VerifyEmailDto {
 }
 __decorate([
-    swagger_1.ApiProperty(),
-    class_validator_1.IsString(),
-    class_validator_1.IsNotEmpty(),
-    class_validator_1.IsEmail(),
-    class_transformer_1.Transform(({ value }) => value.toLowerCase()),
+    (0, swagger_1.ApiProperty)(),
+    (0, class_validator_1.IsString)(),
+    (0, class_validator_1.IsNotEmpty)(),
+    (0, class_validator_1.IsEmail)(),
+    (0, class_transformer_1.Transform)(({ value }) => value.toLowerCase()),
     __metadata("design:type", String)
 ], VerifyEmailDto.prototype, "email", void 0);
 exports.VerifyEmailDto = VerifyEmailDto;
 class VerifyMobilelDto {
 }
 __decorate([
-    swagger_1.ApiProperty(),
-    class_validator_1.IsString(),
-    class_validator_1.IsNotEmpty(),
+    (0, swagger_1.ApiProperty)(),
+    (0, class_validator_1.IsString)(),
+    (0, class_validator_1.IsNotEmpty)(),
     __metadata("design:type", String)
 ], VerifyMobilelDto.prototype, "mobileNo", void 0);
 exports.VerifyMobilelDto = VerifyMobilelDto;
 class ParamsRegisterEmailDto {
 }
 __decorate([
-    swagger_1.ApiProperty(),
-    class_validator_1.IsString(),
-    class_validator_1.IsNotEmpty(),
-    class_validator_1.IsEmail(),
-    class_transformer_1.Transform(({ value }) => value.toLowerCase()),
+    (0, swagger_1.ApiProperty)(),
+    (0, class_validator_1.IsString)(),
+    (0, class_validator_1.IsNotEmpty)(),
+    (0, class_validator_1.IsEmail)(),
+    (0, class_transformer_1.Transform)(({ value }) => value.toLowerCase()),
     __metadata("design:type", String)
 ], ParamsRegisterEmailDto.prototype, "email", void 0);
 __decorate([
-    swagger_1.ApiProperty(),
-    class_validator_1.IsString(),
-    class_validator_1.IsNotEmpty(),
+    (0, swagger_1.ApiProperty)(),
+    (0, class_validator_1.IsString)(),
+    (0, class_validator_1.IsNotEmpty)(),
     __metadata("design:type", String)
 ], ParamsRegisterEmailDto.prototype, "password", void 0);
 __decorate([
-    swagger_1.ApiProperty(),
-    class_validator_1.IsString(),
-    class_validator_1.IsOptional(),
+    (0, swagger_1.ApiProperty)(),
+    (0, class_validator_1.IsString)(),
+    (0, class_validator_1.IsOptional)(),
     __metadata("design:type", String)
 ], ParamsRegisterEmailDto.prototype, "name", void 0);
 exports.ParamsRegisterEmailDto = ParamsRegisterEmailDto;

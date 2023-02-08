@@ -1,24 +1,9 @@
 import { Transform } from 'class-transformer'
-import { unionBy } from 'lodash'
 import { transformerDecimalToNumber } from 'src/utils/entity-transform'
-import {
-  Column,
-  Entity,
-  DeleteDateColumn,
-  Index,
-  FindConditions,
-  ObjectType,
-  ManyToOne,
-  OneToMany,
-  ManyToMany,
-  JoinTable,
-  Generated,
-  RelationId,
-} from 'typeorm'
+import { Column, Entity, OneToMany, ManyToMany, Generated, RelationId } from 'typeorm'
 import { AppEntity } from './AppEntity'
 import { Payment } from './Payment'
 import { Template } from './Template'
-import { Transaction } from './Transaction'
 
 @Entity({ name: 'resources' })
 export class Resource extends AppEntity {

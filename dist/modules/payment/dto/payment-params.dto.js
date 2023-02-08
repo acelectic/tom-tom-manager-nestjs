@@ -17,66 +17,66 @@ const base_dto_1 = require("../../dto/base.dto");
 class GetPaymentsParamsDto extends base_dto_1.BasePaginateParamsDto {
 }
 __decorate([
-    swagger_1.ApiProperty(),
-    class_validator_1.IsUUID(),
-    class_validator_1.IsOptional(),
+    (0, swagger_1.ApiProperty)(),
+    (0, class_validator_1.IsUUID)(),
+    (0, class_validator_1.IsOptional)(),
     __metadata("design:type", String)
 ], GetPaymentsParamsDto.prototype, "userId", void 0);
 __decorate([
-    swagger_1.ApiProperty(),
-    class_validator_1.IsUUID(),
-    class_validator_1.IsOptional(),
+    (0, swagger_1.ApiProperty)(),
+    (0, class_validator_1.IsUUID)(),
+    (0, class_validator_1.IsOptional)(),
     __metadata("design:type", String)
 ], GetPaymentsParamsDto.prototype, "transactionId", void 0);
 exports.GetPaymentsParamsDto = GetPaymentsParamsDto;
 class CreatePaymentParamsDto {
 }
 __decorate([
-    swagger_1.ApiProperty(),
-    class_validator_1.Min(0),
-    class_validator_1.Max(30000),
-    class_validator_1.IsNumber(),
+    (0, swagger_1.ApiProperty)(),
+    (0, class_validator_1.Min)(0),
+    (0, class_validator_1.Max)(30000),
+    (0, class_validator_1.IsNumber)(),
     __metadata("design:type", Number)
 ], CreatePaymentParamsDto.prototype, "price", void 0);
 __decorate([
-    swagger_1.ApiProperty(),
-    class_validator_1.IsUUID('all'),
+    (0, swagger_1.ApiProperty)(),
+    (0, class_validator_1.IsUUID)('all'),
     __metadata("design:type", String)
 ], CreatePaymentParamsDto.prototype, "userId", void 0);
 __decorate([
-    swagger_1.ApiProperty(),
-    class_validator_1.IsEnum(Payment_1.PaymentType, {
+    (0, swagger_1.ApiProperty)(),
+    (0, class_validator_1.IsEnum)(Payment_1.PaymentType, {
         each: true,
     }),
-    class_validator_1.IsNotEmpty(),
+    (0, class_validator_1.IsNotEmpty)(),
     __metadata("design:type", String)
 ], CreatePaymentParamsDto.prototype, "type", void 0);
 __decorate([
-    swagger_1.ApiProperty(),
-    class_validator_1.IsUUID('all'),
-    class_validator_1.ValidateIf(o => o.type === Payment_1.PaymentType.BUY),
+    (0, swagger_1.ApiProperty)(),
+    (0, class_validator_1.IsUUID)('all'),
+    (0, class_validator_1.ValidateIf)(o => o.type === Payment_1.PaymentType.BUY),
     __metadata("design:type", String)
 ], CreatePaymentParamsDto.prototype, "resourceId", void 0);
 __decorate([
-    swagger_1.ApiProperty(),
-    class_validator_1.IsUUID('all'),
-    class_validator_1.ValidateIf(o => o.type === Payment_1.PaymentType.PAID),
+    (0, swagger_1.ApiProperty)(),
+    (0, class_validator_1.IsUUID)('all'),
+    (0, class_validator_1.ValidateIf)(o => o.type === Payment_1.PaymentType.PAID),
     __metadata("design:type", String)
 ], CreatePaymentParamsDto.prototype, "transactionId", void 0);
 exports.CreatePaymentParamsDto = CreatePaymentParamsDto;
 class ConfirmPaymentParamsDto {
 }
 __decorate([
-    swagger_1.ApiProperty(),
-    class_validator_1.IsUUID(),
+    (0, swagger_1.ApiProperty)(),
+    (0, class_validator_1.IsUUID)(),
     __metadata("design:type", String)
 ], ConfirmPaymentParamsDto.prototype, "paymentId", void 0);
 exports.ConfirmPaymentParamsDto = ConfirmPaymentParamsDto;
 class ConfirmUserAllPaymentParamsDto {
 }
 __decorate([
-    swagger_1.ApiProperty(),
-    class_validator_1.IsUUID(),
+    (0, swagger_1.ApiProperty)(),
+    (0, class_validator_1.IsUUID)(),
     __metadata("design:type", String)
 ], ConfirmUserAllPaymentParamsDto.prototype, "userId", void 0);
 exports.ConfirmUserAllPaymentParamsDto = ConfirmUserAllPaymentParamsDto;

@@ -15,7 +15,7 @@ const task_service_1 = require("./task.service");
 let TaskModule = class TaskModule {
 };
 TaskModule = __decorate([
-    common_1.Module({
+    (0, common_1.Module)({
         imports: [
             bull_1.BullModule.registerQueue({ name: 'first' }),
         ],

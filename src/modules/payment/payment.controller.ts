@@ -8,13 +8,16 @@ import {
   CreatePaymentParamsDto,
   GetPaymentsParamsDto,
 } from './dto/payment-params.dto'
-import { TransactionManager, EntityManager, Transaction } from 'typeorm'
+import { DataSource, EntityManager } from 'typeorm'
 
 @ApiTags('payments')
-@Controller('v1/payments')
+@Controller('payments')
 @Auth()
 export class PaymentController {
-  constructor(private readonly paymentService: PaymentService) {}
+  constructor(
+    private readonly paymentService: PaymentService,
+    private readonly dataSource: DataSource,
+  ) {}
 
   @Get()
   async getPayments(@Query() query: GetPaymentsParamsDto) {
@@ -22,28 +25,25 @@ export class PaymentController {
   }
 
   @Post()
-  @Transaction()
   async createTransactions(
     @Body() body: CreatePaymentParamsDto,
-    @TransactionManager() etm: EntityManager,
+    etm = this.dataSource.createEntityManager(),
   ) {
     return this.paymentService.createPayment(body, etm)
   }
 
   @Post(':paymentId/confirm')
-  @Transaction()
   async confirmPayment(
     @Param() params: ConfirmPaymentParamsDto,
-    @TransactionManager() etm: EntityManager,
+    etm = this.dataSource.createEntityManager(),
   ) {
     return this.paymentService.confirmPayment(params, etm)
   }
 
   @Post('/confirm-all')
-  @Transaction()
   async confirmUserAllPayments(
     @Body() bodyParams: ConfirmUserAllPaymentParamsDto,
-    @TransactionManager() etm: EntityManager,
+    etm = this.dataSource.createEntityManager(),
   ) {
     return this.paymentService.confirmUserAllPayments(bodyParams, etm)
   }

@@ -34,33 +34,33 @@ let User = class User extends AppEntity_1.AppEntity {
             },
             relations: ['transaction'],
         });
-        const sumPayments = lodash_1.sumBy(payments, ({ price }) => price);
+        const sumPayments = (0, lodash_1.sumBy)(payments, ({ price }) => price);
         this.balance = -sumPayments;
         return await etm.save(this);
     }
 };
 __decorate([
-    typeorm_1.Column({ name: 'name', nullable: false, default: '' }),
+    (0, typeorm_1.Column)({ name: 'name', nullable: false, default: '' }),
     __metadata("design:type", String)
 ], User.prototype, "name", void 0);
 __decorate([
-    typeorm_1.Column({ name: 'email', nullable: true }),
+    (0, typeorm_1.Column)({ name: 'email', nullable: true }),
     __metadata("design:type", String)
 ], User.prototype, "email", void 0);
 __decorate([
-    typeorm_1.Column({ name: 'last_sign_in_at', type: 'timestamp', nullable: true }),
+    (0, typeorm_1.Column)({ name: 'last_sign_in_at', type: 'timestamp', nullable: true }),
     __metadata("design:type", Date)
 ], User.prototype, "lastSignInAt", void 0);
 __decorate([
-    typeorm_1.DeleteDateColumn({ name: 'deleted_at' }),
+    (0, typeorm_1.DeleteDateColumn)({ name: 'deleted_at' }),
     __metadata("design:type", Date)
 ], User.prototype, "deletedAt", void 0);
 __decorate([
-    typeorm_1.Column({ name: 'password', nullable: true, select: false }),
+    (0, typeorm_1.Column)({ name: 'password', nullable: true, select: false }),
     __metadata("design:type", String)
 ], User.prototype, "password", void 0);
 __decorate([
-    typeorm_1.Column({
+    (0, typeorm_1.Column)({
         name: 'balance',
         type: 'numeric',
         nullable: true,
@@ -70,7 +70,7 @@ __decorate([
     __metadata("design:type", Number)
 ], User.prototype, "balance", void 0);
 __decorate([
-    typeorm_1.Column({
+    (0, typeorm_1.Column)({
         name: 'role',
         type: 'enum',
         nullable: false,
@@ -80,20 +80,20 @@ __decorate([
     __metadata("design:type", String)
 ], User.prototype, "role", void 0);
 __decorate([
-    typeorm_1.ManyToMany(() => Transaction_1.Transaction, transactions => transactions.users),
+    (0, typeorm_1.ManyToMany)(() => Transaction_1.Transaction, transactions => transactions.users),
     __metadata("design:type", Array)
 ], User.prototype, "transactions", void 0);
 __decorate([
-    typeorm_1.OneToMany(() => Payment_1.Payment, payments => payments.user),
+    (0, typeorm_1.OneToMany)(() => Payment_1.Payment, payments => payments.user),
     __metadata("design:type", Array)
 ], User.prototype, "payments", void 0);
 __decorate([
-    typeorm_1.RelationId((user) => user.payments),
+    (0, typeorm_1.RelationId)((user) => user.payments),
     __metadata("design:type", Array)
 ], User.prototype, "paymentIds", void 0);
 User = __decorate([
-    typeorm_1.Entity({ name: 'users' }),
-    typeorm_1.Index(['email'], {
+    (0, typeorm_1.Entity)({ name: 'users' }),
+    (0, typeorm_1.Index)(['email'], {
         unique: true,
         where: 'deleted_at IS NULL',
     })

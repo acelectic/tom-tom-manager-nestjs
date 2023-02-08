@@ -14,6 +14,7 @@ const common_1 = require("@nestjs/common");
 const Resource_1 = require("../../db/entities/Resource");
 const Template_1 = require("../../db/entities/Template");
 const helper_1 = require("../../utils/helper");
+const typeorm_1 = require("typeorm");
 let TemplateService = class TemplateService {
     constructor() { }
     async getTemplates(queryParams) {
@@ -34,7 +35,10 @@ let TemplateService = class TemplateService {
     }
     async createTemplate(params, etm) {
         const { name, description, isActive = true, resourceIds } = params;
-        const resources = await Resource_1.Resource.findByIds(resourceIds, {
+        const resources = await Resource_1.Resource.find({
+            where: {
+                id: (0, typeorm_1.In)(resourceIds),
+            },
             relations: ['templates'],
         });
         const template = await etm.create(Template_1.Template, { name, description, isActive });
@@ -47,8 +51,12 @@ let TemplateService = class TemplateService {
     }
     async updateTemplate(templateId, params, etm) {
         const { name, description, resourceIds, isActive } = params;
-        const template = await Template_1.Template.findOne(templateId);
-        const resources = await Resource_1.Resource.findByIds(resourceIds);
+        const template = await Template_1.Template.findOneBy({
+            id: templateId,
+        });
+        const resources = await Resource_1.Resource.findBy({
+            id: (0, typeorm_1.In)(resourceIds),
+        });
         if ((resourceIds === null || resourceIds === void 0 ? void 0 : resourceIds.length) && resourceIds.length) {
             template.resources = resources;
         }
@@ -59,9 +67,11 @@ let TemplateService = class TemplateService {
     }
     async updateTemplateActiveStatus(templateId, params, etm) {
         const { isActive } = params;
-        const template = await Template_1.Template.findOne(templateId);
+        const template = await Template_1.Template.findOneBy({
+            id: templateId,
+        });
         template.isActive = isActive;
-        helper_1.debugLog({ isActive, template });
+        (0, helper_1.debugLog)({ isActive, template });
         return await etm.save(template);
     }
     async addTemplateToresources(template, resources, etm) {
@@ -73,7 +83,7 @@ let TemplateService = class TemplateService {
     }
 };
 TemplateService = __decorate([
-    common_1.Injectable(),
+    (0, common_1.Injectable)(),
     __metadata("design:paramtypes", [])
 ], TemplateService);
 exports.TemplateService = TemplateService;

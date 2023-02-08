@@ -14,7 +14,7 @@ const transaction_service_1 = require("./transaction.service");
 let TransactionModule = class TransactionModule {
 };
 TransactionModule = __decorate([
-    common_1.Module({
+    (0, common_1.Module)({
         imports: [payment_modules_1.PaymentModule],
         controllers: [transaction_controller_1.TransactionController],
         providers: [transaction_service_1.TransactionService],

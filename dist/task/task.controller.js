@@ -27,15 +27,15 @@ let TaskController = class TaskController {
     }
 };
 __decorate([
-    common_1.Post('first-process'),
+    (0, common_1.Post)('first-process'),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", []),
     __metadata("design:returntype", Promise)
 ], TaskController.prototype, "transcode", null);
 TaskController = __decorate([
-    swagger_1.ApiTags('task'),
-    common_1.Controller('v1/tasks'),
-    __param(0, bull_1.InjectQueue('first')),
+    (0, swagger_1.ApiTags)('task'),
+    (0, common_1.Controller)('v1/tasks'),
+    __param(0, (0, bull_1.InjectQueue)('first')),
     __metadata("design:paramtypes", [Object])
 ], TaskController);
 exports.TaskController = TaskController;

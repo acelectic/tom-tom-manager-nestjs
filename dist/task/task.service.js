@@ -11,7 +11,7 @@ const common_1 = require("@nestjs/common");
 let TaskService = class TaskService {
 };
 TaskService = __decorate([
-    common_1.Injectable()
+    (0, common_1.Injectable)()
 ], TaskService);
 exports.TaskService = TaskService;
 //# sourceMappingURL=task.service.js.map

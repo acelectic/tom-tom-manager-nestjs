@@ -6,19 +6,19 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.bulk = void 0;
 const typeorm_1 = require("typeorm");
 const pg_promise_1 = __importDefault(require("pg-promise"));
-const env_config_1 = require("../config/env-config");
-exports.bulk = async (data, column, table) => {
-    const connection = typeorm_1.getConnection();
+const app_config_1 = require("../config/app-config");
+const bulk = async (data, column, table) => {
+    const connection = (0, typeorm_1.getConnection)();
     const dbConfig = {
-        host: env_config_1.appConfig.DB_HOST,
-        port: env_config_1.appConfig.DB_PORT,
-        username: env_config_1.appConfig.DB_USERNAME,
-        password: env_config_1.appConfig.DB_PASSWORD,
+        host: app_config_1.appConfig.DB_HOST,
+        port: app_config_1.appConfig.DB_PORT,
+        username: app_config_1.appConfig.DB_USERNAME,
+        password: app_config_1.appConfig.DB_PASSWORD,
         database: connection.options.database,
     };
     const timeStart = new Date();
     const config = `postgres://${dbConfig.username}:${dbConfig.password}@${dbConfig.host}:${dbConfig.port}/${dbConfig.database}`;
-    const pgp = pg_promise_1.default();
+    const pgp = (0, pg_promise_1.default)();
     const db = pgp(config);
     const cs = new pgp.helpers.ColumnSet(column, { table });
     const insert = await pgp.helpers.insert(data, cs);
@@ -33,4 +33,5 @@ exports.bulk = async (data, column, table) => {
         console.log(`Fail bulk insert value to table ${table}, beacase of ${error}`);
     });
 };
+exports.bulk = bulk;
 //# sourceMappingURL=bulk.js.map

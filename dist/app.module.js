@@ -21,40 +21,36 @@ const bull_1 = require("@nestjs/bull");
 const task_module_1 = require("./task/task.module");
 const nestjs_pino_1 = require("nestjs-pino");
 const config_1 = require("@nestjs/config");
-const resouce_modules_1 = require("./modules/resource/resouce.modules");
+const resource_modules_1 = require("./modules/resource/resource.modules");
 const transaction_modules_1 = require("./modules/transaction/transaction.modules");
 const payment_modules_1 = require("./modules/payment/payment.modules");
-const serve_static_1 = require("@nestjs/serve-static");
-const path_1 = require("path");
 const template_modules_1 = require("./modules/template/template.modules");
-const env_config_1 = require("./config/env-config");
+const app_config_1 = require("./config/app-config");
+const db_config_1 = require("./config/db-config");
 let AppModule = class AppModule {
 };
 AppModule = __decorate([
-    common_1.Module({
+    (0, common_1.Module)({
         imports: [
             config_1.ConfigModule.forRoot({
                 isGlobal: true,
-                validationSchema: env_config_1.validationEnvSchema,
+                validationSchema: app_config_1.validationEnvSchema,
             }),
-            typeorm_1.TypeOrmModule.forRoot(),
+            typeorm_1.TypeOrmModule.forRoot(Object.assign(Object.assign({}, db_config_1.dbConfig.default), { autoLoadEntities: true })),
             schedule_1.ScheduleModule.forRoot(),
             bull_1.BullModule.forRoot({
                 redis: {
-                    host: env_config_1.appConfig.REDIS_HOST,
-                    port: Number(env_config_1.appConfig.REDIS_PORT),
-                    password: env_config_1.appConfig.REDIS_PASSWORD,
+                    host: app_config_1.appConfig.REDIS_HOST,
+                    port: Number(app_config_1.appConfig.REDIS_PORT),
+                    password: app_config_1.appConfig.REDIS_PASSWORD,
                 },
-            }),
-            serve_static_1.ServeStaticModule.forRoot({
-                rootPath: path_1.join(__dirname, '..', 'frontend/build'),
             }),
             user_module_1.UserModule,
             nestjs_console_1.ConsoleModule,
             app_console_module_1.AppConsoleModule,
             auth_modules_1.AuthModule,
             task_module_1.TaskModule,
-            resouce_modules_1.ResouceModule,
+            resource_modules_1.ResourceModule,
             transaction_modules_1.TransactionModule,
             payment_modules_1.PaymentModule,
             template_modules_1.TemplateModule,

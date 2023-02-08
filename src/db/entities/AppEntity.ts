@@ -1,11 +1,11 @@
 import {
   BaseEntity,
-  FindConditions,
   ObjectType,
   PrimaryGeneratedColumn,
   CreateDateColumn,
   UpdateDateColumn,
   DeleteDateColumn,
+  FindOptionsWhere,
 } from 'typeorm'
 
 export abstract class AppEntity extends BaseEntity {
@@ -31,9 +31,9 @@ export abstract class AppEntity extends BaseEntity {
 
   static async findOrInit<T extends AppEntity>(
     this: ObjectType<T>,
-    data: FindConditions<T>,
+    data: FindOptionsWhere<T>,
   ): Promise<T> {
-    let record = await (this as any).findOne(data)
+    let record = await (this as any).findOneBy(data)
     if (!record) {
       record = (this as any).create(data)
     }

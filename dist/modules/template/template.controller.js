@@ -20,66 +20,59 @@ const swagger_1 = require("@nestjs/swagger");
 const template_params_dto_1 = require("./dto/template-params.dto");
 const typeorm_1 = require("typeorm");
 let TemplateController = class TemplateController {
-    constructor(templateService) {
+    constructor(templateService, dataSource) {
         this.templateService = templateService;
+        this.dataSource = dataSource;
     }
     async getTemplates(queryParams) {
         return this.templateService.getTemplates(queryParams);
     }
-    async createTemplate(bodyParams, etm) {
+    async createTemplate(bodyParams, etm = this.dataSource.createEntityManager()) {
         return this.templateService.createTemplate(bodyParams, etm);
     }
-    async updateTemplate(templateId, bodyParams, etm) {
+    async updateTemplate(templateId, bodyParams, etm = this.dataSource.createEntityManager()) {
         return this.templateService.updateTemplate(templateId, bodyParams, etm);
     }
-    async updateTemplateActiveStatus(templateId, bodyParams, etm) {
+    async updateTemplateActiveStatus(templateId, bodyParams, etm = this.dataSource.createEntityManager()) {
         return this.templateService.updateTemplateActiveStatus(templateId, bodyParams, etm);
     }
 };
 __decorate([
-    common_1.Get(),
-    __param(0, common_1.Query()),
+    (0, common_1.Get)(),
+    __param(0, (0, common_1.Query)()),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", [template_params_dto_1.GetTemplatesParamsDto]),
     __metadata("design:returntype", Promise)
 ], TemplateController.prototype, "getTemplates", null);
 __decorate([
-    common_1.Post(),
-    typeorm_1.Transaction(),
-    __param(0, common_1.Body()),
-    __param(1, typeorm_1.TransactionManager()),
+    (0, common_1.Post)(),
+    __param(0, (0, common_1.Body)()),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [template_params_dto_1.CreateTemplateParamsDto,
-        typeorm_1.EntityManager]),
+    __metadata("design:paramtypes", [template_params_dto_1.CreateTemplateParamsDto, Object]),
     __metadata("design:returntype", Promise)
 ], TemplateController.prototype, "createTemplate", null);
 __decorate([
-    common_1.Patch(':templateId'),
-    typeorm_1.Transaction(),
-    __param(0, common_1.Param('templateId', new common_1.ParseUUIDPipe())),
-    __param(1, common_1.Body()),
-    __param(2, typeorm_1.TransactionManager()),
+    (0, common_1.Patch)(':templateId'),
+    __param(0, (0, common_1.Param)('templateId', new common_1.ParseUUIDPipe())),
+    __param(1, (0, common_1.Body)()),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [String, template_params_dto_1.UpdateTemplateParamsDto,
-        typeorm_1.EntityManager]),
+    __metadata("design:paramtypes", [String, template_params_dto_1.UpdateTemplateParamsDto, Object]),
     __metadata("design:returntype", Promise)
 ], TemplateController.prototype, "updateTemplate", null);
 __decorate([
-    common_1.Patch(':templateId/set-active'),
-    typeorm_1.Transaction(),
-    __param(0, common_1.Param('templateId', new common_1.ParseUUIDPipe())),
-    __param(1, common_1.Body()),
-    __param(2, typeorm_1.TransactionManager()),
+    (0, common_1.Patch)(':templateId/set-active'),
+    __param(0, (0, common_1.Param)('templateId', new common_1.ParseUUIDPipe())),
+    __param(1, (0, common_1.Body)()),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [String, template_params_dto_1.UpdateTemplateIsActiveParamsDto,
-        typeorm_1.EntityManager]),
+    __metadata("design:paramtypes", [String, template_params_dto_1.UpdateTemplateIsActiveParamsDto, Object]),
     __metadata("design:returntype", Promise)
 ], TemplateController.prototype, "updateTemplateActiveStatus", null);
 TemplateController = __decorate([
-    swagger_1.ApiTags('templates'),
-    common_1.Controller('v1/templates'),
-    auth_decorator_1.Auth(),
-    __metadata("design:paramtypes", [template_service_1.TemplateService])
+    (0, swagger_1.ApiTags)('templates'),
+    (0, common_1.Controller)('templates'),
+    (0, auth_decorator_1.Auth)(),
+    __metadata("design:paramtypes", [template_service_1.TemplateService,
+        typeorm_1.DataSource])
 ], TemplateController);
 exports.TemplateController = TemplateController;
 //# sourceMappingURL=template.controller.js.map

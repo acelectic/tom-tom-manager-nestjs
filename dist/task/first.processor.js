@@ -41,49 +41,49 @@ let FirstProcessor = FirstProcessor_1 = class FirstProcessor {
     }
 };
 __decorate([
-    bull_1.Process('firstProcess'),
+    (0, bull_1.Process)('firstProcess'),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", [Object]),
     __metadata("design:returntype", void 0)
 ], FirstProcessor.prototype, "handleProcess", null);
 __decorate([
-    bull_1.OnQueueError(),
+    (0, bull_1.OnQueueError)(),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", [Error]),
     __metadata("design:returntype", void 0)
 ], FirstProcessor.prototype, "onQueueError", null);
 __decorate([
-    bull_1.OnQueueWaiting(),
+    (0, bull_1.OnQueueWaiting)(),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", [Number]),
     __metadata("design:returntype", void 0)
 ], FirstProcessor.prototype, "onQuereWaiting", null);
 __decorate([
-    bull_1.OnQueueActive(),
+    (0, bull_1.OnQueueActive)(),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", [Object]),
     __metadata("design:returntype", void 0)
 ], FirstProcessor.prototype, "onQuereActive", null);
 __decorate([
-    bull_1.OnQueueStalled(),
+    (0, bull_1.OnQueueStalled)(),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", [Object]),
     __metadata("design:returntype", void 0)
 ], FirstProcessor.prototype, "onQuereStalled", null);
 __decorate([
-    bull_1.OnQueueProgress(),
+    (0, bull_1.OnQueueProgress)(),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", [Object, Number]),
     __metadata("design:returntype", void 0)
 ], FirstProcessor.prototype, "onQuereProgress", null);
 __decorate([
-    bull_1.OnQueueCompleted(),
+    (0, bull_1.OnQueueCompleted)(),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", [Object, Object]),
     __metadata("design:returntype", void 0)
 ], FirstProcessor.prototype, "onQueueCompleted", null);
 FirstProcessor = FirstProcessor_1 = __decorate([
-    bull_1.Processor('first')
+    (0, bull_1.Processor)('first')
 ], FirstProcessor);
 exports.FirstProcessor = FirstProcessor;
 //# sourceMappingURL=first.processor.js.map

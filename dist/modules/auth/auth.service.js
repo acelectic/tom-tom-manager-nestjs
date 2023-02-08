@@ -29,7 +29,7 @@ let AuthService = class AuthService {
     async registerWithEmail(data, role, etm) {
         await this.verifyEmail(data);
         await this.validateSignInWithEmail(data);
-        const { email, password, name = chance_1.Chance().name({ middle: false, full: true }) } = data;
+        const { email, password, name = (0, chance_1.Chance)().name({ middle: false, full: true }) } = data;
         console.log({ email, password, name });
         const encryptPassword = await bcrypt_1.default.hash(password, 10);
         const paramsSignInBase = {
@@ -43,7 +43,7 @@ let AuthService = class AuthService {
     async signWithEmail(data, etm) {
         const { email, password } = data;
         await this.validateSignInWithEmail(data);
-        const user = await User_1.User.findOne({ email });
+        const user = await User_1.User.findOneBy({ email });
         const paramsSignInBase = {
             email,
             password,
@@ -58,7 +58,7 @@ let AuthService = class AuthService {
     }
     async signIn(data, etm) {
         const { email, password, name, role } = data;
-        let user = await User_1.User.findOne({ email });
+        let user = await User_1.User.findOneBy({ email });
         if (!user) {
             const params = {
                 email,
@@ -72,7 +72,9 @@ let AuthService = class AuthService {
         if (!(user === null || user === void 0 ? void 0 : user.password))
             user.password = password;
         await etm.save(user);
-        const newUser = await etm.findOne(User_1.User, user.id);
+        const newUser = await etm.findOneBy(User_1.User, {
+            id: user.id,
+        });
         return {
             accessToken: this.getToken(newUser),
             user: newUser,
@@ -90,22 +92,22 @@ let AuthService = class AuthService {
     }
     async verifyEmail(params) {
         const { email } = params;
-        const user = await User_1.User.findOne({ email });
+        const user = await User_1.User.findOneBy({ email });
         return { isEmailExist: user ? true : false };
     }
     async updateForgotPassword(data, etm) {
         const { email, password } = data;
         await this.validateUserWithEmail(email);
         const encryptPassword = await bcrypt_1.default.hash(password, 10);
-        const user = await User_1.User.findOne({ email });
+        const user = await User_1.User.findOneBy({ email });
         user.password = encryptPassword;
         await etm.save(user);
         return user;
     }
     async validateUserWithEmail(email) {
-        const user = await User_1.User.findOne({ email });
+        const user = await User_1.User.findOneBy({ email });
         if (!user) {
-            response_error_1.validateError('User not found');
+            (0, response_error_1.validateError)('User not found');
         }
     }
     async validateSignInWithEmail(data) {
@@ -118,12 +120,12 @@ let AuthService = class AuthService {
             .getOne();
         const isPasswordMatching = await bcrypt_1.default.compare(password, (user === null || user === void 0 ? void 0 : user.password) || '');
         if (user && password && (user === null || user === void 0 ? void 0 : user.password) && !isPasswordMatching) {
-            response_error_1.validateError('Password not match');
+            (0, response_error_1.validateError)('Password not match');
         }
     }
 };
 AuthService = __decorate([
-    common_1.Injectable(),
+    (0, common_1.Injectable)(),
     __metadata("design:paramtypes", [user_service_1.UserService, jwt_1.JwtService])
 ], AuthService);
 exports.AuthService = AuthService;

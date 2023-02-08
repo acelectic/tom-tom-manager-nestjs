@@ -8,7 +8,7 @@ import { AuthService } from '../modules/auth/auth.service'
 import { UserService } from '../modules/user/user.service'
 import { User, UserSignInType } from '../db/entities/User'
 import { Role } from '../modules/auth/auth.constant'
-import { appConfig } from 'src/config/env-config'
+import { appConfig } from 'src/config/app-config'
 
 export const truncates = (...tableNames: string[]) => {
   const query = tableNames.map(name => `TRUNCATE ${name} CASCADE;`).join('')

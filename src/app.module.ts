@@ -12,20 +12,24 @@ import { BullModule } from '@nestjs/bull'
 import { TaskModule } from './task/task.module'
 import { LoggerModule } from 'nestjs-pino'
 import { ConfigModule } from '@nestjs/config'
-import { ResouceModule } from './modules/resource/resouce.modules'
+import { ResourceModule } from './modules/resource/resource.modules'
 import { TransactionModule } from './modules/transaction/transaction.modules'
 import { PaymentModule } from './modules/payment/payment.modules'
 import { ServeStaticModule } from '@nestjs/serve-static'
 import { join } from 'path'
 import { TemplateModule } from './modules/template/template.modules'
-import { appConfig, validationEnvSchema } from './config/env-config'
+import { appConfig, validationEnvSchema } from './config/app-config'
+import { dbConfig } from './config/db-config'
 @Module({
   imports: [
     ConfigModule.forRoot({
       isGlobal: true,
       validationSchema: validationEnvSchema,
     }),
-    TypeOrmModule.forRoot(),
+    TypeOrmModule.forRoot({
+      ...dbConfig.default,
+      autoLoadEntities: true,
+    }),
     ScheduleModule.forRoot(),
     BullModule.forRoot({
       redis: {
@@ -34,15 +38,12 @@ import { appConfig, validationEnvSchema } from './config/env-config'
         password: appConfig.REDIS_PASSWORD,
       },
     }),
-    ServeStaticModule.forRoot({
-      rootPath: join(__dirname, '..', 'frontend/build'),
-    }),
     UserModule,
     ConsoleModule,
     AppConsoleModule,
     AuthModule,
     TaskModule,
-    ResouceModule,
+    ResourceModule,
     TransactionModule,
     PaymentModule,
     TemplateModule,

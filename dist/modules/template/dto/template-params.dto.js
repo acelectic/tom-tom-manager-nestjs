@@ -16,81 +16,81 @@ const class_validator_1 = require("class-validator");
 class GetTemplatesParamsDto {
 }
 __decorate([
-    swagger_1.ApiProperty(),
-    class_validator_1.IsBoolean(),
-    class_transformer_1.Transform(({ value }) => (value === 'true' ? true : false)),
-    class_validator_1.IsIn(['true', 'false', true, false]),
-    class_validator_1.IsOptional(),
+    (0, swagger_1.ApiProperty)(),
+    (0, class_validator_1.IsBoolean)(),
+    (0, class_transformer_1.Transform)(({ value }) => (value === 'true' ? true : false)),
+    (0, class_validator_1.IsIn)(['true', 'false', true, false]),
+    (0, class_validator_1.IsOptional)(),
     __metadata("design:type", Boolean)
 ], GetTemplatesParamsDto.prototype, "isActive", void 0);
 exports.GetTemplatesParamsDto = GetTemplatesParamsDto;
 class CreateTemplateParamsDto {
 }
 __decorate([
-    swagger_1.ApiProperty(),
-    class_validator_1.IsString(),
-    class_validator_1.IsNotEmpty(),
+    (0, swagger_1.ApiProperty)(),
+    (0, class_validator_1.IsString)(),
+    (0, class_validator_1.IsNotEmpty)(),
     __metadata("design:type", String)
 ], CreateTemplateParamsDto.prototype, "name", void 0);
 __decorate([
-    swagger_1.ApiProperty(),
-    class_validator_1.IsString(),
-    class_validator_1.IsOptional(),
+    (0, swagger_1.ApiProperty)(),
+    (0, class_validator_1.IsString)(),
+    (0, class_validator_1.IsOptional)(),
     __metadata("design:type", String)
 ], CreateTemplateParamsDto.prototype, "description", void 0);
 __decorate([
-    swagger_1.ApiProperty(),
-    class_validator_1.IsUUID('all', {
+    (0, swagger_1.ApiProperty)(),
+    (0, class_validator_1.IsUUID)('all', {
         each: true,
     }),
-    class_validator_1.ArrayMinSize(1),
-    class_validator_1.ArrayMaxSize(6),
-    class_validator_1.IsNotEmpty(),
+    (0, class_validator_1.ArrayMinSize)(1),
+    (0, class_validator_1.ArrayMaxSize)(6),
+    (0, class_validator_1.IsNotEmpty)(),
     __metadata("design:type", Array)
 ], CreateTemplateParamsDto.prototype, "resourceIds", void 0);
 __decorate([
-    swagger_1.ApiProperty(),
-    class_validator_1.IsBoolean(),
-    class_validator_1.IsOptional(),
+    (0, swagger_1.ApiProperty)(),
+    (0, class_validator_1.IsBoolean)(),
+    (0, class_validator_1.IsOptional)(),
     __metadata("design:type", Boolean)
 ], CreateTemplateParamsDto.prototype, "isActive", void 0);
 exports.CreateTemplateParamsDto = CreateTemplateParamsDto;
 class UpdateTemplateParamsDto {
 }
 __decorate([
-    swagger_1.ApiProperty(),
-    class_validator_1.IsString(),
-    class_validator_1.IsNotEmpty(),
+    (0, swagger_1.ApiProperty)(),
+    (0, class_validator_1.IsString)(),
+    (0, class_validator_1.IsNotEmpty)(),
     __metadata("design:type", String)
 ], UpdateTemplateParamsDto.prototype, "name", void 0);
 __decorate([
-    swagger_1.ApiProperty(),
-    class_validator_1.IsString(),
-    class_validator_1.IsOptional(),
+    (0, swagger_1.ApiProperty)(),
+    (0, class_validator_1.IsString)(),
+    (0, class_validator_1.IsOptional)(),
     __metadata("design:type", String)
 ], UpdateTemplateParamsDto.prototype, "description", void 0);
 __decorate([
-    swagger_1.ApiProperty(),
-    class_validator_1.IsUUID('all', {
+    (0, swagger_1.ApiProperty)(),
+    (0, class_validator_1.IsUUID)('all', {
         each: true,
     }),
-    class_validator_1.ArrayMinSize(1),
-    class_validator_1.ArrayMaxSize(6),
-    class_validator_1.IsOptional(),
+    (0, class_validator_1.ArrayMinSize)(1),
+    (0, class_validator_1.ArrayMaxSize)(6),
+    (0, class_validator_1.IsOptional)(),
     __metadata("design:type", Array)
 ], UpdateTemplateParamsDto.prototype, "resourceIds", void 0);
 __decorate([
-    swagger_1.ApiProperty(),
-    class_validator_1.IsBoolean(),
-    class_validator_1.IsOptional(),
+    (0, swagger_1.ApiProperty)(),
+    (0, class_validator_1.IsBoolean)(),
+    (0, class_validator_1.IsOptional)(),
     __metadata("design:type", Boolean)
 ], UpdateTemplateParamsDto.prototype, "isActive", void 0);
 exports.UpdateTemplateParamsDto = UpdateTemplateParamsDto;
 class UpdateTemplateIsActiveParamsDto {
 }
 __decorate([
-    swagger_1.ApiProperty(),
-    class_validator_1.IsBoolean(),
+    (0, swagger_1.ApiProperty)(),
+    (0, class_validator_1.IsBoolean)(),
     __metadata("design:type", Boolean)
 ], UpdateTemplateIsActiveParamsDto.prototype, "isActive", void 0);
 exports.UpdateTemplateIsActiveParamsDto = UpdateTemplateIsActiveParamsDto;

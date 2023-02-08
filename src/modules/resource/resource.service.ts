@@ -44,7 +44,9 @@ export class ResourceService {
     etm: EntityManager,
   ) {
     const { isActive } = params
-    const resource = await Resource.findOne(resourceId)
+    const resource = await Resource.findOneBy({
+      id: resourceId,
+    })
     resource.isActive = isActive
     return await etm.save(resource)
   }

@@ -20,8 +20,9 @@ const typeorm_1 = require("typeorm");
 const transaction_service_1 = require("./transaction.service");
 const transaction_params_dto_1 = require("./dto/transaction-params.dto");
 let TransactionController = class TransactionController {
-    constructor(transactionService) {
+    constructor(transactionService, dataSource) {
         this.transactionService = transactionService;
+        this.dataSource = dataSource;
     }
     async getTransactions(params) {
         return this.transactionService.getTransactions(params);
@@ -32,46 +33,44 @@ let TransactionController = class TransactionController {
     async getTransaction(transactionId) {
         return this.transactionService.getTransaction(transactionId);
     }
-    async createTransactions(body, etm) {
+    async createTransactions(body, etm = this.dataSource.createEntityManager()) {
         return this.transactionService.createTransaction(body, etm);
     }
 };
 __decorate([
-    common_1.Get(),
-    __param(0, common_1.Query()),
+    (0, common_1.Get)(),
+    __param(0, (0, common_1.Query)()),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", [transaction_params_dto_1.GetTransactionParamsDto]),
     __metadata("design:returntype", Promise)
 ], TransactionController.prototype, "getTransactions", null);
 __decorate([
-    common_1.Get('history'),
-    __param(0, common_1.Query()),
+    (0, common_1.Get)('history'),
+    __param(0, (0, common_1.Query)()),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", [transaction_params_dto_1.GetTransactionHistoryParamsDto]),
     __metadata("design:returntype", Promise)
 ], TransactionController.prototype, "getTransactionsHistory", null);
 __decorate([
-    common_1.Get(':transactionId'),
-    __param(0, common_1.Param('transactionId', new common_1.ParseUUIDPipe())),
+    (0, common_1.Get)(':transactionId'),
+    __param(0, (0, common_1.Param)('transactionId', new common_1.ParseUUIDPipe())),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", [String]),
     __metadata("design:returntype", Promise)
 ], TransactionController.prototype, "getTransaction", null);
 __decorate([
-    common_1.Post(),
-    typeorm_1.Transaction(),
-    __param(0, common_1.Body()),
-    __param(1, typeorm_1.TransactionManager()),
+    (0, common_1.Post)(),
+    __param(0, (0, common_1.Body)()),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [transaction_params_dto_1.CreateTransactionParamsDto,
-        typeorm_1.EntityManager]),
+    __metadata("design:paramtypes", [transaction_params_dto_1.CreateTransactionParamsDto, Object]),
     __metadata("design:returntype", Promise)
 ], TransactionController.prototype, "createTransactions", null);
 TransactionController = __decorate([
-    swagger_1.ApiTags('transactions'),
-    common_1.Controller('v1/transactions'),
-    auth_decorator_1.Auth(),
-    __metadata("design:paramtypes", [transaction_service_1.TransactionService])
+    (0, swagger_1.ApiTags)('transactions'),
+    (0, common_1.Controller)('transactions'),
+    (0, auth_decorator_1.Auth)(),
+    __metadata("design:paramtypes", [transaction_service_1.TransactionService,
+        typeorm_1.DataSource])
 ], TransactionController);
 exports.TransactionController = TransactionController;
 //# sourceMappingURL=transaction.controller.js.map

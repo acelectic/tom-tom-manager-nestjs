@@ -1,31 +1,19 @@
 import { Transform } from 'class-transformer'
 import { sumBy } from 'lodash'
 import { transformerDecimalToNumber } from 'src/utils/entity-transform'
-import { debugLog, roundUpOnly } from 'src/utils/helper'
 import {
   Column,
   Entity,
-  DeleteDateColumn,
-  Index,
-  FindConditions,
-  ObjectType,
   OneToMany,
-  JoinColumn,
   ManyToMany,
   JoinTable,
-  BeforeInsert,
-  AfterInsert,
-  getConnection,
-  Connection,
   EntityManager,
-  AfterUpdate,
   Generated,
-  OneToOne,
   RelationId,
   ManyToOne,
 } from 'typeorm'
 import { AppEntity } from './AppEntity'
-import { Payment, PaymentStatus, PaymentType } from './Payment'
+import { Payment, PaymentStatus } from './Payment'
 import { Resource } from './Resource'
 import { Template } from './Template'
 import { User } from './User'

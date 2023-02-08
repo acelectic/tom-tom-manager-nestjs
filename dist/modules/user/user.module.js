@@ -13,7 +13,7 @@ const user_service_1 = require("./user.service");
 let UserModule = class UserModule {
 };
 UserModule = __decorate([
-    common_1.Module({
+    (0, common_1.Module)({
         imports: [],
         controllers: [user_controller_1.UserController],
         providers: [user_service_1.UserService],

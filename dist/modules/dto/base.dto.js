@@ -16,17 +16,17 @@ const class_validator_1 = require("class-validator");
 class BasePaginateParamsDto {
 }
 __decorate([
-    swagger_1.ApiProperty(),
-    class_validator_1.IsNumber(),
-    class_transformer_1.Transform(({ value }) => Number(value)),
-    class_validator_1.IsOptional(),
+    (0, swagger_1.ApiProperty)(),
+    (0, class_validator_1.IsNumber)(),
+    (0, class_transformer_1.Transform)(({ value }) => Number(value)),
+    (0, class_validator_1.IsOptional)(),
     __metadata("design:type", Number)
 ], BasePaginateParamsDto.prototype, "limit", void 0);
 __decorate([
-    swagger_1.ApiProperty(),
-    class_validator_1.IsNumber(),
-    class_transformer_1.Transform(({ value }) => Number(value)),
-    class_validator_1.IsOptional(),
+    (0, swagger_1.ApiProperty)(),
+    (0, class_validator_1.IsNumber)(),
+    (0, class_transformer_1.Transform)(({ value }) => Number(value)),
+    (0, class_validator_1.IsOptional)(),
     __metadata("design:type", Number)
 ], BasePaginateParamsDto.prototype, "page", void 0);
 exports.BasePaginateParamsDto = BasePaginateParamsDto;

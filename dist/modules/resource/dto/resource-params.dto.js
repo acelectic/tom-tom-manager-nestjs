@@ -16,34 +16,34 @@ const class_validator_1 = require("class-validator");
 class CreateResourceParamsDto {
 }
 __decorate([
-    swagger_1.ApiProperty(),
-    class_validator_1.Length(1, 100),
-    class_validator_1.IsString(),
+    (0, swagger_1.ApiProperty)(),
+    (0, class_validator_1.Length)(1, 100),
+    (0, class_validator_1.IsString)(),
     __metadata("design:type", String)
 ], CreateResourceParamsDto.prototype, "name", void 0);
 __decorate([
-    swagger_1.ApiProperty(),
-    class_validator_1.Min(0),
-    class_validator_1.Max(30000),
-    class_validator_1.IsNumber(),
+    (0, swagger_1.ApiProperty)(),
+    (0, class_validator_1.Min)(0),
+    (0, class_validator_1.Max)(30000),
+    (0, class_validator_1.IsNumber)(),
     __metadata("design:type", Number)
 ], CreateResourceParamsDto.prototype, "price", void 0);
 exports.CreateResourceParamsDto = CreateResourceParamsDto;
 class GetResourcesParamsDto {
 }
 __decorate([
-    swagger_1.ApiProperty(),
-    class_transformer_1.Type(() => Boolean),
-    class_validator_1.IsBoolean(),
-    class_validator_1.IsOptional(),
+    (0, swagger_1.ApiProperty)(),
+    (0, class_transformer_1.Type)(() => Boolean),
+    (0, class_validator_1.IsBoolean)(),
+    (0, class_validator_1.IsOptional)(),
     __metadata("design:type", Boolean)
 ], GetResourcesParamsDto.prototype, "isActive", void 0);
 exports.GetResourcesParamsDto = GetResourcesParamsDto;
 class UpdateResourceIsActiveParamsDto {
 }
 __decorate([
-    swagger_1.ApiProperty(),
-    class_validator_1.IsBoolean(),
+    (0, swagger_1.ApiProperty)(),
+    (0, class_validator_1.IsBoolean)(),
     __metadata("design:type", Boolean)
 ], UpdateResourceIsActiveParamsDto.prototype, "isActive", void 0);
 exports.UpdateResourceIsActiveParamsDto = UpdateResourceIsActiveParamsDto;

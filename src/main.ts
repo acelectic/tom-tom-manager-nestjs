@@ -7,15 +7,17 @@ import {
   ArgumentsHost,
   Catch,
   NestApplicationOptions,
+  VersioningType,
 } from '@nestjs/common'
 import { AppModule } from './app.module'
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger'
 import { urlencoded, json, Request } from 'express'
 import { DbExeptionFilter } from './db-exeption.filter'
-import { router, setQueues } from 'bull-board'
 import basicAuth from 'express-basic-auth'
 import './initialize'
-import { appConfig } from './config/env-config'
+import { appConfig } from './config/app-config'
+import { bullServerAdapter } from './task/bull-board.provider'
+import { appVersion } from './utils/helper'
 // const sreviceAccount = require('../test-man-savvy-firebase-adminsdk-f2848-982951f18b.json')
 
 @Catch()
@@ -34,7 +36,6 @@ const whitelistOrigin = [
   /\*.com$/,
 ]
 
-setQueues([])
 const loggerProduction: LogLevel[] = ['warn']
 const logger: NestApplicationOptions =
   appConfig.LOG_LEVEL === 'debug'
@@ -47,15 +48,16 @@ async function bootstrap() {
     logger: ['error', 'log', 'debug'],
   })
 
-  // app.enableVersioning({
-  //   type: VersioningType.HEADER,
-  //   header: 'app-version',
-  // })
+  app.enableVersioning({
+    type: VersioningType.URI,
+    prefix: 'v',
+    defaultVersion: '1',
+  })
 
   app.enableCors({
     origin: true,
     methods: ['GET', 'PUT', 'PATCH', 'POST', 'DELETE'],
-    allowedHeaders: ['Content-Type', 'Authorization', 'authorization', 'app-version'],
+    allowedHeaders: ['Content-Type', 'Authorization', 'App-Version'],
     preflightContinue: false,
     optionsSuccessStatus: 204,
     credentials: true,
@@ -85,12 +87,14 @@ async function bootstrap() {
   const options = new DocumentBuilder()
     .setTitle('TOMTOM API')
     .setDescription('The TOMTOM API description')
-    .setVersion('1.0')
+    .setVersion(appVersion)
     .addBearerAuth()
     .build()
   const document = SwaggerModule.createDocument(app, options)
-  SwaggerModule.setup('api', app, document)
+  SwaggerModule.setup('swagger', app, document)
 
+  // bull-board
+  bullServerAdapter.setBasePath('/bull-board')
   app.use(
     '/bull-board',
     basicAuth({
@@ -99,12 +103,12 @@ async function bootstrap() {
       },
       challenge: true,
     }),
-    router,
+    bullServerAdapter.getRouter(),
   )
 
   const port = appConfig.PORT
   await app.listen(port, () => {
-    console.log('Nest server listening on port ' + port + '.')
+    console.log(`Nest server (v${appVersion}) listening on port ` + port + '.')
   })
 }
 bootstrap()

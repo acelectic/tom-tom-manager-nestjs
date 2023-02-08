@@ -13,7 +13,7 @@ exports.AppEntity = void 0;
 const typeorm_1 = require("typeorm");
 class AppEntity extends typeorm_1.BaseEntity {
     static async findOrInit(data) {
-        let record = await this.findOne(data);
+        let record = await this.findOneBy(data);
         if (!record) {
             record = this.create(data);
         }
@@ -21,11 +21,11 @@ class AppEntity extends typeorm_1.BaseEntity {
     }
 }
 __decorate([
-    typeorm_1.PrimaryGeneratedColumn('uuid'),
+    (0, typeorm_1.PrimaryGeneratedColumn)('uuid'),
     __metadata("design:type", String)
 ], AppEntity.prototype, "id", void 0);
 __decorate([
-    typeorm_1.CreateDateColumn({
+    (0, typeorm_1.CreateDateColumn)({
         name: 'created_at',
         type: 'timestamptz',
         nullable: false,
@@ -33,7 +33,7 @@ __decorate([
     __metadata("design:type", Date)
 ], AppEntity.prototype, "createdAt", void 0);
 __decorate([
-    typeorm_1.UpdateDateColumn({
+    (0, typeorm_1.UpdateDateColumn)({
         name: 'updated_at',
         type: 'timestamptz',
         nullable: false,
@@ -41,7 +41,7 @@ __decorate([
     __metadata("design:type", Date)
 ], AppEntity.prototype, "updatedAt", void 0);
 __decorate([
-    typeorm_1.DeleteDateColumn({ name: 'deleted_at', type: 'timestamptz' }),
+    (0, typeorm_1.DeleteDateColumn)({ name: 'deleted_at', type: 'timestamptz' }),
     __metadata("design:type", Date)
 ], AppEntity.prototype, "deletedAt", void 0);
 exports.AppEntity = AppEntity;

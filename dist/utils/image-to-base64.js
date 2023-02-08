@@ -31,7 +31,7 @@ function isImage(urlOrImage) {
 }
 function imageToBase64(urlOrImage) {
     if (validUrl(urlOrImage)) {
-        return node_fetch_1.default(urlOrImage)
+        return (0, node_fetch_1.default)(urlOrImage)
             .then(function (response) {
             return response.buffer();
         })

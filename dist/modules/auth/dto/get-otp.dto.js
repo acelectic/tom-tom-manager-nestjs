@@ -15,27 +15,27 @@ const class_validator_1 = require("class-validator");
 class getOtpDto {
 }
 __decorate([
-    swagger_1.ApiProperty(),
-    class_validator_1.IsNotEmpty(),
-    class_validator_1.IsString(),
+    (0, swagger_1.ApiProperty)(),
+    (0, class_validator_1.IsNotEmpty)(),
+    (0, class_validator_1.IsString)(),
     __metadata("design:type", String)
 ], getOtpDto.prototype, "mobileNo", void 0);
 exports.getOtpDto = getOtpDto;
 class sendOtpRequest {
 }
 __decorate([
-    class_validator_1.IsNotEmpty(),
-    class_validator_1.IsString(),
+    (0, class_validator_1.IsNotEmpty)(),
+    (0, class_validator_1.IsString)(),
     __metadata("design:type", String)
 ], sendOtpRequest.prototype, "key", void 0);
 __decorate([
-    class_validator_1.IsNotEmpty(),
-    class_validator_1.IsString(),
+    (0, class_validator_1.IsNotEmpty)(),
+    (0, class_validator_1.IsString)(),
     __metadata("design:type", String)
 ], sendOtpRequest.prototype, "secret", void 0);
 __decorate([
-    class_validator_1.IsNotEmpty(),
-    class_validator_1.IsString(),
+    (0, class_validator_1.IsNotEmpty)(),
+    (0, class_validator_1.IsString)(),
     __metadata("design:type", String)
 ], sendOtpRequest.prototype, "msisdn", void 0);
 exports.sendOtpRequest = sendOtpRequest;

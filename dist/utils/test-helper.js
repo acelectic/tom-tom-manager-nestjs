@@ -9,32 +9,34 @@ const express_1 = require("express");
 const user_service_1 = require("../modules/user/user.service");
 const User_1 = require("../db/entities/User");
 const auth_constant_1 = require("../modules/auth/auth.constant");
-const env_config_1 = require("../config/env-config");
-exports.truncates = (...tableNames) => {
+const app_config_1 = require("../config/app-config");
+const truncates = (...tableNames) => {
     const query = tableNames.map(name => `TRUNCATE ${name} CASCADE;`).join('');
-    return typeorm_2.getConnection().query(query);
+    return (0, typeorm_2.getConnection)().query(query);
 };
-exports.createTestingApp = (moduleRef) => {
+exports.truncates = truncates;
+const createTestingApp = (moduleRef) => {
     const app = moduleRef.createNestApplication();
     app.useGlobalPipes(new common_1.ValidationPipe({
         transform: true,
         whitelist: true,
     }));
-    app.use(express_1.json({ limit: '50mb' }));
-    app.use(express_1.urlencoded({ limit: '50mb', extended: true }));
+    app.use((0, express_1.json)({ limit: '50mb' }));
+    app.use((0, express_1.urlencoded)({ limit: '50mb', extended: true }));
     return app;
 };
-exports.createTestingModule = async (...modules) => {
-    console.log(env_config_1.appConfig.DB_HOST, Number(env_config_1.appConfig.DB_PORT), env_config_1.appConfig.DB_USERNAME, env_config_1.appConfig.DB_PASSWORD, env_config_1.appConfig.DB_TEST_NAME);
+exports.createTestingApp = createTestingApp;
+const createTestingModule = async (...modules) => {
+    console.log(app_config_1.appConfig.DB_HOST, Number(app_config_1.appConfig.DB_PORT), app_config_1.appConfig.DB_USERNAME, app_config_1.appConfig.DB_PASSWORD, app_config_1.appConfig.DB_TEST_NAME);
     return await testing_1.Test.createTestingModule({
         imports: [
             typeorm_1.TypeOrmModule.forRoot({
                 type: 'postgres',
-                host: env_config_1.appConfig.DB_HOST,
-                port: Number(env_config_1.appConfig.DB_PORT),
-                username: env_config_1.appConfig.DB_USERNAME,
-                password: env_config_1.appConfig.DB_PASSWORD,
-                database: env_config_1.appConfig.DB_TEST_NAME,
+                host: app_config_1.appConfig.DB_HOST,
+                port: Number(app_config_1.appConfig.DB_PORT),
+                username: app_config_1.appConfig.DB_USERNAME,
+                password: app_config_1.appConfig.DB_PASSWORD,
+                database: app_config_1.appConfig.DB_TEST_NAME,
                 synchronize: false,
                 entities: ['src/db/entities/*{.js,.ts}'],
                 autoLoadEntities: true,
@@ -44,7 +46,8 @@ exports.createTestingModule = async (...modules) => {
         ],
     }).compile();
 };
-exports.getToken = (authService) => {
+exports.createTestingModule = createTestingModule;
+const getToken = (authService) => {
     const email = 'mock@test.com';
     const role = auth_constant_1.Role.ADMIN;
     const user = User_1.User.create({ role, email });
@@ -55,4 +58,5 @@ exports.getToken = (authService) => {
         .mockImplementationOnce(jest.fn().mockReturnValue(user));
     return { user, userId, token };
 };
+exports.getToken = getToken;
 //# sourceMappingURL=test-helper.js.map

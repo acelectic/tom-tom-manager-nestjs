@@ -14,16 +14,16 @@ const user_module_1 = require("../user/user.module");
 const auth_controller_1 = require("./auth.controller");
 const auth_service_1 = require("./auth.service");
 const jwt_strategy_1 = require("./jwt.strategy");
-const env_config_1 = require("../../config/env-config");
+const app_config_1 = require("../../config/app-config");
 let AuthModule = class AuthModule {
 };
 AuthModule = __decorate([
-    common_1.Module({
+    (0, common_1.Module)({
         imports: [
             user_module_1.UserModule,
             passport_1.PassportModule,
             jwt_1.JwtModule.register({
-                secret: env_config_1.appConfig.JWT_SECRET_KEY,
+                secret: app_config_1.appConfig.JWT_SECRET_KEY,
             }),
         ],
         controllers: [auth_controller_1.AuthController],

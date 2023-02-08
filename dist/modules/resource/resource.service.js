@@ -36,13 +36,15 @@ let ResourceService = class ResourceService {
     }
     async updateTemplateActiveStatus(resourceId, params, etm) {
         const { isActive } = params;
-        const resource = await Resource_1.Resource.findOne(resourceId);
+        const resource = await Resource_1.Resource.findOneBy({
+            id: resourceId,
+        });
         resource.isActive = isActive;
         return await etm.save(resource);
     }
 };
 ResourceService = __decorate([
-    common_1.Injectable(),
+    (0, common_1.Injectable)(),
     __metadata("design:paramtypes", [])
 ], ResourceService);
 exports.ResourceService = ResourceService;

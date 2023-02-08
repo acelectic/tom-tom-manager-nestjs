@@ -16,123 +16,123 @@ const class_transformer_1 = require("class-transformer");
 class SignInDto {
 }
 __decorate([
-    swagger_1.ApiProperty(),
-    class_validator_1.IsString(),
-    class_validator_1.IsNotEmpty(),
+    (0, swagger_1.ApiProperty)(),
+    (0, class_validator_1.IsString)(),
+    (0, class_validator_1.IsNotEmpty)(),
     __metadata("design:type", String)
 ], SignInDto.prototype, "mobileNo", void 0);
 __decorate([
-    swagger_1.ApiProperty(),
-    class_validator_1.IsString(),
-    class_validator_1.IsNotEmpty(),
+    (0, swagger_1.ApiProperty)(),
+    (0, class_validator_1.IsString)(),
+    (0, class_validator_1.IsNotEmpty)(),
     __metadata("design:type", String)
 ], SignInDto.prototype, "token", void 0);
 __decorate([
-    swagger_1.ApiProperty(),
-    class_validator_1.IsString(),
-    class_validator_1.IsNotEmpty(),
+    (0, swagger_1.ApiProperty)(),
+    (0, class_validator_1.IsString)(),
+    (0, class_validator_1.IsNotEmpty)(),
     __metadata("design:type", String)
 ], SignInDto.prototype, "pin", void 0);
 __decorate([
-    swagger_1.ApiProperty(),
-    class_validator_1.IsString(),
-    class_validator_1.IsNotEmpty(),
+    (0, swagger_1.ApiProperty)(),
+    (0, class_validator_1.IsString)(),
+    (0, class_validator_1.IsNotEmpty)(),
     __metadata("design:type", String)
 ], SignInDto.prototype, "deviceToken", void 0);
 exports.SignInDto = SignInDto;
 class SignInGoogleDto {
 }
 __decorate([
-    swagger_1.ApiProperty(),
-    class_validator_1.IsString(),
-    class_validator_1.IsNotEmpty(),
+    (0, swagger_1.ApiProperty)(),
+    (0, class_validator_1.IsString)(),
+    (0, class_validator_1.IsNotEmpty)(),
     __metadata("design:type", String)
 ], SignInGoogleDto.prototype, "deviceToken", void 0);
 __decorate([
-    swagger_1.ApiProperty(),
-    class_validator_1.IsString(),
-    class_validator_1.IsNotEmpty(),
+    (0, swagger_1.ApiProperty)(),
+    (0, class_validator_1.IsString)(),
+    (0, class_validator_1.IsNotEmpty)(),
     __metadata("design:type", String)
 ], SignInGoogleDto.prototype, "authToken", void 0);
 exports.SignInGoogleDto = SignInGoogleDto;
 class SignInFacebookDto {
 }
 __decorate([
-    swagger_1.ApiProperty(),
-    class_validator_1.IsString(),
-    class_validator_1.IsNotEmpty(),
+    (0, swagger_1.ApiProperty)(),
+    (0, class_validator_1.IsString)(),
+    (0, class_validator_1.IsNotEmpty)(),
     __metadata("design:type", String)
 ], SignInFacebookDto.prototype, "deviceToken", void 0);
 __decorate([
-    swagger_1.ApiProperty(),
-    class_validator_1.IsString(),
-    class_validator_1.IsNotEmpty(),
+    (0, swagger_1.ApiProperty)(),
+    (0, class_validator_1.IsString)(),
+    (0, class_validator_1.IsNotEmpty)(),
     __metadata("design:type", String)
 ], SignInFacebookDto.prototype, "authToken", void 0);
 exports.SignInFacebookDto = SignInFacebookDto;
 class SignInEmailDto {
 }
 __decorate([
-    swagger_1.ApiProperty(),
-    class_validator_1.IsString(),
-    class_validator_1.IsNotEmpty(),
-    class_validator_1.IsEmail(),
-    class_transformer_1.Transform(({ value }) => value.toLowerCase()),
+    (0, swagger_1.ApiProperty)(),
+    (0, class_validator_1.IsString)(),
+    (0, class_validator_1.IsNotEmpty)(),
+    (0, class_validator_1.IsEmail)(),
+    (0, class_transformer_1.Transform)(({ value }) => value.toLowerCase()),
     __metadata("design:type", String)
 ], SignInEmailDto.prototype, "email", void 0);
 __decorate([
-    swagger_1.ApiProperty(),
-    class_validator_1.IsString(),
-    class_validator_1.IsNotEmpty(),
+    (0, swagger_1.ApiProperty)(),
+    (0, class_validator_1.IsString)(),
+    (0, class_validator_1.IsNotEmpty)(),
     __metadata("design:type", String)
 ], SignInEmailDto.prototype, "password", void 0);
 exports.SignInEmailDto = SignInEmailDto;
 class SignInEmailInternalDto {
 }
 __decorate([
-    swagger_1.ApiProperty(),
-    class_validator_1.IsString(),
-    class_validator_1.IsNotEmpty(),
-    class_validator_1.IsEmail(),
-    class_transformer_1.Transform(({ value }) => value.toLowerCase()),
+    (0, swagger_1.ApiProperty)(),
+    (0, class_validator_1.IsString)(),
+    (0, class_validator_1.IsNotEmpty)(),
+    (0, class_validator_1.IsEmail)(),
+    (0, class_transformer_1.Transform)(({ value }) => value.toLowerCase()),
     __metadata("design:type", String)
 ], SignInEmailInternalDto.prototype, "email", void 0);
 __decorate([
-    swagger_1.ApiProperty(),
-    class_validator_1.IsString(),
-    class_validator_1.IsNotEmpty(),
+    (0, swagger_1.ApiProperty)(),
+    (0, class_validator_1.IsString)(),
+    (0, class_validator_1.IsNotEmpty)(),
     __metadata("design:type", String)
 ], SignInEmailInternalDto.prototype, "password", void 0);
 exports.SignInEmailInternalDto = SignInEmailInternalDto;
 class UpdateForgotPasswordDto {
 }
 __decorate([
-    swagger_1.ApiProperty(),
-    class_validator_1.IsNotEmpty(),
-    class_validator_1.IsString(),
-    class_validator_1.IsEmail(),
-    class_transformer_1.Transform(({ value }) => value.toLowerCase()),
+    (0, swagger_1.ApiProperty)(),
+    (0, class_validator_1.IsNotEmpty)(),
+    (0, class_validator_1.IsString)(),
+    (0, class_validator_1.IsEmail)(),
+    (0, class_transformer_1.Transform)(({ value }) => value.toLowerCase()),
     __metadata("design:type", String)
 ], UpdateForgotPasswordDto.prototype, "email", void 0);
 __decorate([
-    swagger_1.ApiProperty(),
-    class_validator_1.IsNotEmpty(),
-    class_validator_1.IsString(),
+    (0, swagger_1.ApiProperty)(),
+    (0, class_validator_1.IsNotEmpty)(),
+    (0, class_validator_1.IsString)(),
     __metadata("design:type", String)
 ], UpdateForgotPasswordDto.prototype, "password", void 0);
 exports.UpdateForgotPasswordDto = UpdateForgotPasswordDto;
 class SignInAppleDto {
 }
 __decorate([
-    swagger_1.ApiProperty(),
-    class_validator_1.IsString(),
-    class_validator_1.IsNotEmpty(),
+    (0, swagger_1.ApiProperty)(),
+    (0, class_validator_1.IsString)(),
+    (0, class_validator_1.IsNotEmpty)(),
     __metadata("design:type", String)
 ], SignInAppleDto.prototype, "deviceToken", void 0);
 __decorate([
-    swagger_1.ApiProperty(),
-    class_validator_1.IsNotEmpty(),
-    class_validator_1.IsString(),
+    (0, swagger_1.ApiProperty)(),
+    (0, class_validator_1.IsNotEmpty)(),
+    (0, class_validator_1.IsString)(),
     __metadata("design:type", Object)
 ], SignInAppleDto.prototype, "authToken", void 0);
 exports.SignInAppleDto = SignInAppleDto;

@@ -1,6 +1,6 @@
 import { Connection, getConnection } from 'typeorm'
 import pgPromise from 'pg-promise'
-import { appConfig } from 'src/config/env-config'
+import { appConfig } from 'src/config/app-config'
 
 export const bulk = async (data: any, column: any, table: string) => {
   const connection: Connection = getConnection()
