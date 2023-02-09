@@ -1,12 +1,17 @@
-import { InjectQueue } from '@nestjs/bull'
+import { InjectQueue } from '@nestjs/bullmq'
 import { Injectable } from '@nestjs/common'
 import { Cron, CronExpression, Interval, Timeout, CronOptions } from '@nestjs/schedule'
 import { Queue } from 'bullmq'
 import dayjs from 'dayjs'
+import { FirstProcessorConstants } from './first.processor'
+import { range } from 'lodash'
+import { v4 } from 'uuid'
 
 @Injectable()
 export class TaskService {
-  // constructor(@InjectQueue('first') private readonly firstQueue: Queue) {}
+  constructor(
+    @InjectQueue(FirstProcessorConstants.PROCESS_NAME) private readonly firstQueue: Queue,
+  ) {}
   // run every 2 sec
   // @Cron('*/2 * * * * *', { name: 'job1' })
   // cronJob() {
@@ -19,11 +24,64 @@ export class TaskService {
   //   console.log('job2', now.format())
   // }
   // run once after serve start 1 sec
-  // @Timeout('Test Job', 1000)
-  // timeout() {
-  //   const now = dayjs()
-  //   console.log('Job Worked', now.format())
-  // }
+  @Timeout('Test Job', 1000)
+  async timeout() {
+    const now = dayjs()
+    for (const index of range(1)) {
+      // const parentId = v4()
+
+      const firstProcess = await this.firstQueue.add(FirstProcessorConstants.FIRST_PROCESS, {
+        index,
+      })
+
+      const { id: parentId } = firstProcess
+
+      const secondProcess = await this.firstQueue.add(
+        FirstProcessorConstants.SECOND_PROCESS,
+        { index, parentId },
+        {
+          // parent: {
+          //   id: parentId,
+          //   queue: `bull:${FirstProcessorConstants.PROCESS_NAME}`,
+          // },
+          // failParentOnFailure: true,
+        },
+      )
+      // await this.firstQueue.addBulk([
+      //   {
+      //     name: FirstProcessorConstants.FIRST_PROCESS,
+      //     data: {
+      //       index,
+      //     },
+      //     opts: {
+      //       jobId: parentId,
+      //     },
+      //   },
+      //   {
+      //     name: FirstProcessorConstants.SECOND_PROCESS,
+      //     data: {
+      //       index,
+      //       parentId,
+      //     },
+      //     opts: {
+      //       parent: {
+      //         id: parentId,
+      //         queue: FirstProcessorConstants.SECOND_PROCESS,
+      //       },
+      //       failParentOnFailure: true,
+      //     },
+      //   },
+      // ])
+      // await firstProcess.moveToWaitingChildren(this.firstQueue.token, {
+      //   child: {
+      //     id: secondProcess.id,
+      //     queue: FirstProcessorConstants.PROCESS_NAME,
+      //   },
+      // })
+    }
+
+    console.log('Job Worked', now.format())
+  }
   // @Cron(`*/5 * * * * *`, { name: 'job3' })
   // cronJob3() {
   //   const now = dayjs()

@@ -1,17 +1,18 @@
-import { InjectQueue } from '@nestjs/bull'
+import { InjectQueue } from '@nestjs/bullmq'
 import { Controller, Param, Post, Query } from '@nestjs/common'
 import { ApiTags } from '@nestjs/swagger'
 import { Queue } from 'bull'
+import { FirstProcessorConstants } from './first.processor'
 
 @ApiTags('task')
 @Controller('v1/tasks')
 export class TaskController {
   constructor(
-    @InjectQueue('first') private readonly firstQueue: Queue, // @InjectQueue('notify') private readonly notifyQueue: Queue,
+    @InjectQueue(FirstProcessorConstants.PROCESS_NAME) private readonly firstQueue: Queue, // @InjectQueue('notify') private readonly notifyQueue: Queue,
   ) {}
   @Post('first-process')
   async transcode() {
-    await this.firstQueue.add('firstProcess')
+    await this.firstQueue.add(FirstProcessorConstants.FIRST_PROCESS)
     await this.firstQueue.resume()
     return { message: 'success' }
   }

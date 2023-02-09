@@ -6,21 +6,48 @@ import {
   OnQueueStalled,
   OnQueueWaiting,
   Process,
-  Processor,
 } from '@nestjs/bull'
+import { Processor, WorkerHost } from '@nestjs/bullmq'
 import { Logger } from '@nestjs/common'
-import { Job } from 'bull'
+import { Job, delay } from 'bullmq'
+import { random } from 'lodash'
 
-@Processor('first')
-export class FirstProcessor {
+export enum FirstProcessorConstants {
+  PROCESS_NAME = 'first',
+  FIRST_PROCESS = 'firstProcess',
+  SECOND_PROCESS = 'secondProcess',
+}
+@Processor(FirstProcessorConstants.PROCESS_NAME, {
+  concurrency: 20,
+})
+export class FirstProcessor extends WorkerHost {
   private readonly logger = new Logger(FirstProcessor.name)
 
-  @Process('firstProcess')
-  handleProcess(job: Job) {
-    console.log('process', job.data)
-    // for (let i = 0; i < 100; i++) {
-    //   job.progress(i)
-    // }
+  async process(job: Job<any, any, FirstProcessorConstants>, token?: string): Promise<any> {
+    switch (job.name) {
+      case FirstProcessorConstants.FIRST_PROCESS:
+        return this.firstProcess(job, token)
+      case FirstProcessorConstants.SECOND_PROCESS:
+        return this.secondProcess(job, token)
+      default:
+        return
+    }
+  }
+
+  async firstProcess(job: Job, token?: string) {
+    console.log('firstProcess', job.id, ' START')
+    await delay(5000)
+    console.log('firstProcess', job.id, ' END')
+    return 'completed'
+  }
+
+  async secondProcess(job: Job, token?: string) {
+    console.log('secondProcess', job.id, ' START')
+    await delay(10000)
+    if (random(1, 10) > 5) {
+      // throw new Error('BREAK')
+    }
+    console.log('secondProcess', job.id, ' END')
     return 'completed'
   }
 

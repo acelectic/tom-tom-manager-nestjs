@@ -30,8 +30,6 @@ export class ExceptionsLoggerFilter extends BaseExceptionFilter {
   }
 }
 
-console.log({ appConfig })
-
 const whitelistOrigin = [
   'https://tomtom-react.herokuapp.com',
   /\*.herokuapp.com$/,
