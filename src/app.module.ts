@@ -19,6 +19,7 @@ import { PaymentModule } from './modules/payment/payment.modules'
 import { TemplateModule } from './modules/template/template.modules'
 import { appConfig, validationEnvSchema } from './config/app-config'
 import { dbConfig } from './config/db-config'
+import { AdminModule } from './modules/admin/admin.modules'
 @Module({
   imports: [
     ConfigModule.forRoot({
@@ -30,33 +31,15 @@ import { dbConfig } from './config/db-config'
       autoLoadEntities: true,
     }),
     ScheduleModule.forRoot(),
-    // BullModule.forRoot({
-    //   redis: {
-    //     host: appConfig.REDIS_HOST,
-    //     port: Number(appConfig.REDIS_PORT),
-    //     password: appConfig.REDIS_PASSWORD,
-    //   },
-    //   prefix: 'tom-tom-service',
-    // }),
     BullModule.forRoot({
       connection: {
         host: appConfig.REDIS_HOST,
         port: Number(appConfig.REDIS_PORT),
-        // password: appConfig.REDIS_PASSWORD,
       },
       defaultJobOptions: {
         removeOnComplete: 1000,
       },
     }),
-    UserModule,
-    ConsoleModule,
-    AppConsoleModule,
-    AuthModule,
-    TaskModule,
-    ResourceModule,
-    TransactionModule,
-    PaymentModule,
-    TemplateModule,
     LoggerModule.forRoot({
       pinoHttp: {
         level: 'silent',
@@ -71,9 +54,22 @@ import { dbConfig } from './config/db-config'
           },
         },
       },
-
       exclude: [{ method: RequestMethod.GET, path: '/api/v1/health' }],
     }),
+    ConsoleModule,
+
+    // common
+    AppConsoleModule,
+    TaskModule,
+
+    // feature
+    AdminModule,
+    AuthModule,
+    PaymentModule,
+    ResourceModule,
+    TemplateModule,
+    TransactionModule,
+    UserModule,
   ],
   controllers: [AppController],
   providers: [AppService],

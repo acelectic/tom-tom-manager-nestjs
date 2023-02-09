@@ -77,17 +77,22 @@ export class SignInEmailInternalDto {
 }
 
 export class UpdateForgotPasswordDto {
-  @ApiProperty()
-  @IsNotEmpty()
-  @IsString()
-  @IsEmail()
-  @Transform(({ value }) => value.toLowerCase())
-  email: string
+  // @ApiProperty()
+  // @IsNotEmpty()
+  // @IsString()
+  // @IsEmail()
+  // @Transform(({ value }) => value.toLowerCase())
+  // email: string
 
   @ApiProperty()
   @IsNotEmpty()
   @IsString()
-  password: string
+  oldPassword: string
+
+  @ApiProperty()
+  @IsNotEmpty()
+  @IsString()
+  newPassword: string
 }
 
 export class SignInAppleDto {

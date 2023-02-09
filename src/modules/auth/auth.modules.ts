@@ -14,7 +14,9 @@ import { appConfig } from 'src/config/app-config'
     PassportModule,
     JwtModule.register({
       secret: appConfig.JWT_SECRET_KEY,
-      // signOptions: { expiresIn: 'none' },
+      signOptions: {
+        expiresIn: '1d',
+      },
     }),
   ],
   controllers: [AuthController],

@@ -100,11 +100,12 @@ export class AuthService {
     return { isEmailExist: user ? true : false }
   }
 
-  async updateForgotPassword(data: UpdateForgotPasswordDto, etm: EntityManager) {
-    const { email, password } = data
+  async updateForgotPassword(data: UpdateForgotPasswordDto, email: string, etm: EntityManager) {
+    const { oldPassword, newPassword } = data
     await this.validateUserWithEmail(email)
+    await this.validateSignInWithEmail({ email, password: oldPassword })
 
-    const encryptPassword = await bcrypt.hash(password, 10)
+    const encryptPassword = await bcrypt.hash(newPassword, 10)
     const user = await User.findOneBy({ email })
     user.password = encryptPassword
 
@@ -112,14 +113,15 @@ export class AuthService {
     return user
   }
 
-  private async validateUserWithEmail(email) {
+  // private
+  async validateUserWithEmail(email) {
     const user = await User.findOneBy({ email })
     if (!user) {
       validateError('User not found')
     }
   }
 
-  private async validateSignInWithEmail(data: SignInEmailDto) {
+  async validateSignInWithEmail(data: SignInEmailDto) {
     const { email, password } = data
 
     const user = await User.createQueryBuilder('user')

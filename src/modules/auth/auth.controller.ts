@@ -1,62 +1,21 @@
-import {
-  Body,
-  Controller,
-  Get,
-  Post,
-  Query,
-  Patch,
-  Header,
-  UseInterceptors,
-  SerializeOptions,
-  Req,
-  Res,
-} from '@nestjs/common'
+import { Body, Controller, Post, Patch, SerializeOptions, Res } from '@nestjs/common'
 import { ApiBody, ApiTags } from '@nestjs/swagger'
 import { AuthService } from './auth.service'
-import {
-  SignInGoogleDto,
-  SignInFacebookDto,
-  SignInAppleDto,
-  SignInEmailDto,
-  UpdateForgotPasswordDto,
-} from './dto/sign-in.dto'
+import { SignInEmailDto, UpdateForgotPasswordDto } from './dto/sign-in.dto'
 import { SignOutDto } from './dto/sing-out.dto'
-import { getOtpDto } from './dto/get-otp.dto'
-import { VerifyEmailDto, VerifyMobilelDto, ParamsRegisterEmailDto } from './dto/register.dto'
-import { EntityManager, DataSource } from 'typeorm'
+import { ParamsRegisterEmailDto } from './dto/register.dto'
+import { DataSource } from 'typeorm'
 import { Role, cookieKeys, cookieOptions } from './auth.constant'
 import { debugLog } from 'src/utils/helper'
-import { ResponseInterceptor } from 'src/utils/interceptors/response.interceptor'
-import { CookieOptions, Request, Response } from 'express'
-import { pick, pickBy } from 'lodash'
+import { Response } from 'express'
+import { pick } from 'lodash'
+import { Auth, ReqUser } from './auth.decorator'
+import { User } from 'src/db/entities/User'
 
 @ApiTags('auth')
 @Controller('auth')
 export class AuthController {
   constructor(private readonly authService: AuthService, private readonly dataSource: DataSource) {}
-
-  // @Get('request-otp')
-  // async getOtp(@Query() body: getOtpDto) {
-  //   return await this.authService.getOtp(body)
-  // }
-
-  // @ApiBody({ type: SignInGoogleDto })
-  // @Post("google")
-  // async signInGoogle(
-  //   @Body() body: SignInGoogleDto,
-  //   etm = this.dataSource.createEntityManager()
-  // ) {
-  //   return await this.authService.singWithGoogle(body, etm);
-  // }
-
-  // @ApiBody({ type: SignInFacebookDto })
-  // @Post("facebook")
-  // async signInFacebook(
-  //   @Body() body: SignInFacebookDto,
-  //   etm = this.dataSource.createEntityManager()
-  // ) {
-  //   return await this.authService.signWithFacebook(body, etm);
-  // }
 
   @ApiBody({ type: SignInEmailDto })
   @Post('sign-in')
@@ -115,11 +74,13 @@ export class AuthController {
   }
 
   @ApiBody({ type: UpdateForgotPasswordDto })
+  @Auth()
   @Patch('/update-password')
   async updateForgotPassword(
     @Body() body: UpdateForgotPasswordDto,
+    @ReqUser() user: User,
     etm = this.dataSource.createEntityManager(),
   ) {
-    return await this.authService.updateForgotPassword(body, etm)
+    return await this.authService.updateForgotPassword(body, user.email, etm)
   }
 }

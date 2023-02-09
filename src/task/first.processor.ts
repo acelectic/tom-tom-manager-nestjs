@@ -34,14 +34,14 @@ export class FirstProcessor extends WorkerHost {
     }
   }
 
-  async firstProcess(job: Job, token?: string) {
+  private async firstProcess(job: Job, token?: string) {
     console.log('firstProcess', job.id, ' START')
     await delay(5000)
     console.log('firstProcess', job.id, ' END')
     return 'completed'
   }
 
-  async secondProcess(job: Job, token?: string) {
+  private async secondProcess(job: Job, token?: string) {
     console.log('secondProcess', job.id, ' START')
     await delay(10000)
     if (random(1, 10) > 5) {
