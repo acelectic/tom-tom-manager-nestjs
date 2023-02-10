@@ -6,14 +6,14 @@ import {
   SetMetadata,
 } from '@nestjs/common'
 import { ApiBearerAuth } from '@nestjs/swagger'
-import { JwtAuthGuard } from './jwt-auth.guard'
-import { RolesGuard } from './role.guard'
+import { AccessTokenGuard } from './guard/access-token.guard'
+import { RolesGuard } from './guard/role.guard'
 import { Role } from './auth.constant'
 
 export const Roles = (...roles: string[]) => SetMetadata('roles', roles)
 
 export const Auth = (...roles: string[]) => {
-  return applyDecorators(Roles(...roles), UseGuards(JwtAuthGuard, RolesGuard), ApiBearerAuth())
+  return applyDecorators(Roles(...roles), UseGuards(AccessTokenGuard, RolesGuard), ApiBearerAuth())
 }
 
 export const Admin = () => {

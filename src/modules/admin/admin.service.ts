@@ -21,15 +21,15 @@ export class AdminService {
       length: 10,
       alpha: true,
       numeric: true,
-      symbols: true,
-      casing: 'lower',
     })
     const encryptPassword = await bcrypt.hash(newPassword, 10)
     const user = await User.findOneBy({ email })
     user.password = encryptPassword
     await etm.save(user)
 
-    return user
+    return {
+      newPassword,
+    }
   }
 
   async adminChangePassword(data: AdminChangePasswordParamsDto, etm: EntityManager) {

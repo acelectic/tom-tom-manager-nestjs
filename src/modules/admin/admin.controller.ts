@@ -13,8 +13,8 @@ import {
 } from './dto/reset-password.dto'
 import { Admin, Auth, ReqUser } from '../auth/auth.decorator'
 
-@Auth()
-@Admin()
+// @Auth()
+// @Admin()
 @ApiTags('admin')
 @Controller('admin')
 export class AdminController {
@@ -29,7 +29,6 @@ export class AdminController {
   @Post('/reset-password')
   async resetPassword(
     @Body() body: AdminResetPasswordParamsDto,
-    @ReqUser() user: User,
     etm = this.dataSource.createEntityManager(),
   ) {
     return await this.adminService.resetPassword(body, etm)

@@ -9,6 +9,7 @@ export enum Role {
 
 export const cookieKeys = {
   accessToken: 'AccessToken',
+  refreshToken: 'RefreshToken',
   user: 'User',
 } as const
 

@@ -50,4 +50,9 @@ export class RegisterEmailResponseDto {
   @IsString()
   @IsNotEmpty()
   accessToken: string
+
+  @ApiProperty()
+  @IsString()
+  @IsNotEmpty()
+  refreshToken: string
 }

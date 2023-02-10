@@ -74,7 +74,7 @@ export const dbConfig: {
     database: appConfig.DB_TEST_NAME,
   },
 }
-
+console.log({ dbConfig: dbConfig.default })
 const AppDataSource = new DataSource({
   ...dbConfig.default,
 })

@@ -51,8 +51,8 @@ export class TransactionService {
     return transactions
   }
 
-  async getTransactionsHistory(parmas: GetTransactionHistoryParamsDto) {
-    const { userId, status, endDate, startDate = dayjs().subtract(30, 'day') } = parmas
+  async getTransactionsHistory(params: GetTransactionHistoryParamsDto) {
+    const { userId, status, endDate, startDate = dayjs().subtract(30, 'day') } = params
     const queryBuilder = Transaction.createQueryBuilder('transaction')
       .leftJoinAndSelect('transaction.users', 'users')
       .orderBy('transaction.completed', 'ASC')
@@ -60,16 +60,12 @@ export class TransactionService {
 
     if (startDate) {
       queryBuilder.andWhere('transaction.created_at > :startDate', {
-        startDate: dayjs(startDate)
-          .tz()
-          .toISOString(),
+        startDate: dayjs(startDate).tz().toISOString(),
       })
     }
     if (endDate) {
       queryBuilder.andWhere('transaction.created_at < :endDate', {
-        endDate: dayjs(endDate)
-          .tz()
-          .toISOString(),
+        endDate: dayjs(endDate).tz().toISOString(),
       })
     }
     if (userId) {
@@ -127,7 +123,7 @@ export class TransactionService {
     await etm.save(transaction)
 
     const paymentPrice = ceil(price / users.length, 0)
-    const payments = await users.map(async user => {
+    const payments = await users.map(async (user) => {
       const { id: userId } = user
       const params: CreatePaymentParamsDto = {
         price: paymentPrice,

@@ -1,23 +1,23 @@
 import { HttpStatus, Injectable } from '@nestjs/common'
 import { PassportStrategy } from '@nestjs/passport'
 import { ExtractJwt, Strategy } from 'passport-jwt'
-import { httpError } from '../../utils/response-error'
-import { UserService } from '../user/user.service'
-import { TokenData } from './auth.interface'
+import { httpError } from '../../../utils/response-error'
+import { UserService } from '../../user/user.service'
+import { TokenData } from '../auth.interface'
 import { appConfig } from 'src/config/app-config'
 import { Request } from 'express'
-import { cookieKeys } from './auth.constant'
+import { cookieKeys } from '../auth.constant'
 
 @Injectable()
-export class JwtStrategy extends PassportStrategy(Strategy) {
+export class RefreshTokenStrategy extends PassportStrategy(Strategy, 'jwt-refresh') {
   constructor(private readonly userService: UserService) {
     super({
       jwtFromRequest: ExtractJwt.fromExtractors([
-        JwtStrategy.extractJWT,
+        RefreshTokenStrategy.extractJWT,
         ExtractJwt.fromAuthHeaderAsBearerToken(),
       ]),
-      ignoreExpiration: false,
-      secretOrKey: appConfig.JWT_SECRET_KEY,
+      secretOrKey: appConfig.JWT_REFRESH_SECRET_KEY,
+      passReqToCallback: true,
     })
   }
 
@@ -30,8 +30,8 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
   }
 
   private static extractJWT(req: Request): string | null {
-    if (req.cookies?.[cookieKeys.accessToken]?.length) {
-      return req.cookies[cookieKeys.accessToken]
+    if (req.cookies?.[cookieKeys.refreshToken]?.length) {
+      return req.cookies[cookieKeys.refreshToken]
     }
     return null
   }

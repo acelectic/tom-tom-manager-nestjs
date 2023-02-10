@@ -11,7 +11,7 @@ import { Role } from '../modules/auth/auth.constant'
 import { appConfig } from 'src/config/app-config'
 
 export const truncates = (...tableNames: string[]) => {
-  const query = tableNames.map(name => `TRUNCATE ${name} CASCADE;`).join('')
+  const query = tableNames.map((name) => `TRUNCATE ${name} CASCADE;`).join('')
   return getConnection().query(query)
 }
 
@@ -61,7 +61,7 @@ export const getToken = (authService: AuthService) => {
   const role = Role.ADMIN
   const user = User.create({ role, email })
   const userId = user.id
-  const token = `Bearer ${authService.getToken(user)}`
+  const token = `Bearer ${authService.getTokens(user)}`
 
   jest
     .spyOn(UserService.prototype as any, 'getUserWithId')

@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common'
+import { ForbiddenException, Injectable } from '@nestjs/common'
 import { JwtService } from '@nestjs/jwt'
 import { EntityManager } from 'typeorm'
 import { UserService } from '../user/user.service'
@@ -18,6 +18,7 @@ import bcrypt from 'bcrypt'
 import { Role } from './auth.constant'
 import { Chance } from 'chance'
 import { TransformInstanceToInstance } from 'class-transformer'
+import { appConfig } from 'src/config/app-config'
 
 @Injectable()
 export class AuthService {
@@ -90,21 +91,17 @@ export class AuthService {
       id: user.id,
     })
 
-    response.accessToken = this.getToken(newUser)
+    const { accessToken, refreshToken } = await this.getTokens(newUser)
+    const hashedRefreshToken = await this.updateRefreshToken(user.id, refreshToken, etm)
+
+    response.accessToken = accessToken
+    response.refreshToken = refreshToken
     response.user = newUser
     return response
   }
 
   async signOut(data: SignOutDto, etm: EntityManager) {
     return { message: 'success' }
-  }
-
-  getToken(user: User) {
-    const payload: TokenData = {
-      id: user.id,
-      role: user.role,
-    }
-    return this.jwtService.sign(payload)
   }
 
   async verifyEmail(params: VerifyEmailDto) {
@@ -119,12 +116,22 @@ export class AuthService {
     await this.validateUserWithEmail(email)
     await this.validateSignInWithEmail({ email, password: oldPassword })
 
-    const encryptPassword = await bcrypt.hash(newPassword, 10)
+    const encryptPassword = await this.hashData(newPassword)
     const user = await User.findOneBy({ email })
     user.password = encryptPassword
 
     await etm.save(user)
     return user
+  }
+
+  async refreshTokens(userId: string, refreshToken: string, etm: EntityManager) {
+    const user = await User.findOneBy({ id: userId })
+    if (!user || !user.refreshToken) throw new ForbiddenException('Access Denied')
+    const refreshTokenMatches = await await bcrypt.compare(user.refreshToken, refreshToken)
+    if (!refreshTokenMatches) throw new ForbiddenException('Access Denied')
+    const tokens = await this.getTokens(user)
+    await this.updateRefreshToken(user.id, tokens.refreshToken, etm)
+    return tokens
   }
 
   // private
@@ -149,5 +156,56 @@ export class AuthService {
     if (user && password && user?.password && !isPasswordMatching) {
       validateError('Password not match')
     }
+  }
+
+  async getTokens(user: User) {
+    const { id: userId, email: username } = user
+
+    const [accessToken, refreshToken] = await Promise.all([
+      this.jwtService.signAsync(
+        {
+          sub: userId,
+          username,
+        },
+        {
+          secret: appConfig.JWT_SECRET_KEY,
+          expiresIn: '15m',
+        },
+      ),
+      this.jwtService.signAsync(
+        {
+          sub: userId,
+          username,
+        },
+        {
+          secret: appConfig.JWT_REFRESH_SECRET_KEY,
+          expiresIn: '7d',
+        },
+      ),
+    ])
+
+    return {
+      accessToken,
+      refreshToken,
+    }
+  }
+
+  async updateRefreshToken(userId: string, refreshToken: string, etm: EntityManager) {
+    const hashedRefreshToken = await this.hashData(refreshToken)
+    await etm.update(
+      User,
+      {
+        id: userId,
+      },
+      {
+        refreshToken: hashedRefreshToken,
+      },
+    )
+
+    return hashedRefreshToken
+  }
+
+  private hashData(data: string) {
+    return bcrypt.hash(data, 16)
   }
 }

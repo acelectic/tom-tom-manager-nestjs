@@ -29,14 +29,15 @@ export class UserService {
     const users = await paginate(queryBuilder, { page, limit })
     return users
   }
-  async getUser(userId: string) {
-    return await User.findOneBy({
+
+  getUser(userId: string) {
+    return User.findOneBy({
       id: userId,
     })
   }
 
-  async getUserWithId(userId: string) {
-    return await User.findOneBy({
+  getUserWithId(userId: string) {
+    return User.findOneBy({
       id: userId,
     })
   }

@@ -45,6 +45,10 @@ export class User extends AppEntity {
   @Column({ name: 'password', nullable: true })
   password: string
 
+  @Exclude()
+  @Column({ name: 'refresh_token', nullable: true })
+  refreshToken: string
+
   @Column({
     name: 'balance',
     type: 'numeric',
