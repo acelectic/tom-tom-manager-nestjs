@@ -8,7 +8,7 @@ import { DataSource } from 'typeorm'
 import { Role, cookieKeys, cookieOptions } from './auth.constant'
 import { Response } from 'express'
 import { pick } from 'lodash'
-import { Auth, ReqUser } from './auth.decorator'
+import { Auth, AuthRefreshToken, ReqUser } from './auth.decorator'
 import { User } from 'src/db/entities/User'
 import { RefreshTokenGuard } from './guard/refresh-token.guard'
 
@@ -70,6 +70,7 @@ export class AuthController {
       cookieOptions,
     )
     res.send(response)
+    res.end()
   }
 
   @ApiBody({ type: UpdateForgotPasswordDto })
@@ -83,10 +84,19 @@ export class AuthController {
     return await this.authService.updateForgotPassword(body, user.email, etm)
   }
 
-  @UseGuards(RefreshTokenGuard)
-  @Post('refresh')
-  refreshTokens(@ReqUser() user: User, etm = this.dataSource.createEntityManager()) {
-    const { id: userId, refreshToken } = user
-    return this.authService.refreshTokens(userId, refreshToken, etm)
+  @AuthRefreshToken()
+  @Post('refresh-token')
+  async refreshTokens(
+    @Res() res: Response,
+    @ReqUser() user: User,
+    etm = this.dataSource.createEntityManager(),
+  ) {
+    const { id: userId } = user
+    const refreshToken = res.req.cookies[cookieKeys.refreshToken]
+    const response = await this.authService.refreshTokens(userId, refreshToken, etm)
+    res.cookie(cookieKeys.accessToken, response.accessToken, cookieOptions)
+    res.cookie(cookieKeys.refreshToken, response.refreshToken, cookieOptions)
+    res.send(response)
+    res.end()
   }
 }

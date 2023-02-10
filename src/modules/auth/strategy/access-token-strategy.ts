@@ -3,7 +3,7 @@ import { PassportStrategy } from '@nestjs/passport'
 import { ExtractJwt, Strategy } from 'passport-jwt'
 import { httpError } from '../../../utils/response-error'
 import { UserService } from '../../user/user.service'
-import { TokenData } from '../auth.interface'
+import { AccessTokenJwtPayload } from '../auth.interface'
 import { appConfig } from 'src/config/app-config'
 import { Request } from 'express'
 import { cookieKeys } from '../auth.constant'
@@ -20,7 +20,7 @@ export class AccessTokenStrategy extends PassportStrategy(Strategy, 'jwt') {
     })
   }
 
-  async validate(payload: TokenData): Promise<any> {
+  async validate(payload: AccessTokenJwtPayload): Promise<any> {
     const user = await this.userService.getUserWithId(payload.id)
     if (!user) {
       httpError(HttpStatus.UNAUTHORIZED)

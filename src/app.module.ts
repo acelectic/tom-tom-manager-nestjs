@@ -1,4 +1,4 @@
-import { Module, RequestMethod } from '@nestjs/common'
+import { CacheModule, Module, RequestMethod } from '@nestjs/common'
 import { AppController } from './app.controller'
 import { AppService } from './app.service'
 import { TypeOrmModule } from '@nestjs/typeorm'
@@ -22,6 +22,9 @@ import { dbConfig } from './config/db-config'
 import { AdminModule } from './modules/admin/admin.modules'
 @Module({
   imports: [
+    CacheModule.register({
+      isGlobal: true,
+    }),
     ConfigModule.forRoot({
       isGlobal: true,
       validationSchema: validationEnvSchema,

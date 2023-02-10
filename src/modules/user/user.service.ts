@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common'
+import { CacheKey, CacheTTL, Injectable } from '@nestjs/common'
 import { Transaction } from 'src/db/entities/Transaction'
 import { EntityManager, Not, SelectQueryBuilder } from 'typeorm'
 import { User } from '../../db/entities/User'
@@ -36,6 +36,7 @@ export class UserService {
     })
   }
 
+  @CacheTTL(20)
   getUserWithId(userId: string) {
     return User.findOneBy({
       id: userId,

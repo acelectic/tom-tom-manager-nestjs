@@ -2,23 +2,29 @@ import { ForbiddenException, Injectable } from '@nestjs/common'
 import { JwtService } from '@nestjs/jwt'
 import { EntityManager } from 'typeorm'
 import { UserService } from '../user/user.service'
-import { TokenData } from './auth.interface'
+import { AccessTokenJwtPayload, RefreshTokenJwtPayload } from './auth.interface'
 import { SignInEmailDto, UpdateForgotPasswordDto } from './dto/sign-in.dto'
 import { SignOutDto } from './dto/sing-out.dto'
 import { User } from '../../db/entities/User'
 import { validateError } from '../../utils/response-error'
 import { ParamSignInBase } from './auth.interface'
 import { ParamsCreateUserSignIn } from '../user/user.interface'
-import {
-  VerifyEmailDto,
-  RegisterEmailParamsDto,
-  RegisterEmailResponseDto,
-} from './dto/register.dto'
+import { RegisterEmailParamsDto, RegisterEmailResponseDto } from './dto/register.dto'
 import bcrypt from 'bcrypt'
 import { Role } from './auth.constant'
 import { Chance } from 'chance'
 import { TransformInstanceToInstance } from 'class-transformer'
 import { appConfig } from 'src/config/app-config'
+import { PerformanceObserver, performance } from 'perf_hooks'
+
+const obs = new PerformanceObserver((list) => {
+  console.log(list.getEntries())
+
+  performance.clearMarks()
+  performance.clearMeasures()
+  obs.disconnect()
+})
+obs.observe({ entryTypes: ['function'] })
 
 @Injectable()
 export class AuthService {
@@ -30,10 +36,7 @@ export class AuthService {
     role: Role,
     etm: EntityManager,
   ): Promise<RegisterEmailResponseDto> {
-    await this.verifyEmail(data)
-    await this.validateSignInWithEmail(data)
-
-    const response = new RegisterEmailResponseDto()
+    await Promise.all([this.validateSignInWithEmail(data)])
 
     const { email, password, name = Chance().name({ middle: false, full: true }) } = data
     console.log({ email, password, name })
@@ -41,8 +44,6 @@ export class AuthService {
 
     const paramsSignInBase: ParamSignInBase = {
       email,
-      // accountId,
-      // typeSignIn,
       name,
       password: encryptPassword,
       role,
@@ -61,10 +62,6 @@ export class AuthService {
       role: Role.USER,
     }
     return await this.signIn(paramsSignInBase, etm)
-  }
-
-  private async generateAccountId() {
-    return Math.random().toString(36).substring(2)
   }
 
   private async signIn(
@@ -86,29 +83,19 @@ export class AuthService {
     }
     user.lastSignInAt = new Date()
     if (!user?.password) user.password = password
-    await etm.save(user)
-    const newUser = await etm.findOneBy(User, {
-      id: user.id,
-    })
 
-    const { accessToken, refreshToken } = await this.getTokens(newUser)
-    const hashedRefreshToken = await this.updateRefreshToken(user.id, refreshToken, etm)
+    const { accessToken, refreshToken } = await this.getTokens(user)
+    await this.updateRefreshToken(user, refreshToken, etm)
+    await etm.save(user)
 
     response.accessToken = accessToken
     response.refreshToken = refreshToken
-    response.user = newUser
+    response.user = user
     return response
   }
 
   async signOut(data: SignOutDto, etm: EntityManager) {
     return { message: 'success' }
-  }
-
-  async verifyEmail(params: VerifyEmailDto) {
-    const { email } = params
-    const user = await User.findOneBy({ email })
-
-    return { isEmailExist: user ? true : false }
   }
 
   async updateForgotPassword(data: UpdateForgotPasswordDto, email: string, etm: EntityManager) {
@@ -126,11 +113,20 @@ export class AuthService {
 
   async refreshTokens(userId: string, refreshToken: string, etm: EntityManager) {
     const user = await User.findOneBy({ id: userId })
+
     if (!user || !user.refreshToken) throw new ForbiddenException('Access Denied')
-    const refreshTokenMatches = await await bcrypt.compare(user.refreshToken, refreshToken)
+
+    const compareToken = performance.timerify(() => bcrypt.compare(refreshToken, user.refreshToken))
+    const refreshTokenMatches = await compareToken()
     if (!refreshTokenMatches) throw new ForbiddenException('Access Denied')
-    const tokens = await this.getTokens(user)
-    await this.updateRefreshToken(user.id, tokens.refreshToken, etm)
+
+    const getTokens = performance.timerify(() => this.getTokens(user))
+    const tokens = await getTokens()
+
+    const updateToken = performance.timerify(() =>
+      this.updateRefreshToken(user, tokens.refreshToken, etm),
+    )
+    await updateToken()
     return tokens
   }
 
@@ -159,29 +155,26 @@ export class AuthService {
   }
 
   async getTokens(user: User) {
-    const { id: userId, email: username } = user
-
+    const { id: userId, email, role } = user
+    const accessTokenPayload: AccessTokenJwtPayload = {
+      id: userId,
+      email,
+      role,
+    }
+    const refreshTokenPayload: RefreshTokenJwtPayload = {
+      id: userId,
+      email,
+      role,
+    }
     const [accessToken, refreshToken] = await Promise.all([
-      this.jwtService.signAsync(
-        {
-          sub: userId,
-          username,
-        },
-        {
-          secret: appConfig.JWT_SECRET_KEY,
-          expiresIn: '15m',
-        },
-      ),
-      this.jwtService.signAsync(
-        {
-          sub: userId,
-          username,
-        },
-        {
-          secret: appConfig.JWT_REFRESH_SECRET_KEY,
-          expiresIn: '7d',
-        },
-      ),
+      this.jwtService.sign(accessTokenPayload, {
+        secret: appConfig.JWT_SECRET_KEY,
+        expiresIn: '15s',
+      }),
+      this.jwtService.sign(refreshTokenPayload, {
+        secret: appConfig.JWT_REFRESH_SECRET_KEY,
+        expiresIn: '7d',
+      }),
     ])
 
     return {
@@ -190,22 +183,14 @@ export class AuthService {
     }
   }
 
-  async updateRefreshToken(userId: string, refreshToken: string, etm: EntityManager) {
+  async updateRefreshToken(user: User, refreshToken: string, etm: EntityManager) {
     const hashedRefreshToken = await this.hashData(refreshToken)
-    await etm.update(
-      User,
-      {
-        id: userId,
-      },
-      {
-        refreshToken: hashedRefreshToken,
-      },
-    )
-
+    user.refreshToken = hashedRefreshToken
+    await etm.save(user)
     return hashedRefreshToken
   }
 
   private hashData(data: string) {
-    return bcrypt.hash(data, 16)
+    return bcrypt.hash(data, 10)
   }
 }

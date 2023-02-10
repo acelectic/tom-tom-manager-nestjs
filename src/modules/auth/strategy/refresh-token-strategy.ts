@@ -3,10 +3,11 @@ import { PassportStrategy } from '@nestjs/passport'
 import { ExtractJwt, Strategy } from 'passport-jwt'
 import { httpError } from '../../../utils/response-error'
 import { UserService } from '../../user/user.service'
-import { TokenData } from '../auth.interface'
+import { AccessTokenJwtPayload, RefreshTokenJwtPayload } from '../auth.interface'
 import { appConfig } from 'src/config/app-config'
 import { Request } from 'express'
 import { cookieKeys } from '../auth.constant'
+import { IncomingMessage } from 'http'
 
 @Injectable()
 export class RefreshTokenStrategy extends PassportStrategy(Strategy, 'jwt-refresh') {
@@ -21,7 +22,7 @@ export class RefreshTokenStrategy extends PassportStrategy(Strategy, 'jwt-refres
     })
   }
 
-  async validate(payload: TokenData): Promise<any> {
+  async validate(req: IncomingMessage, payload: RefreshTokenJwtPayload): Promise<any> {
     const user = await this.userService.getUserWithId(payload.id)
     if (!user) {
       httpError(HttpStatus.UNAUTHORIZED)

@@ -9,11 +9,16 @@ import { ApiBearerAuth } from '@nestjs/swagger'
 import { AccessTokenGuard } from './guard/access-token.guard'
 import { RolesGuard } from './guard/role.guard'
 import { Role } from './auth.constant'
+import { RefreshTokenGuard } from './guard/refresh-token.guard'
 
 export const Roles = (...roles: string[]) => SetMetadata('roles', roles)
 
 export const Auth = (...roles: string[]) => {
   return applyDecorators(Roles(...roles), UseGuards(AccessTokenGuard, RolesGuard), ApiBearerAuth())
+}
+
+export const AuthRefreshToken = () => {
+  return applyDecorators(UseGuards(RefreshTokenGuard))
 }
 
 export const Admin = () => {

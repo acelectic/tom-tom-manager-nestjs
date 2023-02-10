@@ -1,8 +1,15 @@
 import { UserSignInType } from '../../db/entities/User'
 import { Role } from './auth.constant'
 
-export type TokenData = {
+export type AccessTokenJwtPayload = {
   id: string
+  email?: string
+  role?: string
+}
+
+export type RefreshTokenJwtPayload = {
+  id: string
+  email?: string
   role?: string
 }
 

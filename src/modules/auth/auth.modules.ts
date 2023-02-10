@@ -7,11 +7,12 @@ import { AuthController } from './auth.controller'
 import { AuthService } from './auth.service'
 import { AccessTokenStrategy } from './strategy/access-token-strategy'
 import { appConfig } from 'src/config/app-config'
+import { RefreshTokenStrategy } from './strategy/refresh-token-strategy'
 
 @Module({
   imports: [UserModule, PassportModule, JwtModule.register({})],
   controllers: [AuthController],
-  providers: [AuthService, AccessTokenStrategy],
+  providers: [AuthService, AccessTokenStrategy, RefreshTokenStrategy],
   exports: [AuthService],
 })
 export class AuthModule {}
