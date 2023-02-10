@@ -7,7 +7,8 @@ import { GetUsersParamsDto, UpdateUserDto } from './dto/user-params.dto'
 import { ParamsCreateUserSignIn } from './user.interface'
 import bcrypt from 'bcrypt'
 import { validateError } from 'src/utils/response-error'
-import { paginate } from 'nestjs-typeorm-paginate'
+import { PaginationTypeEnum, paginate } from 'nestjs-typeorm-paginate'
+import { ceil } from 'lodash'
 
 @Injectable()
 export class UserService {
@@ -25,9 +26,17 @@ export class UserService {
       const userIds = transaction.users.map(({ id }) => id)
       queryBuilder.where('user.id in (:...userIds)', { userIds })
     }
-    queryBuilder.orderBy('user.name', 'ASC').leftJoinAndSelect('user.payments', 'payments')
-    const users = await paginate(queryBuilder, { page, limit })
-    return users
+    // queryBuilder.leftJoinAndSelect('user.payments', 'payments')
+    queryBuilder.orderBy('user.name', 'ASC')
+
+    // queryBuilder.take(limit).skip((page - 1) * limit)
+    // const [items, total] = await Promise.all([queryBuilder.getMany(), queryBuilder.getCount()])
+
+    const response = await paginate(queryBuilder, {
+      page,
+      limit,
+    })
+    return response
   }
 
   getUser(userId: string) {
