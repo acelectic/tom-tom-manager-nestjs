@@ -1,3 +1,5 @@
+## [1.2.1](https://github.com/acelectic/tom-tom-manager/compare/v1.2.0...v1.2.1) (2023-02-10)
+
 # [1.2.0](https://github.com/acelectic/tom-tom-manager/compare/v1.1.3...v1.2.0) (2023-02-10)
 
 ## [1.1.3](https://github.com/acelectic/tom-tom-manager/compare/v1.1.2...v1.1.3) (2023-02-09)
