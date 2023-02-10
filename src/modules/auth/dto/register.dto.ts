@@ -1,7 +1,8 @@
 import { ApiProperty } from '@nestjs/swagger'
-import { Transform } from 'class-transformer'
-import { IsNotEmpty, IsString, IsEmail, IsOptional } from 'class-validator'
+import { Transform, Type } from 'class-transformer'
+import { IsNotEmpty, IsString, IsEmail, IsOptional, ValidateNested } from 'class-validator'
 import { SignInEmailDto } from './sign-in.dto'
+import { User } from 'src/db/entities/User'
 
 export class VerifyEmailDto {
   @ApiProperty()
@@ -19,7 +20,7 @@ export class VerifyMobilelDto {
   mobileNo: string
 }
 
-export class ParamsRegisterEmailDto {
+export class RegisterEmailParamsDto {
   @ApiProperty()
   @IsString()
   @IsNotEmpty()
@@ -36,4 +37,17 @@ export class ParamsRegisterEmailDto {
   @IsString()
   @IsOptional()
   name: string
+}
+
+export class RegisterEmailResponseDto {
+  @ApiProperty()
+  @ValidateNested()
+  @Type(() => User)
+  @IsNotEmpty()
+  user: User
+
+  @ApiProperty()
+  @IsString()
+  @IsNotEmpty()
+  accessToken: string
 }

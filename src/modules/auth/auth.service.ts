@@ -9,18 +9,30 @@ import { User } from '../../db/entities/User'
 import { validateError } from '../../utils/response-error'
 import { ParamSignInBase } from './auth.interface'
 import { ParamsCreateUserSignIn } from '../user/user.interface'
-import { VerifyEmailDto, ParamsRegisterEmailDto } from './dto/register.dto'
+import {
+  VerifyEmailDto,
+  RegisterEmailParamsDto,
+  RegisterEmailResponseDto,
+} from './dto/register.dto'
 import bcrypt from 'bcrypt'
 import { Role } from './auth.constant'
 import { Chance } from 'chance'
+import { TransformInstanceToInstance } from 'class-transformer'
 
 @Injectable()
 export class AuthService {
   constructor(private readonly userService: UserService, private readonly jwtService: JwtService) {}
 
-  async registerWithEmail(data: ParamsRegisterEmailDto, role: Role, etm: EntityManager) {
+  @TransformInstanceToInstance()
+  async registerWithEmail(
+    data: RegisterEmailParamsDto,
+    role: Role,
+    etm: EntityManager,
+  ): Promise<RegisterEmailResponseDto> {
     await this.verifyEmail(data)
     await this.validateSignInWithEmail(data)
+
+    const response = new RegisterEmailResponseDto()
 
     const { email, password, name = Chance().name({ middle: false, full: true }) } = data
     console.log({ email, password, name })
@@ -35,7 +47,7 @@ export class AuthService {
       role,
     }
 
-    return await this.signIn(paramsSignInBase, etm)
+    return this.signIn(paramsSignInBase, etm)
   }
 
   async signWithEmail(data: SignInEmailDto, etm: EntityManager) {
@@ -51,13 +63,15 @@ export class AuthService {
   }
 
   private async generateAccountId() {
-    return Math.random()
-      .toString(36)
-      .substring(2)
+    return Math.random().toString(36).substring(2)
   }
 
-  private async signIn(data: ParamSignInBase, etm: EntityManager) {
+  private async signIn(
+    data: ParamSignInBase,
+    etm: EntityManager,
+  ): Promise<RegisterEmailResponseDto> {
     const { email, password, name, role } = data
+    const response = new RegisterEmailResponseDto()
     let user = await User.findOneBy({ email })
 
     if (!user) {
@@ -75,10 +89,10 @@ export class AuthService {
     const newUser = await etm.findOneBy(User, {
       id: user.id,
     })
-    return {
-      accessToken: this.getToken(newUser),
-      user: newUser,
-    }
+
+    response.accessToken = this.getToken(newUser)
+    response.user = newUser
+    return response
   }
 
   async signOut(data: SignOutDto, etm: EntityManager) {

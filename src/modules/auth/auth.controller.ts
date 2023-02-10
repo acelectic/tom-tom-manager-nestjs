@@ -1,12 +1,11 @@
-import { Body, Controller, Post, Patch, SerializeOptions, Res } from '@nestjs/common'
-import { ApiBody, ApiTags } from '@nestjs/swagger'
+import { Body, Controller, Post, Patch, Res } from '@nestjs/common'
+import { ApiBody, ApiResponse, ApiTags } from '@nestjs/swagger'
 import { AuthService } from './auth.service'
 import { SignInEmailDto, UpdateForgotPasswordDto } from './dto/sign-in.dto'
 import { SignOutDto } from './dto/sing-out.dto'
-import { ParamsRegisterEmailDto } from './dto/register.dto'
+import { RegisterEmailParamsDto, RegisterEmailResponseDto } from './dto/register.dto'
 import { DataSource } from 'typeorm'
 import { Role, cookieKeys, cookieOptions } from './auth.constant'
-import { debugLog } from 'src/utils/helper'
 import { Response } from 'express'
 import { pick } from 'lodash'
 import { Auth, ReqUser } from './auth.decorator'
@@ -49,17 +48,14 @@ export class AuthController {
     res.end()
   }
 
-  @ApiBody({ type: ParamsRegisterEmailDto })
+  @ApiBody({ type: RegisterEmailParamsDto })
+  @ApiResponse({ type: RegisterEmailResponseDto })
   @Post('register')
-  @SerializeOptions({
-    strategy: 'exposeAll',
-  })
   async registerEmail(
-    @Body() body: ParamsRegisterEmailDto,
+    @Body() body: RegisterEmailParamsDto,
     @Res() res: Response,
     etm = this.dataSource.createEntityManager(),
   ) {
-    debugLog({ ...body })
     const response = await this.authService.registerWithEmail(body, Role.USER, etm)
     const { accessToken, user } = response
 
@@ -70,7 +66,6 @@ export class AuthController {
       cookieOptions,
     )
     res.send(response)
-    res.end()
   }
 
   @ApiBody({ type: UpdateForgotPasswordDto })

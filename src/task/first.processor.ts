@@ -18,7 +18,7 @@ export enum FirstProcessorConstants {
   SECOND_PROCESS = 'secondProcess',
 }
 @Processor(FirstProcessorConstants.PROCESS_NAME, {
-  concurrency: 20,
+  concurrency: 3,
 })
 export class FirstProcessor extends WorkerHost {
   private readonly logger = new Logger(FirstProcessor.name)

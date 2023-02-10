@@ -1,11 +1,10 @@
 import { InjectQueue } from '@nestjs/bullmq'
 import { Injectable } from '@nestjs/common'
-import { BullAdapter } from '@bull-board/api/bullAdapter'
+import { BullMQAdapter } from '@bull-board/api/bullMQAdapter'
 import { createBullBoard } from '@bull-board/api'
 import { ExpressAdapter } from '@bull-board/express'
-import { Queue } from 'bull'
+import { Queue } from 'bullmq'
 import { FirstProcessorConstants } from './first.processor'
-
 export const bullServerAdapter = new ExpressAdapter()
 
 @Injectable()
@@ -15,7 +14,7 @@ export class BullBoardProvider {
     private readonly firstQueue: Queue,
   ) {
     createBullBoard({
-      queues: [new BullAdapter(this.firstQueue)],
+      queues: [new BullMQAdapter(this.firstQueue)],
       serverAdapter: bullServerAdapter,
     })
   }

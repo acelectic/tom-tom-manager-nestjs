@@ -39,7 +39,7 @@ export class AdminController {
   @ApiResponse({
     type: AdminChangePasswordResponseDto,
   })
-  @Post('/admin-change-password')
+  @Post('/change-password')
   async adminChangePassword(
     @Body() body: AdminChangePasswordParamsDto,
     etm = this.dataSource.createEntityManager(),

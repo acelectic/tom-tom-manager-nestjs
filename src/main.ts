@@ -81,8 +81,8 @@ async function bootstrap() {
 
   app.useGlobalFilters()
   app.useGlobalInterceptors(
-    new ResponseInterceptor(),
     new ClassSerializerInterceptor(app.get(Reflector)),
+    new ResponseInterceptor(),
   )
   const { httpAdapter } = app.get(HttpAdapterHost)
   app.useGlobalFilters(new DbExeptionFilter(), new ExceptionsLoggerFilter(httpAdapter))

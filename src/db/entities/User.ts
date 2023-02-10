@@ -14,6 +14,7 @@ import { Transaction } from './Transaction'
 import { Payment, PaymentStatus } from './Payment'
 import { transformerDecimalToNumber } from 'src/utils/entity-transform'
 import { sumBy } from 'lodash'
+import { Exclude } from 'class-transformer'
 
 export enum UserSignInType {
   GOOGLE = 'google',
@@ -40,7 +41,8 @@ export class User extends AppEntity {
   @DeleteDateColumn({ name: 'deleted_at' })
   deletedAt: Date
 
-  @Column({ name: 'password', nullable: true, select: false })
+  @Exclude()
+  @Column({ name: 'password', nullable: true })
   password: string
 
   @Column({
@@ -61,19 +63,13 @@ export class User extends AppEntity {
   })
   role: Role
 
-  @ManyToMany(
-    () => Transaction,
-    transactions => transactions.users,
-  )
+  @ManyToMany(() => Transaction, (transactions) => transactions.users)
   transactions: Transaction[]
-  // @RelationId((user: User) => user.transactions)
-  // transactionIds: string[]
 
-  @OneToMany(
-    () => Payment,
-    payments => payments.user,
-  )
+  @OneToMany(() => Payment, (payments) => payments.user)
   payments: Payment[]
+
+  @Exclude()
   @RelationId((user: User) => user.payments)
   paymentIds: string[]
 
