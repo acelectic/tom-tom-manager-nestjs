@@ -33,11 +33,26 @@ const envSchema: Required<SchemaMap<typeof appConfig>> = {
   PORT: Joi.number().required().default(8626),
   JWT_SECRET_KEY: Joi.string().required().default('secret_key'),
   JWT_REFRESH_SECRET_KEY: Joi.string().required().default('refresh_secret_key'),
-  DB_HOST: Joi.string().required().default('dev_service_postgres'),
-  DB_PORT: Joi.number().required().default(5432),
-  DB_USERNAME: Joi.string().required().default('admin'),
-  DB_PASSWORD: Joi.string().required().default('admin'),
-  DB_NAME: Joi.string().required().default('tom_tom'),
+  DB_HOST: Joi.alternatives().conditional('PG_LOCAL', {
+    is: 'true',
+    then: Joi.string().required().default('dev_service_postgres'),
+  }),
+  DB_PORT: Joi.alternatives().conditional('PG_LOCAL', {
+    is: 'true',
+    then: Joi.number().required().default(5432),
+  }),
+  DB_USERNAME: Joi.alternatives().conditional('PG_LOCAL', {
+    is: 'true',
+    then: Joi.string().required().default('admin'),
+  }),
+  DB_PASSWORD: Joi.alternatives().conditional('PG_LOCAL', {
+    is: 'true',
+    then: Joi.string().required().default('admin'),
+  }),
+  DB_NAME: Joi.alternatives().conditional('PG_LOCAL', {
+    is: 'true',
+    then: Joi.string().required().default('tom_tom'),
+  }),
   DB_SCHEMA: Joi.string().required().default('tom_tom'),
   DB_TEST_NAME: Joi.string().required().default('tom_tom_test'),
   DB_HEROKU_URL: Joi.string().optional(),
