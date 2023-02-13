@@ -38,6 +38,7 @@ import { AdminModule } from './modules/admin/admin.modules'
       connection: {
         host: appConfig.REDIS_HOST,
         port: Number(appConfig.REDIS_PORT),
+        password: appConfig.REDIS_PASSWORD,
       },
       defaultJobOptions: {
         removeOnComplete: 1000,
