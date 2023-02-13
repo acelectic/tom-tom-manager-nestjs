@@ -24,7 +24,7 @@ export class TaskService {
   //   console.log('job2', now.format())
   // }
   // run once after serve start 1 sec
-  @Timeout('Test Job', 1000)
+  // @Timeout('Test Job', 1000)
   async timeout() {
     const now = dayjs()
     for (const index of range(10)) {

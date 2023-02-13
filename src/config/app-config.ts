@@ -23,6 +23,7 @@ export const appConfig = {
   FIREBASE_STORAGE_BUCKET: process.env.FIREBASE_STORAGE_BUCKET,
   FIREBASE_PROJECT_ID: process.env.FIREBASE_PROJECT_ID,
   PORT: +process.env.PORT,
+  ENABLE_TASKS: process.env.ENABLE_TASKS === 'true',
 } as const
 
 const envSchema: Required<SchemaMap<typeof appConfig>> = {
@@ -63,6 +64,7 @@ const envSchema: Required<SchemaMap<typeof appConfig>> = {
   BULL_BOARD_PASSWORD: Joi.string().required(),
   FIREBASE_STORAGE_BUCKET: Joi.string().required(),
   FIREBASE_PROJECT_ID: Joi.string().required(),
+  ENABLE_TASKS: Joi.boolean().optional(),
 }
 
 export const validationEnvSchema = Joi.object(envSchema)

@@ -34,16 +34,21 @@ import { AdminModule } from './modules/admin/admin.modules'
       autoLoadEntities: true,
     }),
     ScheduleModule.forRoot(),
-    BullModule.forRoot({
-      connection: {
-        host: appConfig.REDIS_HOST,
-        port: Number(appConfig.REDIS_PORT),
-        password: appConfig.REDIS_PASSWORD,
-      },
-      defaultJobOptions: {
-        removeOnComplete: 1000,
-      },
-    }),
+    // BullModule.forRoot({
+    //   connection: {
+    //     // host: appConfig.REDIS_HOST,
+    //     // port: Number(appConfig.REDIS_PORT),
+    //     // password: appConfig.REDIS_PASSWORD,
+    //     // host: 'redis://:p5706d5cf10dcf6b4df70cf33bed1f6b38c43cce472d4dad56298a067f3d24a1b@ec2-44-198-93-109.compute-1.amazonaws.com:26680',
+    //     host: 'redis://:p5706d5cf10dcf6b4df70cf33bed1f6b38c43cce472d4dad56298a067f3d24a1b@ec2-44-198-93-109.compute-1.amazonaws.com:26680',
+    //     // host: 'ec2-44-198-93-109.compute-1.amazonaws.com',
+    //     // port: 26680,
+    //     // password: 'p5706d5cf10dcf6b4df70cf33bed1f6b38c43cce472d4dad56298a067f3d24a1b',
+    //   },
+    //   defaultJobOptions: {
+    //     removeOnComplete: 1000,
+    //   },
+    // }),
     LoggerModule.forRoot({
       pinoHttp: {
         level: 'silent',
