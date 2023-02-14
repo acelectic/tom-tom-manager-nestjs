@@ -16,6 +16,7 @@ import { Chance } from 'chance'
 import { TransformInstanceToInstance } from 'class-transformer'
 import { appConfig } from 'src/config/app-config'
 import { PerformanceObserver, performance } from 'perf_hooks'
+import { ForgotPasswordParamsDto, ForgotPasswordResponseDto } from './dto/forgot-password.dto'
 
 const obs = new PerformanceObserver((list) => {
   console.log(list.getEntries())
@@ -98,7 +99,7 @@ export class AuthService {
     return { message: 'success' }
   }
 
-  async updateForgotPassword(data: UpdateForgotPasswordDto, email: string, etm: EntityManager) {
+  async updatePassword(data: UpdateForgotPasswordDto, email: string, etm: EntityManager) {
     const { oldPassword, newPassword } = data
     await this.validateUserWithEmail(email)
     await this.validateSignInWithEmail({ email, password: oldPassword })
@@ -128,6 +129,28 @@ export class AuthService {
     )
     await updateToken()
     return tokens
+  }
+
+  async forgotPassword(
+    params: ForgotPasswordParamsDto,
+    etm: EntityManager,
+  ): Promise<ForgotPasswordResponseDto> {
+    const { email } = params
+    await this.validateUserWithEmail(email)
+
+    const newPassword = Chance().string({
+      length: 10,
+      alpha: true,
+      numeric: true,
+    })
+    const encryptPassword = await bcrypt.hash(newPassword, 10)
+    const user = await User.findOneBy({ email })
+    user.password = encryptPassword
+    await etm.save(user)
+
+    return {
+      newPassword,
+    }
   }
 
   // private

@@ -11,6 +11,7 @@ import { pick } from 'lodash'
 import { Auth, AuthRefreshToken, ReqUser } from './auth.decorator'
 import { User } from 'src/db/entities/User'
 import { RefreshTokenGuard } from './guard/refresh-token.guard'
+import { ForgotPasswordParamsDto, ForgotPasswordResponseDto } from './dto/forgot-password.dto'
 
 @ApiTags('auth')
 @Controller('auth')
@@ -64,11 +65,10 @@ export class AuthController {
 
     res.cookie(cookieKeys.accessToken, accessToken, cookieOptions)
     res.cookie(cookieKeys.refreshToken, refreshToken, cookieOptions)
-    res.cookie(
-      cookieKeys.user,
-      pick(user, ['name', 'email', 'lastSignInAt', 'password', 'balance']),
-      cookieOptions,
-    )
+    res.cookie(cookieKeys.user, pick(user, ['name', 'email', 'lastSignInAt', 'balance']), {
+      ...cookieOptions,
+      maxAge: undefined,
+    })
     res.send(response)
     res.end()
   }
@@ -76,12 +76,22 @@ export class AuthController {
   @ApiBody({ type: UpdateForgotPasswordDto })
   @Auth()
   @Patch('/update-password')
-  async updateForgotPassword(
+  async updatePassword(
     @Body() body: UpdateForgotPasswordDto,
     @ReqUser() user: User,
     etm = this.dataSource.createEntityManager(),
   ) {
-    return await this.authService.updateForgotPassword(body, user.email, etm)
+    return await this.authService.updatePassword(body, user.email, etm)
+  }
+
+  @ApiBody({ type: ForgotPasswordParamsDto })
+  @ApiResponse({ type: ForgotPasswordResponseDto })
+  @Post('/forgot-password')
+  async forgotPassword(
+    @Body() body: ForgotPasswordParamsDto,
+    etm = this.dataSource.createEntityManager(),
+  ) {
+    return await this.authService.forgotPassword(body, etm)
   }
 
   @AuthRefreshToken()
