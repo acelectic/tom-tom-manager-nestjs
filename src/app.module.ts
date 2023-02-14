@@ -51,7 +51,6 @@ import { AdminModule } from './modules/admin/admin.modules'
     // }),
     LoggerModule.forRoot({
       pinoHttp: {
-        level: 'silent',
         redact: {
           paths: ['req.body.password', 'req.headers.authorization', 'req.headers.cookie'],
           censor: '********',

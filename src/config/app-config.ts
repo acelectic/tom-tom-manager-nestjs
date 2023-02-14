@@ -6,6 +6,8 @@ export const appConfig = {
   NODE_ENV: process.env.NODE_ENV as (typeof NODE_ENVS)[number],
   JWT_SECRET_KEY: process.env.JWT_SECRET_KEY,
   JWT_REFRESH_SECRET_KEY: process.env.JWT_REFRESH_SECRET_KEY,
+  JWT_EXPIRES_IN: process.env.JWT_EXPIRES_IN,
+  JWT_REFRESH_EXPIRES_IN: process.env.JWT_REFRESH_EXPIRES_IN,
   DB_NAME: process.env.DB_NAME,
   DB_TEST_NAME: process.env.DB_TEST_NAME,
   DB_HOST: process.env.DB_HOST,
@@ -26,36 +28,27 @@ export const appConfig = {
   ENABLE_TASKS: process.env.ENABLE_TASKS === 'true',
 } as const
 
+const validatePgLocalOnly = (validateSchema: Joi.SchemaLike): Joi.AlternativesSchema =>
+  Joi.alternatives().conditional('PG_LOCAL', {
+    is: 'true',
+    then: validateSchema,
+  })
+
 const envSchema: Required<SchemaMap<typeof appConfig>> = {
-  NODE_ENV: Joi.string()
-    .valid(...NODE_ENVS)
-    .default('development'),
+  NODE_ENV: Joi.string().valid(...NODE_ENVS),
   LOG_LEVEL: Joi.string().valid(...LOG_LEVELS),
-  PORT: Joi.number().required().default(8626),
-  JWT_SECRET_KEY: Joi.string().required().default('secret_key'),
-  JWT_REFRESH_SECRET_KEY: Joi.string().required().default('refresh_secret_key'),
-  DB_HOST: Joi.alternatives().conditional('PG_LOCAL', {
-    is: 'true',
-    then: Joi.string().required().default('dev_service_postgres'),
-  }),
-  DB_PORT: Joi.alternatives().conditional('PG_LOCAL', {
-    is: 'true',
-    then: Joi.number().required().default(5432),
-  }),
-  DB_USERNAME: Joi.alternatives().conditional('PG_LOCAL', {
-    is: 'true',
-    then: Joi.string().required().default('admin'),
-  }),
-  DB_PASSWORD: Joi.alternatives().conditional('PG_LOCAL', {
-    is: 'true',
-    then: Joi.string().required().default('admin'),
-  }),
-  DB_NAME: Joi.alternatives().conditional('PG_LOCAL', {
-    is: 'true',
-    then: Joi.string().required().default('tom_tom'),
-  }),
-  DB_SCHEMA: Joi.string().required().default('tom_tom'),
-  DB_TEST_NAME: Joi.string().required().default('tom_tom_test'),
+  PORT: Joi.number().required(),
+  JWT_SECRET_KEY: Joi.string().required(),
+  JWT_REFRESH_SECRET_KEY: Joi.string().required(),
+  JWT_EXPIRES_IN: Joi.string().required(),
+  JWT_REFRESH_EXPIRES_IN: Joi.string().required(),
+  DB_HOST: validatePgLocalOnly(Joi.string().required()),
+  DB_PORT: validatePgLocalOnly(Joi.number().required()),
+  DB_USERNAME: validatePgLocalOnly(Joi.string().required()),
+  DB_PASSWORD: validatePgLocalOnly(Joi.string().required()),
+  DB_NAME: validatePgLocalOnly(Joi.string().required()),
+  DB_SCHEMA: Joi.string().required(),
+  DB_TEST_NAME: Joi.string().required(),
   DB_HEROKU_URL: Joi.string().optional(),
   PG_LOCAL: Joi.boolean().required().valid(true, false),
   REDIS_HOST: Joi.string().required(),
