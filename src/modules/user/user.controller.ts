@@ -31,7 +31,7 @@ export class UserController {
   async changeRole(
     @Param('userId', new ParseUUIDPipe()) userId: string,
     @Body() param: ChangeRoleDto,
-    etm: EntityManager,
+    etm = this.dataSource.createEntityManager(),
   ) {
     return await this.userService.changeRole(userId, param.role, etm)
   }

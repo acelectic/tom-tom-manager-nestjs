@@ -1,7 +1,5 @@
 require('dotenv').config()
-const {
-  Client
-} = module.require('pg')
+const { Client } = module.require('pg')
 const adminCred = {
   user: process.env.DB_ADMIN_USERNAME,
   password: process.env.DB_ADMIN_PASSWORD,
@@ -10,9 +8,11 @@ const adminCred = {
 }
 
 console.log({
-  adminCred
+  adminCred,
 })
 async function createDb(config) {
+  const { database } = config
+  if (!database) return
   const client = new Client(adminCred)
   await client.connect()
   const result = await client.query(
@@ -51,18 +51,16 @@ const defaultDbCred = {
   database: process.env.DB_NAME,
 }
 async function createAllDb() {
-
   try {
     await createDb(defaultDbCred)
     await createDb({
       ...defaultDbCred,
-      database: process.env.DB_TEST_NAME
+      database: process.env.DB_TEST_NAME,
     })
   } catch (error) {
     console.log({
-      error
+      error,
     })
   }
-
 }
 createAllDb()
