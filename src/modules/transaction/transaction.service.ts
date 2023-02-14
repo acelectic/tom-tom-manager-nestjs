@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common'
 import dayjs from 'dayjs'
 import { ceil, isBoolean, sumBy } from 'lodash'
-import { paginate } from 'nestjs-typeorm-paginate'
+import { Pagination, paginate } from 'nestjs-typeorm-paginate'
 import { PaymentType } from 'src/db/entities/Payment'
 import { Resource } from 'src/db/entities/Resource'
 import { Template } from 'src/db/entities/Template'
@@ -21,7 +21,7 @@ import {
 @Injectable()
 export class TransactionService {
   constructor(private readonly paymentService: PaymentService) {}
-  async getTransactions(params: GetTransactionParamsDto) {
+  async getTransactions(params: GetTransactionParamsDto): Promise<Pagination<Transaction>> {
     const { userId, page = 1, limit = 5 } = params
 
     if (userId) {
@@ -31,6 +31,18 @@ export class TransactionService {
         },
         relations: ['transactions'],
       })
+      if (!userTransactions?.length) {
+        return {
+          items: [],
+          meta: {
+            currentPage: 1,
+            itemCount: 0,
+            itemsPerPage: limit,
+            totalItems: 0,
+            totalPages: 0,
+          },
+        }
+      }
       const transactionIds = userTransactions.map(({ id }) => id)
       const queryBuilder = Transaction.createQueryBuilder('transaction')
         .leftJoinAndSelect('transaction.users', 'users')
