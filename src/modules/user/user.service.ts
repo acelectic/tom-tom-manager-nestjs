@@ -39,8 +39,20 @@ export class UserService {
   }
 
   getUser(userId: string) {
-    return User.findOneBy({
-      id: userId,
+    return User.findOne({
+      where: {
+        id: userId,
+      },
+      cache: 30 * 1000,
+    })
+  }
+
+  getCurrentUserBalance(userId: string) {
+    return User.findOne({
+      where: {
+        id: userId,
+      },
+      select: ['balance'],
     })
   }
 

@@ -22,6 +22,11 @@ export class UserController {
     return this.userService.getUser(user.id)
   }
 
+  @Get('/current-user/balance')
+  async getCurrentUserBalance(@ReqUser() user: User) {
+    return this.userService.getCurrentUserBalance(user.id)
+  }
+
   @Get('/:userId')
   async getUser(@Param('userId', new ParseUUIDPipe()) userId: string) {
     return this.userService.getUser(userId)
