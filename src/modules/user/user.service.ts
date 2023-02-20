@@ -1,14 +1,13 @@
-import { CacheKey, CacheTTL, Injectable } from '@nestjs/common'
+import { CacheTTL, Injectable } from '@nestjs/common'
 import { Transaction } from 'src/db/entities/Transaction'
-import { EntityManager, Not, SelectQueryBuilder } from 'typeorm'
+import { EntityManager } from 'typeorm'
 import { User } from '../../db/entities/User'
 import { Role } from '../auth/auth.constant'
 import { GetUsersParamsDto, UpdateUserDto } from './dto/user-params.dto'
 import { ParamsCreateUserSignIn } from './user.interface'
 import bcrypt from 'bcrypt'
 import { validateError } from 'src/utils/response-error'
-import { PaginationTypeEnum, paginate } from 'nestjs-typeorm-paginate'
-import { ceil } from 'lodash'
+import { paginate } from 'nestjs-typeorm-paginate'
 
 @Injectable()
 export class UserService {

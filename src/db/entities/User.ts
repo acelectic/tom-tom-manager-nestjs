@@ -7,13 +7,13 @@ import {
   ManyToMany,
   RelationId,
   EntityManager,
+  In,
 } from 'typeorm'
 import { AppEntity } from './AppEntity'
 import { Role } from '../../modules/auth/auth.constant'
 import { Transaction } from './Transaction'
-import { Payment, PaymentStatus } from './Payment'
+import { Payment, PaymentStatus, PaymentType } from './Payment'
 import { transformerDecimalToNumber } from 'src/utils/entity-transform'
-import { sumBy } from 'lodash'
 import { Exclude } from 'class-transformer'
 
 export enum UserSignInType {
@@ -79,15 +79,19 @@ export class User extends AppEntity {
 
   async updateBalance(etm: EntityManager) {
     const userId = this.id
-    const payments = await etm.find(Payment, {
-      where: {
-        userId,
-        status: PaymentStatus.PENDING,
-      },
-      relations: ['transaction'],
+    const paymentsPaid = await etm.sum(Payment, 'price', {
+      userId,
+      type: PaymentType.PAID,
+      status: In([PaymentStatus.PENDING]),
     })
-    const sumPayments = sumBy(payments, ({ price }) => price)
-    this.balance = -sumPayments
-    return await etm.save(this)
+    // const paymentsBuy = await etm.sum(Payment, 'price', {
+    //   userId,
+    //   type: PaymentType.BUY,
+    //   status: PaymentStatus.SETTLED,
+    // })
+
+    this.balance = paymentsPaid
+    await etm.save(this)
+    return this
   }
 }

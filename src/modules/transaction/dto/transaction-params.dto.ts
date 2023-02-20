@@ -31,11 +31,15 @@ export class CreateTransactionParamsDto {
 
 export class GetTransactionParamsDto extends BasePaginateParamsDto {
   @ApiProperty()
-  @IsUUID('all', {
-    each: true,
-  })
+  @IsUUID()
   @IsOptional()
   userId?: string
+
+  @ApiProperty()
+  @Transform(({ value }) => (value === undefined ? undefined : value === 'true'))
+  @IsBoolean()
+  @IsOptional()
+  isCompleted?: boolean
 }
 
 export class GetTransactionHistoryParamsDto {

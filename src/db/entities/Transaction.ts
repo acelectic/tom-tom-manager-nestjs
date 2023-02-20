@@ -13,7 +13,7 @@ import {
   ManyToOne,
 } from 'typeorm'
 import { AppEntity } from './AppEntity'
-import { Payment, PaymentStatus } from './Payment'
+import { Payment, PaymentStatus, PaymentType } from './Payment'
 import { Resource } from './Resource'
 import { Template } from './Template'
 import { User } from './User'
@@ -55,10 +55,7 @@ export class Transaction extends AppEntity {
   @Transform(({ value }) => `${value}`.padStart(6, '0'))
   ref: string
 
-  @ManyToMany(
-    () => User,
-    users => users.transactions,
-  )
+  @ManyToMany(() => User, (users) => users.transactions)
   @JoinTable({
     name: 'users_transactions',
     joinColumn: {
@@ -72,23 +69,15 @@ export class Transaction extends AppEntity {
   })
   users: User[]
 
-  @OneToMany(
-    () => Payment,
-    payments => payments.transaction,
-    {
-      cascade: true,
-    },
-  )
+  @OneToMany(() => Payment, (payments) => payments.transaction, {
+    cascade: true,
+  })
   payments: Payment[]
 
-  @ManyToOne(
-    () => Template,
-    template => template.transactions,
-    {
-      lazy: true,
-      nullable: true,
-    },
-  )
+  @ManyToOne(() => Template, (template) => template.transactions, {
+    lazy: true,
+    nullable: true,
+  })
   template: Template
   @RelationId((transaction: Transaction) => transaction.template)
   templateId: string
@@ -103,16 +92,16 @@ export class Transaction extends AppEntity {
 
   async updateRemain(etm: EntityManager) {
     const transactionId = this.id
-    const paymentsWaitPaid = await etm.find(Payment, {
-      where: {
-        transactionId,
-        status: PaymentStatus.PENDING,
-      },
+    const remain = await etm.sum(Payment, 'price', {
+      transactionId,
+      type: PaymentType.PAID,
+      status: PaymentStatus.PENDING,
     })
-    const totalWaitPaided = sumBy(paymentsWaitPaid, payment => Number(payment.price))
-    const remain = totalWaitPaided
+
     this.remain = Math.max(0, remain)
     if (remain <= 0) this.completed = true
     await etm.save(this)
+
+    return this
   }
 }

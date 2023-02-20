@@ -22,7 +22,7 @@ import {
 export class TransactionService {
   constructor(private readonly paymentService: PaymentService) {}
   async getTransactions(params: GetTransactionParamsDto): Promise<Pagination<Transaction>> {
-    const { userId, page = 1, limit = 5 } = params
+    const { userId, isCompleted, page = 1, limit = 5 } = params
 
     if (userId) {
       const { transactions: userTransactions } = await User.findOne({
@@ -49,7 +49,11 @@ export class TransactionService {
         .orderBy('transaction.completed', 'ASC')
         .addOrderBy('transaction.createdAt', 'ASC')
         .where('transaction.id in (:...transactionIds)', { transactionIds })
-
+      if (isCompleted === true || isCompleted === false) {
+        queryBuilder.andWhere({
+          completed: isCompleted,
+        })
+      }
       const transactions = await paginate(queryBuilder, { page, limit })
       return transactions
     }
@@ -58,6 +62,12 @@ export class TransactionService {
       .leftJoinAndSelect('transaction.users', 'users')
       .orderBy('transaction.completed', 'ASC')
       .addOrderBy('transaction.createdAt', 'ASC')
+
+    if (isCompleted === true || isCompleted === false) {
+      queryBuilder.andWhere({
+        completed: isCompleted,
+      })
+    }
 
     const transactions = await paginate(queryBuilder, { page, limit })
     return transactions

@@ -6,11 +6,15 @@ import dayjs from 'dayjs'
 import { FirstProcessorConstants } from './first.processor'
 import { range } from 'lodash'
 import { v4 } from 'uuid'
+import { DataSource } from 'typeorm'
+import { Transaction } from 'src/db/entities/Transaction'
+import { User } from 'src/db/entities/User'
 
 @Injectable()
 export class TaskService {
   constructor(
     @InjectQueue(FirstProcessorConstants.PROCESS_NAME) private readonly firstQueue: Queue,
+    private readonly dataSource: DataSource,
   ) {}
   // run every 2 sec
   // @Cron('*/2 * * * * *', { name: 'job1' })
@@ -81,6 +85,24 @@ export class TaskService {
     }
 
     console.log('Job Worked', now.format())
+  }
+
+  // @Timeout('Test Job', 1000)
+  async reCalculateBalance() {
+    const etm = this.dataSource.createEntityManager()
+
+    const transactionRepository = await this.dataSource.getRepository(Transaction)
+    const transactions = await transactionRepository.find({
+      where: {
+        completed: false,
+      },
+    })
+
+    await Promise.all(transactions.map((transaction) => transaction.updateRemain(etm)))
+
+    const userRepository = await this.dataSource.getRepository(User)
+    const users = await userRepository.find()
+    await Promise.all(users.map((user) => user.updateBalance(etm)))
   }
   // @Cron(`*/5 * * * * *`, { name: 'job3' })
   // cronJob3() {

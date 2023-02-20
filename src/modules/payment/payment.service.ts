@@ -63,8 +63,10 @@ export class PaymentService {
     if (type === PaymentType.BUY && resource) {
       payment.resource = resource
     }
-
-    return await etm.save(payment)
+    await etm.save(payment)
+    await user.updateBalance(etm)
+    await transaction?.updateRemain(etm)
+    return payment
   }
 
   async confirmPayment(params: ConfirmPaymentParamsDto, etm: EntityManager) {
@@ -81,7 +83,9 @@ export class PaymentService {
 
     const { user, transaction } = payment
     await user.updateBalance(etm)
-    await transaction.updateRemain(etm)
+    if (transaction) {
+      await transaction.updateRemain(etm)
+    }
     return payment
   }
 
@@ -97,7 +101,7 @@ export class PaymentService {
       },
       relations: ['transaction', 'user'],
     })
-    const resultPayments = await payments.map(async payment => {
+    const resultPayments = await payments.map(async (payment) => {
       const { id: paymentId } = payment
       const resultPayment = await this.confirmPayment(
         {
