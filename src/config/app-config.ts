@@ -1,4 +1,5 @@
 import Joi, { SchemaMap } from 'joi'
+import semver from 'semver'
 
 const NODE_ENVS = ['development', 'production', 'test', 'provision'] as const
 const LOG_LEVELS = ['debug', 'sql', 'production'] as const
@@ -26,6 +27,7 @@ export const appConfig = {
   FIREBASE_PROJECT_ID: process.env.FIREBASE_PROJECT_ID,
   PORT: +process.env.PORT,
   ENABLE_TASKS: process.env.ENABLE_TASKS === 'true',
+  ALLOW_MIN_CLIENT_VERSION: process.env.ALLOW_MIN_CLIENT_VERSION,
 } as const
 
 const validatePgLocalOnly = (validateSchema: Joi.SchemaLike): Joi.AlternativesSchema =>
@@ -58,6 +60,16 @@ const envSchema: Required<SchemaMap<typeof appConfig>> = {
   FIREBASE_STORAGE_BUCKET: Joi.string().required(),
   FIREBASE_PROJECT_ID: Joi.string().required(),
   ENABLE_TASKS: Joi.boolean().optional(),
+  ALLOW_MIN_CLIENT_VERSION: Joi.string()
+    .trim()
+    .required()
+    .custom((value, helpers) => {
+      const isValid = semver.valid(semver.coerce(value))
+      if (!isValid) {
+        return helpers.error('ALLOW_MIN_CLIENT_VERSION format invalid')
+      }
+      return value
+    }),
 }
 
 export const validationEnvSchema = Joi.object(envSchema)

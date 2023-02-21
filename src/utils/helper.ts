@@ -2,14 +2,17 @@ import { isNumber } from 'class-validator'
 import fs from 'fs'
 import { floor, ceil } from 'lodash'
 import { regressiveFee } from '../constants/gold-fee'
+import { appConfig } from 'src/config/app-config'
 var pjJson = require('../../package.json')
+
 export const appVersion = pjJson.version
+export const allowMinClientVersion = appConfig.ALLOW_MIN_CLIENT_VERSION
 
 export const GOLD_WEIGHT_PER_GOLD_BAHT = 15.244 as const
 
 export const makeDir = (dir: string) => {
   if (!fs.existsSync(dir)) {
-    fs.mkdir(dir, { recursive: true }, err => {
+    fs.mkdir(dir, { recursive: true }, (err) => {
       if (err) return Promise.reject(err)
     })
   }

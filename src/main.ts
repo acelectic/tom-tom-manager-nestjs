@@ -17,9 +17,10 @@ import basicAuth from 'express-basic-auth'
 import './initialize'
 import { appConfig } from './config/app-config'
 import { bullServerAdapter } from './task/bull-board.provider'
-import { appVersion } from './utils/helper'
+import { allowMinClientVersion, appVersion } from './utils/helper'
 import cookieParser from 'cookie-parser'
 import { ResponseInterceptor } from './utils/interceptors/response.interceptor'
+import { ClientVersionGuard } from './utils/guards/client-version.guard'
 
 // const sreviceAccount = require('../test-man-savvy-firebase-adminsdk-f2848-982951f18b.json')
 
@@ -80,6 +81,7 @@ async function bootstrap() {
   )
 
   app.useGlobalFilters()
+  app.useGlobalGuards(new ClientVersionGuard())
   app.useGlobalInterceptors(
     new ClassSerializerInterceptor(app.get(Reflector)),
     new ResponseInterceptor(),
@@ -112,7 +114,14 @@ async function bootstrap() {
 
   const port = appConfig.PORT
   await app.listen(port, () => {
-    console.log(`Nest server (v${appVersion}) listening on port ` + port + '.')
+    console.log(
+      '\n',
+      `Nest server is running`,
+      `\n\tVersion: ${appVersion}`,
+      `\n\tPort: ${port}`,
+      `\n\tAllow min client version: ${allowMinClientVersion}`,
+      '\n',
+    )
   })
 }
 bootstrap()
