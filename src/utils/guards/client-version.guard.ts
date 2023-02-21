@@ -14,7 +14,7 @@ export class ClientVersionGuard implements CanActivate {
     console.log({ clientVersion, validRange, isAllowed })
 
     if (!isAllowed) {
-      httpError(HttpStatus.SERVICE_UNAVAILABLE, 'App Version not allow: ' + validRange)
+      httpError(HttpStatus.HTTP_VERSION_NOT_SUPPORTED, 'App Version not allow: ' + validRange)
     }
 
     return true
