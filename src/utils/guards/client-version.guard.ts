@@ -11,7 +11,6 @@ export class ClientVersionGuard implements CanActivate {
     const clientVersion = request.header('App-Version').toString()
     const validRange = semver.validRange(appConfig.ALLOW_MIN_CLIENT_VERSION)
     const isAllowed = semver.satisfies(clientVersion, appConfig.ALLOW_MIN_CLIENT_VERSION) // true
-    console.log({ clientVersion, validRange, isAllowed })
 
     if (!isAllowed) {
       httpError(HttpStatus.HTTP_VERSION_NOT_SUPPORTED, 'App Version not allow: ' + validRange)
