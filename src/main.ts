@@ -22,7 +22,6 @@ import cookieParser from 'cookie-parser'
 import { ResponseInterceptor } from './utils/interceptors/response.interceptor'
 import { ClientVersionGuard } from './utils/guards/client-version.guard'
 
-// const sreviceAccount = require('../test-man-savvy-firebase-adminsdk-f2848-982951f18b.json')
 
 @Catch()
 export class ExceptionsLoggerFilter extends BaseExceptionFilter {
